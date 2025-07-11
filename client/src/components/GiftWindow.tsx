@@ -7,10 +7,11 @@ import styles from './GiftWindow.module.css';
 interface GiftWindowProps {
   onClose: () => void;
   open: boolean;
-  onClaimGift?: () => void;
+  onClaimGift: () => void;
+  translations: any;
 }
 
-function GiftWindow({ onClose, open, onClaimGift }: GiftWindowProps) {
+function GiftWindow({ onClose, open, onClaimGift, translations }: GiftWindowProps) {
   const [visible, setVisible] = useState(open);
   const [animate, setAnimate] = useState(false);
 
@@ -47,13 +48,13 @@ function GiftWindow({ onClose, open, onClaimGift }: GiftWindowProps) {
             <CloseGiftWindowIcon className={styles.closeGiftWindowIcon} />
           </button>
           <div className={styles.innerContentGiftWindow}>
-            <div className={styles.innerContentGiftWindowTitle}>Bonus Gift</div>
+            <div className={styles.innerContentGiftWindowTitle}>{translations.bonusGift}</div>
             <div className={styles.innerContentGiftWindowInfoContainer}>
               <div className={styles.innerContentGiftWindowInfoIconContainer}>
                 <GiftIconWindowGift className={styles.innerContentGiftWindowInfoIcon} />
               </div>
-              <div className={styles.innerContentGiftWindowBalanceText}>to balance</div>
-              <div className={styles.innerContentGiftWindowBalanceValue}>+$100</div>
+              <div className={styles.innerContentGiftWindowBalanceText}>{translations.toBalance}</div>
+              <div className={styles.innerContentGiftWindowBalanceValue}>{translations.bonusValue}</div>
             </div>
             <div
               className={styles.innerContentGiftWindowClaim}
@@ -63,7 +64,7 @@ function GiftWindow({ onClose, open, onClaimGift }: GiftWindowProps) {
               }}
               style={{ cursor: 'pointer' }}
             >
-              Claim gift
+              {translations.claimGift}
             </div>
           </div>
         </div>

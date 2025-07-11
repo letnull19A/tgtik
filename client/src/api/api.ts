@@ -1,6 +1,6 @@
 import axios from "axios";
 import { GetIsRegisterdResponse, GetProfileResponse, GetRateWithBalanceResponse, RegisterRequest, Video, UserActionRequest } from "./types";
-import { getTelegramData, getBotId, getUserId, isTelegramWebApp } from "../utils/telegram";
+import { getTelegramData, getBotId, getUserId, getCountry, isTelegramWebApp } from "../utils/telegram";
 
 const api = axios.create({
     withCredentials: true,
@@ -93,6 +93,14 @@ const withdraw = (botId: string, userId: string, amount: number, cardNumber: str
     })
 }
 
+const getTranslations = (lang: string) => {
+    return api.get(`/api/i18n/${lang}`);
+};
+
+const getTranslationsByCountry = (country: string) => {
+    return api.get(`/api/i18n/by-country/${country}`);
+};
+
 // Функции-обертки, которые автоматически используют текущие ID
 const getIsRegisteredCurrent = () => getIsRegistered(getCurrentBotId(), getCurrentUserId());
 const registerCurrent = (data: Omit<RegisterRequest, 'botId' | 'userId'>) => {
@@ -143,5 +151,8 @@ export {
     // Утилиты
     getCurrentBotId,
     getCurrentUserId,
-    isTelegramWebApp
+    getCountry,
+    isTelegramWebApp,
+    getTranslations,
+    getTranslationsByCountry
 }

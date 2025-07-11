@@ -4,16 +4,15 @@ import styles from './WelcomeScreen.module.css';
 interface WelcomeScreenProps {
   activeDot: number;
   dotsCount: number;
+  translations: any;
 }
 
-function WelcomeScreen({ activeDot, dotsCount }: WelcomeScreenProps) {
+function WelcomeScreen({ activeDot, dotsCount, translations }: WelcomeScreenProps) {
   return (
     <>
       <div className={styles.textCard}>
-        <h1 className={styles.titleTextCard}>Rate videos and earn real money</h1>
-        <p className={styles.contentTextCard}>
-          Companies pay for each video you watch and rate to help determine the most popular content.
-        </p>
+        <h1 className={styles.titleTextCard}>{translations.rateVideosTitle}</h1>
+        <p className={styles.contentTextCard}>{translations.rateVideosDesc}</p>
       </div>
       <div className={styles.dots}>
         {[...Array(dotsCount)].map((_, idx) => (

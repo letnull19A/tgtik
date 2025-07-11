@@ -17,6 +17,7 @@ interface ContentSectionProps {
   dotsCount: number;
   onNext: () => void;
   onCreateAccount: (age: number, sex: Sex) => void;
+  translations: any;
 }
 
 function ContentSection({ 
@@ -25,7 +26,8 @@ function ContentSection({
   activeDot, 
   dotsCount, 
   onNext, 
-  onCreateAccount 
+  onCreateAccount, 
+  translations
 }: ContentSectionProps) {
   const [age, setAge] = useState<number | null>(null)
   const [sex, setSex] = useState<Sex>('female')
@@ -60,12 +62,12 @@ function ContentSection({
         {isLoading ? (
           <>
             <Loader />
-            {showRegistration && <BottomNavBar />}
+            {showRegistration && <BottomNavBar translations={translations} />}
           </>
         ) : (
           <>
             {!showRegistration && (
-              <WelcomeScreen activeDot={activeDot} dotsCount={dotsCount} />
+              <WelcomeScreen activeDot={activeDot} dotsCount={dotsCount} translations={translations} />
             )}
             <ActionButtons 
               showRegistration={showRegistration}
@@ -75,6 +77,7 @@ function ContentSection({
                 typeof age === 'number' &&
                 /^([1-9][6-9]|[2-9][0-9]|100)$/.test(String(age))
               }
+              translations={translations}
             />
           </>
         )}

@@ -35,7 +35,7 @@ const InviteList: React.FC<{refs: Referral[], onInvite: () => void}> = ({refs, o
   );
 }
 
-const BonusPage: React.FC<{ showToast: (title: string, description: string) => void }> = ({ showToast }) => {
+const BonusPage: React.FC<{ showToast: (title: string, description: string) => void, translations: any }> = ({ showToast, translations }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const [referrals, setReferrals] = React.useState<Referral[]>([]);
@@ -55,7 +55,7 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
   }, []);
 
   const handlePromoApply = () => {
-    showToast('Promocode error', 'Promocode is not found!');
+    showToast(translations.promocodeError, translations.promocodeNotFound);
   };
 
   const fetchReferrals = async () => {
@@ -170,17 +170,15 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
             <img src={require('../assets/BonusPrizeIcon.svg').default} alt="Cup" className={styles.bonusCupIcon} />
           </div>
           <div className={styles.bonusTextBlock}>
-            <div className={styles.bonusLabel}>Secret bonus</div>
-            <div className={styles.bonusActivated}>Activated codes: 0</div>
+            <div className={styles.bonusLabel}>{translations.secretBonus}</div>
+            <div className={styles.bonusActivated}>{translations.activatedCodes.replace('{count}', '0')}</div>
           </div>
           <button className={styles.bonusSubscribeBtn} onClick={openTelegramChannel}>
-            <span className={styles.bonusSubscribeText}>Subscribe to the channel</span>
+            <span className={styles.bonusSubscribeText}>{translations.subscribeToChannel}</span>
             <img src={require('../assets/BonusTgIcon.svg').default} alt="Telegram" className={styles.bonusTgIcon} />
           </button>
         </div>
-        <div className={styles.bonusNewsText}>
-          Follow the news in the channel and get bonuses to your balance
-        </div>
+        <div className={styles.bonusNewsText}>{translations.followNews}</div>
         <div className={styles.bonusPromoBlock}>
           <input
             className={styles.bonusPromoInput}
@@ -231,7 +229,7 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
         <div className={styles.friendsListInfoText}>
           <span className={styles.friendsListInfoTextBold}>Invite your friends</span>
           <span className={styles.friendsListInfoTextNormal}> and start earning! Share your link or send a direct invitation —</span>
-          <span className={styles.friendsListInfoTextBold}> get $100</span>
+          <span className={styles.friendsListInfoTextBold}> get {translations.currency}100</span>
           <span className={styles.friendsListInfoTextNormal}> for each friend you bring. Start earning today!</span>
         </div>
       </div>
@@ -246,7 +244,7 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
               className={styles.bonusInviteBtn + (isInvitePressed ? ' ' + styles.bonusInviteBtnActive : '')}
               onClick={handleInviteClick}
             >
-              <span className={styles.bonusInviteText}>Invite</span>
+              <span className={styles.bonusInviteText}>{translations.invite}</span>
             </button>
           </div>
       ) : (

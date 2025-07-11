@@ -8,9 +8,10 @@ interface BottomNavBarProps {
   onSelect?: (tab: 'home' | 'bonus' | 'money') => void;
   activeTab?: 'home' | 'bonus' | 'money';
   isModalOpen?: boolean;
+  translations: any;
 }
 
-const BottomNavBar: React.FC<BottomNavBarProps> = ({ onSelect, activeTab = 'home', isModalOpen = false }) => (
+const BottomNavBar: React.FC<BottomNavBarProps> = ({ onSelect, activeTab = 'home', isModalOpen = false, translations }) => (
   <div className={styles.bottomNavBar}>
       <div className={styles.bottomNavBarContainer}>
           <div
@@ -24,7 +25,7 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({ onSelect, activeTab = 'home
                   className={styles.navLabel}
                   style={{ color: isModalOpen ? 'rgba(255,255,255,0.5)' : (activeTab === 'home' ? '#fff' : 'rgba(255,255,255,0.5)') }}
               >
-                  Home
+                  {translations.home}
               </div>
           </div>
           <div
@@ -38,7 +39,7 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({ onSelect, activeTab = 'home
                   className={styles.navLabel}
                   style={{ color: isModalOpen ? 'rgba(255,255,255,0.5)' : (activeTab === 'bonus' ? '#fff' : 'rgba(255,255,255,0.5)') }}
               >
-                  Bonus
+                  {translations.bonus}
               </div>
           </div>
           <div
@@ -52,7 +53,7 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({ onSelect, activeTab = 'home
                   className={styles.navLabel}
                   style={{ color: isModalOpen ? '#fff' : (activeTab === 'money' ? '#fff' : 'rgba(255,255,255,0.5)') }}
               >
-                  Money
+                  {translations.money}
               </div>
           </div>
       </div>

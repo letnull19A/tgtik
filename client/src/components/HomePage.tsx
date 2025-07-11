@@ -19,7 +19,7 @@ import { setBalance } from '../store';
 import type { RootState, AppDispatch } from '../store';
 import { getUserId, getBotId, isTelegramWebApp } from '../utils/telegram';
 
-function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, setIsOpenBackgroundModal }: { onSelect?: (tab: 'home' | 'bonus' | 'money') => void, activeTab?: 'home' | 'bonus' | 'money' , setMoney: (v: number) => void, showToast: (title: string, description: string) => void, showErrorModal?: (msg: string) => void, setIsOpenBackgroundModal: (value: boolean) => void}) {
+function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, setIsOpenBackgroundModal, translations }: { onSelect?: (tab: 'home' | 'bonus' | 'money') => void, activeTab?: 'home' | 'bonus' | 'money' , setMoney: (v: number) => void, showToast: (title: string, description: string) => void, showErrorModal?: (msg: string) => void, setIsOpenBackgroundModal: (value: boolean) => void, translations: any }) {
   const [showGiftToast, setShowGiftToast] = useState(false);
   const [showGiftWindow, setShowGiftWindow] = useState(false);
   const [isGiftOpen, setIsGiftOpen] = useState(false);
@@ -169,17 +169,17 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
         const response = await getIsSubscribedCurrent()
         const {isSubscribed, hasBonus} = response.data
         if(!isSubscribed) {
-          showToast('You dont have a sponsor subscription', 'Subscribe and try again');
+          showToast(translations.giftToast.noSubscriptionTitle, translations.giftToast.noSubscriptionDescription);
           return
         }
         if (hasBonus) {
-          showToast('You already get bonus', 'Thanks');
+          showToast(translations.giftToast.alreadyBonusTitle, translations.giftToast.alreadyBonusDescription);
           return
         }
         setShowGiftWindow(true);
         setIsGiftOpen(true)
     } catch (error) {
-       showToast('You dont have a sponsor subscription', 'Subscribe and try again');
+       showToast(translations.giftToast.noSubscriptionTitle, translations.giftToast.noSubscriptionDescription);
      } 
   };
 
@@ -187,9 +187,9 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
     try {
       const response = await addSignupBonusCurrent()
       dispatch(setBalance(balance + response.data.bonus))
-      showToast('Gift claimed!', `You received + ${response.data.bonus}$`)
+      showToast(translations.giftToast.giftClaimedTitle, translations.giftToast.giftClaimedDescription.replace('{amount}', response.data.bonus.toString()).replace('{currency}', translations.currency));
     }catch(err) {
-      showToast('Server error', 'Boun not recieved')
+      showToast(translations.giftToast.serverErrorTitle, translations.giftToast.serverErrorDescription);
     }
   }
 
@@ -221,6 +221,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
             setTimeout(() => setShowGiftWindow(false), 300);
           }}
           onClaimGift={onClaimGift}
+          translations={translations}
         />
       )}
       {profile && (
@@ -245,7 +246,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
       <VideoProgressBar progress={progress} />
       <VideoTopBar onGiftClick={handleGiftClick} rate={rate} maxVideos={maxVideos} onProfileClick={handleOpenProfile}/>
       <VideoBalanceBar />
-      <VideoPromoBar onOpenTelegramChannel={openTelegramChannel} />
+      <VideoPromoBar onOpenTelegramChannel={openTelegramChannel} translations={translations} />
       <div className={styles.homePage}>
         <VideoSidebar
           key={currentIndex}
@@ -265,7 +266,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
         />
         <VideoInfoBlock video={videos[currentIndex]} />
       </div>
-      <BottomNavBar onSelect={onSelect} activeTab={activeTab} />
+      <BottomNavBar onSelect={onSelect} activeTab={activeTab} translations={translations} />
     </>
   );
 }

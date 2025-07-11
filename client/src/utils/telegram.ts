@@ -120,6 +120,18 @@ export const getBotId = (): string | null => {
 };
 
 /**
+ * Получает country из URL
+ */
+export const getCountry = (): string | null => {
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('country') || null;
+  } catch {
+    return null;
+  }
+};
+
+/**
  * Получает данные пользователя
  */
 export const getUserData = () => {

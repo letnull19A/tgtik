@@ -6,9 +6,10 @@ interface ActionButtonsProps {
   onNext: () => void;
   onCreateAccount: () => void;
   isAgeValid: boolean;
+  translations: any;
 }
 
-function ActionButtons({ showRegistration, onNext, onCreateAccount, isAgeValid }: ActionButtonsProps) {
+function ActionButtons({ showRegistration, onNext, onCreateAccount, isAgeValid, translations }: ActionButtonsProps) {
   return (
     <>
       {showRegistration ? (
@@ -17,14 +18,14 @@ function ActionButtons({ showRegistration, onNext, onCreateAccount, isAgeValid }
           onClick={onCreateAccount}
           disabled={!isAgeValid}
         >
-          CREATE AN ACCOUNT
+          {translations.createAccount}
         </button>
       ) : (
         <button className={styles.nextBtn} onClick={onNext}>
-          Next
+          {translations.next}
         </button>
       )}
-      <div className={styles.subscribeLink}>subscribe to communities</div>
+      <div className={styles.subscribeLink}>{translations.subscribeToCommunities}</div>
     </>
   );
 }

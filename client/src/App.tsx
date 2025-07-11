@@ -7,7 +7,7 @@ import BonusPage from './components/BonusPage';
 import BottomNavBar from './components/BottomNavBar';
 import SubscriptionBlock from './components/SubscriptionBlock';
 import { WithdrawalForm } from './components/SubscriptionBlock';
-import { getIsRegisteredCurrent, registerCurrent, getRateWithBalanceCurrent, getCanWithdrawCurrent, withdrawCurrent, isTelegramWebApp } from "./api/api";
+import { getIsRegisteredCurrent, registerCurrent, getRateWithBalanceCurrent, getCanWithdrawCurrent, withdrawCurrent, isTelegramWebApp, getTranslations, getTranslationsByCountry, getCountry } from "./api/api";
 import { Sex } from "./components/RegistrationBlock";
 import HelloLoader from './components/HelloLoader';
 import GiftToast from './components/GiftToast';
@@ -67,6 +67,31 @@ export default function App() {
   const handleCloseToast = (id: number) => {
     setToasts(prev => prev.filter(t => t.id !== id));
   };
+  const [translations, setTranslations] = useState<any>(null);
+  const [lang, setLang] = useState<'en' | 'ru'>('en'); // по умолчанию английский
+
+  // Загрузка переводов при инициализации
+  useEffect(() => {
+    async function fetchTranslations() {
+      try {
+        // Получаем country из URL
+        const country = getCountry();
+        if (country) {
+          // Используем новый endpoint с country
+          const res = await getTranslationsByCountry(country);
+          setTranslations(res.data);
+        } else {
+          // Fallback на старый способ
+          const res = await getTranslations(lang);
+          setTranslations(res.data);
+        }
+      } catch (e) {
+        // fallback: можно показать ошибку или использовать en
+        setTranslations(null);
+      }
+    }
+    fetchTranslations();
+  }, [lang]);
 
 
   const isLoading = useSelector((state: RootState) => state.app.isLoading);
@@ -192,6 +217,10 @@ export default function App() {
     return <HelloLoader />;
   }
 
+  if (!translations) {
+    return <div>Loading...</div>;
+  }
+
   if (isRegistered) {
       return <>
       <div style={{
@@ -236,13 +265,13 @@ export default function App() {
           ))}
         </div>
         {canWithdraw
-              ? <WithdrawalForm onWithdraw={onWithdraw} onClose={() => setIsOpenBackgroundModal(false)} minWithdraw={minWithdraw}/>
-              : <SubscriptionBlock money={money} onContinue={() => setIsOpenBackgroundModal(false)} minWithdraw={minWithdraw}/> }
+              ? <WithdrawalForm onWithdraw={onWithdraw} onClose={() => setIsOpenBackgroundModal(false)} minWithdraw={minWithdraw} translations={translations}/>
+              : <SubscriptionBlock money={money} onContinue={() => setIsOpenBackgroundModal(false)} minWithdraw={minWithdraw} translations={translations}/> }
             
       </BackgroundModal>
-      {activeTab === 'bonus' && <BonusPage showToast={showToast} />}
-      {activeTab !== 'bonus' && <HomePage setMoney={setMoney} onSelect={handleTabSelect} activeTab={activeTab} showToast={showToast} setIsOpenBackgroundModal={setIsOpenBackgroundModal} />}
-      <BottomNavBar onSelect={handleTabSelect} activeTab={activeTab} isModalOpen={isOpenBackgroundModal} />
+      {activeTab === 'bonus' && <BonusPage showToast={showToast} translations={translations} />}
+      {activeTab !== 'bonus' && <HomePage translations={translations} onSelect={handleTabSelect} activeTab={activeTab} setMoney={setMoney} showToast={showToast} showErrorModal={undefined} setIsOpenBackgroundModal={setIsOpenBackgroundModal} />}
+      <BottomNavBar onSelect={handleTabSelect} activeTab={activeTab} isModalOpen={isOpenBackgroundModal} translations={translations} />
     </>;
   }
 
@@ -252,11 +281,12 @@ export default function App() {
         <BackgroundSection />
         <ContentSection
           showRegistration={showRegistration}
-          isLoading={isLoading}
+          isLoading={localIsLoading}
           activeDot={activeDot}
           dotsCount={dotsCount}
           onNext={handleNext}
           onCreateAccount={handleCreateAccount}
+          translations={translations}
         />
       </div>
     </div>

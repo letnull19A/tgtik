@@ -10,15 +10,17 @@ export interface SubscriptionBlockProps {
   onContinue?: () => void;
   money: number
   minWithdraw: number
+  translations: any
 }
 
 type WithdrawFormProps = {
     minWithdraw: number
     onClose: () => void
     onWithdraw: (data: { cardData: string; amount: string }) => void
+    translations: any
 }
 
-export const WithdrawalForm: React.FC<WithdrawFormProps> = ({ onClose, minWithdraw, onWithdraw }) => {
+export const WithdrawalForm: React.FC<WithdrawFormProps> = ({ onClose, minWithdraw, onWithdraw, translations }) => {
     const [card, setCard] = useState('');
     const [iban, setIban] = useState('');
     const [amount, setAmount] = useState('');
@@ -62,10 +64,10 @@ export const WithdrawalForm: React.FC<WithdrawFormProps> = ({ onClose, minWithdr
                     </button>
                 </div>
             </div>
-            <div className={styles.instruction}>Please indicate your card number</div>
+            <div className={styles.instruction}>{translations.pleaseIndicateCard}</div>
             <div className={styles.option}>
             <div className={styles.optionContent}>
-                <div className={styles.optionLabel}>Card</div>
+                <div className={styles.optionLabel}>{translations.card}</div>
                 <div className={styles.separator} />
                 <input
                     className={styles.optionInput}
@@ -77,30 +79,30 @@ export const WithdrawalForm: React.FC<WithdrawFormProps> = ({ onClose, minWithdr
                 />
                 </div>
             </div>
-            <div className={styles.instruction}>Or use your IBAN account</div>
+            <div className={styles.instruction}>{translations.orUseIban}</div>
             <div className={styles.option}>
             <div className={styles.optionContent}>
-                <div className={styles.optionLabel}>IBAN</div>
+                <div className={styles.optionLabel}>{translations.iban}</div>
                 <div className={styles.separator} />
                 <input
                     className={styles.optionInput}
                     type="text"
-                    placeholder="from 15 to 34 characters"
+                    placeholder={translations.ibanPlaceholder}
                     maxLength={34}
                     value={iban}
                     onChange={e => setIban(e.target.value)}
                 />
                 </div>
             </div>
-            <div className={styles.instruction}>Amount to withdraw</div>
+            <div className={styles.instruction}>{translations.amountToWithdraw}</div>
             <div className={styles.option}>
             <div className={styles.optionContent}>
-                <div className={styles.optionLabel}>Amount</div>
+                <div className={styles.optionLabel}>{translations.amount}</div>
                 <div className={styles.separator} />
                 <input
                     className={styles.optionInput}
                     type="number"
-                    placeholder="Sum"
+                    placeholder={translations.sum}
                     min={minWithdraw}
                     max={1000}
                     value={amount}
@@ -123,7 +125,7 @@ export const WithdrawalForm: React.FC<WithdrawFormProps> = ({ onClose, minWithdr
     );
 };
 
-function ProgressPath({money = 0, minWithdraw = 0}) {
+function ProgressPath({money = 0, minWithdraw = 0, translations}: {money?: number, minWithdraw?: number, translations: any}) {
     return (
         <div className={styles.wrapper}>
             <svg className={styles.svg} xmlns="http://www.w3.org/2000/svg" width="100" height="84" viewBox="0 0 100 84" fill="none">
@@ -137,20 +139,20 @@ function ProgressPath({money = 0, minWithdraw = 0}) {
             </svg>
             {/*<MoneyWarningIcon className={styles.moneyWarningIcon} />*/}
             <div className={styles.moneyValueContainer} >
-                <span className={styles.moneyCurrentValue} >${money}</span><span className={styles.moneyMaxValue}>/${minWithdraw}</span>
+                <span className={styles.moneyCurrentValue} >${money}</span><span className={styles.moneyMaxValue}>/{translations.currency}{minWithdraw}</span>
             </div>
         </div>
     );
 }
 
-const SubscriptionBlock: React.FC<SubscriptionBlockProps> = ({ onContinue, money , minWithdraw }) => {
+const SubscriptionBlock: React.FC<SubscriptionBlockProps> = ({ onContinue, money , minWithdraw, translations }) => {
   const dispatch = useDispatch<AppDispatch>();
   const balance = useSelector((state: RootState) => state.balance.value);
   return (
     <div className={styles.subscriptionWrapper}>
       <div className={styles.subscriptionIconWrapper}>
         <div className={styles.moneyWarningIconContainer}></div>
-        <ProgressPath money={money} minWithdraw={minWithdraw}/>
+        <ProgressPath money={money} minWithdraw={minWithdraw} translations={translations}/>
       </div>
       <div className={styles.subscriptionTitle}>Insufficient Funds</div>
       <div className={styles.subscriptionText}>
