@@ -93,19 +93,30 @@ const getBotIdFromInitData = (initData: any): string | null => {
 };
 
 /**
- * Получает только botId
- */
-export const getBotId = (): string | null => {
-  const data = getTelegramData();
-  return data?.botId || null;
-};
-
-/**
  * Получает только userId
  */
 export const getUserId = (): string | null => {
-  const data = getTelegramData();
-  return data?.userId || null;
+  try {
+    return window.Telegram?.WebApp?.initDataUnsafe?.user?.id?.toString() || null;
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * Получает только botId
+ */
+export const getBotId = (): string | null => {
+  try {
+    // Сначала из initDataUnsafe (если вдруг есть)
+    const fromInitData = window.Telegram?.WebApp?.initDataUnsafe?.bot_id;
+    if (fromInitData) return fromInitData.toString();
+    // Потом из URL
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('bot_id') || urlParams.get('botId') || null;
+  } catch {
+    return null;
+  }
 };
 
 /**
