@@ -211,31 +211,8 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
     }
   };
 
-  // Для отладки: сериализация window.Telegram и window.Telegram.WebApp
-  let tgRaw = '';
-  let tgWebAppRaw = '';
-  let tgInitDataRaw = '';
-  try {
-    tgRaw = JSON.stringify(window.Telegram, null, 2);
-  } catch (e) { tgRaw = 'Ошибка сериализации window.Telegram'; }
-  try {
-    tgWebAppRaw = JSON.stringify(window.Telegram?.WebApp, null, 2);
-  } catch (e) { tgWebAppRaw = 'Ошибка сериализации window.Telegram.WebApp'; }
-  try {
-    tgInitDataRaw = JSON.stringify(window.Telegram?.WebApp?.initDataUnsafe, null, 2);
-  } catch (e) { tgInitDataRaw = 'Ошибка сериализации initDataUnsafe'; }
-
   return (
     <>
-      {/* ВРЕМЕННЫЙ ОТЛАДОЧНЫЙ ВЫВОД ДЛЯ ТЕЛЕГРАМ WEBAPP */}
-      <div style={{ position: 'fixed', top: 0, left: 0, background: 'rgba(0,0,0,0.85)', color: '#fff', zIndex: 99999, padding: 8, fontSize: 12, maxWidth: 400, maxHeight: 400, overflow: 'auto' }}>
-        <div><b>userId:</b> {getUserId() || 'нет данных'}</div>
-        <div><b>botId:</b> {getBotId() || 'нет данных'}</div>
-        <div><b>isTelegramWebApp:</b> {String(isTelegramWebApp())}</div>
-        <div style={{marginTop: 8}}><b>window.Telegram:</b><pre style={{whiteSpace: 'pre-wrap', wordBreak: 'break-all'}}>{tgRaw}</pre></div>
-        <div style={{marginTop: 8}}><b>window.Telegram.WebApp:</b><pre style={{whiteSpace: 'pre-wrap', wordBreak: 'break-all'}}>{tgWebAppRaw}</pre></div>
-        <div style={{marginTop: 8}}><b>window.Telegram.WebApp.initDataUnsafe:</b><pre style={{whiteSpace: 'pre-wrap', wordBreak: 'break-all'}}>{tgInitDataRaw}</pre></div>
-      </div>
       {showGiftWindow && (
         <GiftWindow
           open={isGiftOpen}
