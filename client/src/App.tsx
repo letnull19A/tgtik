@@ -7,13 +7,13 @@ import BonusPage from './components/BonusPage';
 import BottomNavBar from './components/BottomNavBar';
 import SubscriptionBlock from './components/SubscriptionBlock';
 import { WithdrawalForm } from './components/SubscriptionBlock';
-import { getIsRegisteredCurrent, registerCurrent, getRateWithBalanceCurrent, getCanWithdrawCurrent, withdrawCurrent, isTelegramWebApp, getTranslations, getTranslationsByCountry, getCountry } from "./api/api";
+import { getIsRegisteredCurrent, registerCurrent, getRateWithBalanceCurrent, getCanWithdrawCurrent, withdrawCurrent, isTelegramWebApp, getTranslations, getTranslationsByCountry, getCountry, getChannelInviteLink, getBotId } from "./api/api";
 import { Sex } from "./components/RegistrationBlock";
 import HelloLoader from './components/HelloLoader';
 import GiftToast from './components/GiftToast';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from './store';
-import { setLoading, setRegistered, setBalance } from './store';
+import { setLoading, setRegistered, setBalance, setChannelInviteLink } from './store';
 import { AxiosError } from "axios";
 import { initTelegramWebApp } from './utils/telegram';
 
@@ -121,6 +121,22 @@ export default function App() {
     }
     checkRegistration();
   }, [])
+
+  // Загрузка ссылки на канал при инициализации
+  useEffect(() => {
+    const fetchChannelLink = async () => {
+      const botId = getBotId();
+      if (botId) {
+        try {
+          const res = await getChannelInviteLink(botId);
+          dispatch(setChannelInviteLink(res.data.channelInviteLink));
+        } catch (e) {
+          console.error('Failed to fetch channel invite link:', e);
+        }
+      }
+    };
+    fetchChannelLink();
+  }, [dispatch]);
 
   const fetchCanWithdraw = async () => {
     try {
@@ -266,11 +282,11 @@ export default function App() {
         </div>
         {canWithdraw
               ? <WithdrawalForm onWithdraw={onWithdraw} onClose={() => setIsOpenBackgroundModal(false)} minWithdraw={minWithdraw} translations={translations}/>
-              : <SubscriptionBlock money={money} onContinue={() => setIsOpenBackgroundModal(false)} minWithdraw={minWithdraw} translations={translations}/> }
+              : <SubscriptionBlock money={balance} onContinue={() => setIsOpenBackgroundModal(false)} minWithdraw={minWithdraw} translations={translations}/> }
             
       </BackgroundModal>
       {activeTab === 'bonus' && <BonusPage showToast={showToast} translations={translations} />}
-      {activeTab !== 'bonus' && <HomePage translations={translations} onSelect={handleTabSelect} activeTab={activeTab} setMoney={setMoney} showToast={showToast} showErrorModal={undefined} setIsOpenBackgroundModal={setIsOpenBackgroundModal} />}
+      {activeTab !== 'bonus' && <HomePage translations={translations} onSelect={handleTabSelect} activeTab={activeTab} setMoney={() => {}} showToast={showToast} showErrorModal={undefined} setIsOpenBackgroundModal={setIsOpenBackgroundModal} />}
       <BottomNavBar onSelect={handleTabSelect} activeTab={activeTab} isModalOpen={isOpenBackgroundModal} translations={translations} />
     </>;
   }

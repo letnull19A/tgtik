@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './BonusPage.module.css';
 import { ReactComponent as BonusBigFriendsIcon } from '../assets/BonusBigFriendsIcon.svg';
-import { getReferralUrlCurrent, getReferralsCurrent, getRateWithBalanceCurrent, getChannelInviteLink, getBotId } from '../api/api';
+import { getReferralUrlCurrent, getReferralsCurrent, getRateWithBalanceCurrent } from '../api/api';
 import GiftToast from './GiftToast';
 import { useSelector, useDispatch } from 'react-redux';
 import { incrementBalance, setBalance } from '../store';
@@ -45,7 +45,7 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
   const [promoCode, setPromoCode] = React.useState('');
   const [message, setMessage] = React.useState('');
   const [isTelegram, setIsTelegram] = React.useState(false);
-  const [channelUrl, setChannelUrl] = React.useState<string>('');
+  const channelUrl = useSelector((state: RootState) => state.channel.inviteLink);
 
   // Проверяем, что мы в Telegram Mini App
   React.useEffect(() => {
@@ -53,22 +53,6 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
       window.Telegram.WebApp.ready();
       setIsTelegram(true);
     }
-  }, []);
-
-  // Получаем ссылку на канал
-  React.useEffect(() => {
-    const fetchChannelUrl = async () => {
-      const botId = getBotId();
-      if (botId) {
-        try {
-          const res = await getChannelInviteLink(botId);
-          setChannelUrl(res.data.channelInviteLink);
-        } catch (e) {
-          setChannelUrl('');
-        }
-      }
-    };
-    fetchChannelUrl();
   }, []);
 
   const handlePromoApply = () => {

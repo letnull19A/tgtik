@@ -38,7 +38,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
   const [playing, setPlaying] = useState(true);
   const dispatch = useDispatch<AppDispatch>();
   const balance = useSelector((state: RootState) => state.balance.value);
-  const [channelUrl, setChannelUrl] = useState<string>('');
+  const channelUrl = useSelector((state: RootState) => state.channel.inviteLink);
 
   useEffect(() => {
     setMoney(balance);
@@ -57,21 +57,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
     }
   }, [activeTab, videos.length, currentIndex, setIsOpenBackgroundModal]);
 
-  useEffect(() => {
-    // Получаем ссылку на канал
-    const fetchChannelUrl = async () => {
-      const botId = getBotId();
-      if (botId) {
-        try {
-          const res = await getChannelInviteLink(botId);
-          setChannelUrl(res.data.channelInviteLink);
-        } catch (e) {
-          setChannelUrl('');
-        }
-      }
-    };
-    fetchChannelUrl();
-  }, []);
+
 
   const fetchProfile = async () => {
     try {
@@ -182,20 +168,26 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
   };
 
   const handleGiftClick = async () => {
+    console.log('Gift button clicked!');
     try {
         const response = await getIsSubscribedCurrent()
+        console.log('Subscription response:', response.data);
         const {isSubscribed, hasBonus} = response.data
         if(!isSubscribed) {
+          console.log('User not subscribed');
           showToast(translations.giftToast.noSubscriptionTitle, translations.giftToast.noSubscriptionDescription);
           return
         }
         if (hasBonus) {
+          console.log('User already has bonus');
           showToast(translations.giftToast.alreadyBonusTitle, translations.giftToast.alreadyBonusDescription);
           return
         }
+        console.log('Opening gift window');
         setShowGiftWindow(true);
         setIsGiftOpen(true)
     } catch (error) {
+       console.error('Error in handleGiftClick:', error);
        showToast(translations.giftToast.noSubscriptionTitle, translations.giftToast.noSubscriptionDescription);
      } 
   };
@@ -263,7 +255,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
       />
       <VideoProgressBar progress={progress} />
       <VideoTopBar onGiftClick={handleGiftClick} rate={rate} maxVideos={maxVideos} onProfileClick={handleOpenProfile} translations={translations}/>
-      <VideoBalanceBar />
+      <VideoBalanceBar translations={translations} />
       <VideoPromoBar onOpenTelegramChannel={openTelegramChannel} translations={translations} />
       <div className={styles.homePage}>
         <VideoSidebar

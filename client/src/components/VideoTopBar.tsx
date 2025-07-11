@@ -12,9 +12,16 @@ interface VideoTopBarProps {
 }
 
 function VideoTopBar({ onGiftClick, rate, maxVideos, onProfileClick, translations }: VideoTopBarProps) {
+  const handleGiftClick = () => {
+    console.log('Gift icon clicked in VideoTopBar');
+    if (onGiftClick) {
+      onGiftClick();
+    }
+  };
+
   return (
     <div className={styles.videoTopBar}>
-      <GiftIcon className={styles.topbarGiftIcon} onClick={onGiftClick} style={{cursor: 'pointer'}} />
+      <GiftIcon className={styles.topbarGiftIcon} onClick={handleGiftClick} style={{cursor: 'pointer'}} />
       <div className={styles.topbarCenter}>
         <span className={styles.topbarProgress}>{rate} / {maxVideos}</span>
         <span className={styles.topbarDivider} />

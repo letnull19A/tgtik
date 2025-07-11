@@ -139,7 +139,7 @@ function ProgressPath({money = 0, minWithdraw = 0, translations}: {money?: numbe
             </svg>
             {/*<MoneyWarningIcon className={styles.moneyWarningIcon} />*/}
             <div className={styles.moneyValueContainer} >
-                <span className={styles.moneyCurrentValue} >${money}</span><span className={styles.moneyMaxValue}>/{translations.currency}{minWithdraw}</span>
+                <span className={styles.moneyCurrentValue} >{translations.currency}{money}</span><span className={styles.moneyMaxValue}>/{translations.currency}{minWithdraw}</span>
             </div>
         </div>
     );

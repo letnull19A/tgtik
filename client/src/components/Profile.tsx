@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import styles from './Profile.module.css';
 import { ReactComponent as CloseGiftWindowIcon } from '../assets/CloseGiftWindowIcon.svg';
 import Profile1Image from '../assets/Profile1Image.jpg';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../store';
 
 interface ProfileProps {
   username?: string;
@@ -25,7 +27,7 @@ const Profile: React.FC<ProfileProps> = ({
   friendsInvited = 0,
   likes = 1,
   dislikes = 0,
-  earnings = '$120',
+  earnings = '120',
   isVerified = false,
   onPassVerification,
   onClose,
@@ -50,8 +52,10 @@ const Profile: React.FC<ProfileProps> = ({
 
   if (!visible) return null;
 
+  const channelUrl = useSelector((state: RootState) => state.channel.inviteLink);
+  
   const openTelegramChannel = () => {
-    const channelUrl = 'https://t.me/test_tik_tok1_bot_channel';
+    if (!channelUrl) return;
     if (window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
       window.Telegram.WebApp.openTelegramLink(channelUrl);
     } else {
@@ -110,7 +114,7 @@ const Profile: React.FC<ProfileProps> = ({
             </div>
           </div>
           <div className={styles.earningsContainer}>
-            <div className={styles.statValue}>{earnings}</div>
+            <div className={styles.statValue}>{translations.currency}{earnings}</div>
             <div className={styles.statLabel}>{translations.earnings}</div>
           </div>
           {!isVerified && (

@@ -8,7 +8,7 @@ import styles from './VideoSidebar.module.css';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../store';
 import { startTimer, pauseTimer, resumeTimer, resetTimer, finishTimer, TimerStatus } from '../store';
-import { getReferralUrl, BOT_ID, USER_ID, getChannelInviteLink, getBotId } from '../api/api';
+import { getReferralUrl, BOT_ID, USER_ID } from '../api/api';
 
 interface VideoSidebarProps {
   onProfileClick?: () => void;
@@ -44,7 +44,7 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
     const [isTelegram, setIsTelegram] = useState(false);
     const [shareMessage, setShareMessage] = useState('');
     const [isSharePressed, setIsSharePressed] = useState(false);
-    const [channelUrl, setChannelUrl] = useState<string>('');
+    const channelUrl = useSelector((state: RootState) => state.channel.inviteLink);
 
     const totalDuration = 3;
 
@@ -118,21 +118,7 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
       }
     }, []);
 
-    useEffect(() => {
-      // Получаем ссылку на канал
-      const fetchChannelUrl = async () => {
-        const botId = getBotId();
-        if (botId) {
-          try {
-            const res = await getChannelInviteLink(botId);
-            setChannelUrl(res.data.channelInviteLink);
-          } catch (e) {
-            setChannelUrl('');
-          }
-        }
-      };
-      fetchChannelUrl();
-    }, []);
+
 
     const handleCopyInvite = async () => {
       try {
