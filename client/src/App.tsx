@@ -252,12 +252,8 @@ export default function App() {
     }
   }, [isOpenBackgroundModal, pendingTab]);
 
-  if (isLoading) {
+  if (isLoading || !translations) {
     return <HelloLoader />;
-  }
-
-  if (!translations) {
-    return <div>Loading...</div>;
   }
 
   if (isRegistered) {
