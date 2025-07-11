@@ -1,45 +1,64 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ReactComponent as WarningToast } from '../assets/WarningToast.svg';
 import { ReactComponent as CloseToastIcon } from '../assets/CloseToastIcon.svg';
 import styles from './GiftToast.module.css';
 
 interface GiftToastProps {
+  open: boolean;
   onClose: () => void;
+  title: string;
+  description: string;
 }
 
-function GiftToast({ onClose }: GiftToastProps) {
-  const [visible, setVisible] = useState(false);
-
-  useLayoutEffect(() => {
-    // Запускаем анимацию появления после первого рендера
-    setVisible(true);
-  }, []);
+const GiftToast: React.FC<GiftToastProps> = ({ open, onClose, title, description }) => {
+  const [visible, setVisible] = useState(open);
+  const [animate, setAnimate] = useState(false);
 
   useEffect(() => {
-    if (!visible) return;
-    const timer = setTimeout(() => setVisible(false), 2500);
-    return () => clearTimeout(timer);
-  }, [visible]);
-
-  useEffect(() => {
-    if (!visible) {
-      const timer = setTimeout(onClose, 300); // время для анимации
-      return () => clearTimeout(timer);
+    let autoCloseTimeout: NodeJS.Timeout | null = null;
+    if (open) {
+      setVisible(true);
+      setAnimate(false);
+      const raf = requestAnimationFrame(() => setAnimate(true));
+      // Автоматическое закрытие через 2 секунды
+      autoCloseTimeout = setTimeout(() => {
+        handleRequestClose();
+      }, 2000);
+      return () => {
+        cancelAnimationFrame(raf);
+        if (autoCloseTimeout) clearTimeout(autoCloseTimeout);
+      };
+    } else {
+      setAnimate(false);
+      const timeout = setTimeout(() => setVisible(false), 300);
+      return () => clearTimeout(timeout);
     }
-  }, [visible, onClose]);
+  }, [open]);
+
+  const handleRequestClose = () => {
+    setAnimate(false);
+    setTimeout(() => {
+      onClose();
+    }, 300);
+  };
+
+  if (!visible) return null;
 
   return (
-    <div className={`${styles.giftToast}${visible ? ` ${styles.giftToastVisible}` : ` ${styles.giftToastHidden}`}`}>
+    <div
+      className={styles.giftToast + (animate && open ? ' ' + styles.open : '')}
+      onClick={handleRequestClose}
+    >
       <WarningToast className={styles.giftToastWarning} />
       <div className={styles.giftToastContent}>
-        <div className={styles.giftToastTitle}>You dont have a sponsor subscription</div>
-        <div className={styles.giftToastDesc}>Subscribe and try again</div>
+        <div className={styles.giftToastTitle}>{title}</div>
+        <div className={styles.giftToastDesc}>{description}</div>
       </div>
-      <button className={styles.giftToastClose} onClick={() => setVisible(false)}>
+      <button className={styles.giftToastCloseBtn} onClick={e => { e.stopPropagation(); handleRequestClose(); }}>
         <CloseToastIcon />
       </button>
     </div>
   );
-}
+};
 
 export default GiftToast; 

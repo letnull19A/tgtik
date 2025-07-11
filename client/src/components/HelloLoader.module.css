@@ -1,0 +1,165 @@
+.loaderWrapper {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.backgroundImage {
+  position: absolute;
+  width: 100% !important;
+  height: 309px !important;
+  min-width: 466px !important;
+  min-height: 309px !important;
+  max-width: 100% !important;
+  max-height: 309px !important;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  display: block;
+}
+
+.iconsContainer {
+  width: 246.54px;
+  height: 118px;
+  position: relative;
+  z-index: 2;
+}
+
+.white1 {
+  width: 65.22px;
+  height: 52.44px;
+  left: 155.23px;
+  top: 32.78px;
+  position: absolute;
+  background: white;
+  border-radius: 12px;
+}
+.white2 {
+  width: 27px;
+  height: 27.14px;
+  left: 109.77px;
+  top: 50.74px;
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+}
+.red {
+  width: 53.09px;
+  height: 67.75px;
+  left: 36.92px;
+  top: 26.54px;
+  position: absolute;
+  background: #FF004F;
+  border-radius: 16px;
+}
+.white3 {
+  width: 55.82px;
+  height: 64.93px;
+  left: 30.79px;
+  top: 26.54px;
+  position: absolute;
+  background: white;
+  border-radius: 16px;
+}
+.cyan {
+  width: 59.22px;
+  height: 64.13px;
+  left: 27.39px;
+  top: 23.71px;
+  position: absolute;
+  background: #00F7EF;
+  border-radius: 16px;
+}
+.homeIcons {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 246.536px !important;
+  height: 118px !important;
+  min-width: 246.536px !important;
+  min-height: 118px !important;
+  max-width: 246.536px !important;
+  max-height: 118px !important;
+  pointer-events: none;
+  user-select: none;
+  display: block;
+}
+
+.progressBarBg {
+  width: 209px;
+  height: 4px;
+  background: #7FA9B9;
+  border-radius: 38px;
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+}
+.progressBarFg {
+  height: 4px;
+  background: white;
+  border-radius: 38px;
+  transition: width 0.2s linear;
+}
+
+.gradient1 {
+  width: 186px;
+  height: 555px;
+  background: linear-gradient(180deg, #5CA19C 0%, #B69BA1 50%, #FF2B54 100%);
+  box-shadow: 132.7px 132.7px 132.7px;
+  border-radius: 9999px;
+  filter: blur(66.35px);
+  position: absolute;
+  left: 10vw;
+  top: 30vh;
+  z-index: 1;
+}
+.gradient2 {
+  width: 186px;
+  height: 555px;
+  background: linear-gradient(180deg, #0193D6 0%, #0193D6 50%, #0193D6 100%);
+  box-shadow: 132.7px 132.7px 132.7px;
+  border-radius: 9999px;
+  filter: blur(66.35px);
+  position: absolute;
+  right: 10vw;
+  top: 40vh;
+  z-index: 1;
+}
+
+.leftGradient {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 186px;
+  height: 555px;
+  flex-shrink: 0;
+  border-radius: 555px;
+  background: linear-gradient(180deg, #5CA19C 0%, #B69BA1 50%, #FF2B54 100%);
+  filter: blur(66.3499984741211px);
+  z-index: 1;
+}
+
+.rightGradient {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 186px;
+  height: 555px;
+  flex-shrink: 0;
+  border-radius: 555px;
+  background: linear-gradient(180deg, #0193D6 0%, #0193D6 50%, #0193D6 100%);
+  filter: blur(66.3499984741211px);
+  z-index: 1;
+} 

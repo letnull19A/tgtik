@@ -1,0 +1,638 @@
+.bonusContainer {
+  width: 100%;
+  padding: 16px 0 32px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #0F0F0F;
+  min-height: 600px;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+.bonusHeader {
+  width: calc(100% + 24px);
+  left: -12px;
+  position: relative;
+  height: 56px;
+  background: linear-gradient(90deg, #06DED9 0%, black 40%, black 61%, #EC044C 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 12px;
+  margin-top: 0;
+  padding-top: 5px;
+  padding-bottom: 3px;
+}
+
+.bonusHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.bonusLine {
+  width: 100px;
+  height: 1px;
+  margin-right: 3px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.00) 0%, #FFF 100%);
+}
+
+.bonusSocialIcons {
+  width: 169px;
+  height: 24px;
+  margin-right: 3px;
+  display: block;
+}
+
+.bonusTitle {
+  color: white;
+  font-size: 12px;
+  font-family: 'Inter', 'SF Pro Text', Arial, sans-serif;
+  font-weight: 700;
+  line-height: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%;
+  text-align: center;
+  display: block;
+  margin-top: 4px;
+}
+
+.bonusContent {
+  width: calc(100% - 24px);
+  margin-left: 12px;
+  margin-right: 12px;
+  background-size: cover;
+  background-position: center;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  border-radius: 11px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  margin-bottom: 17px;
+}
+
+.bonusBanner {
+  width: 100%;
+  height: 136px;
+  border-radius: 11px;
+  background: #222;
+  margin-bottom: 16px;
+  object-fit: cover;
+}
+
+.bonusCircle {
+  width: 32px;
+  height: 32px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 8px 0;
+}
+
+.bonusMiniIcon {
+  width: 18px;
+  height: 18px;
+  background: #00AFFF;
+  border-radius: 4px;
+}
+
+.bonusTopRow {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 13px;
+}
+
+.bonusCupBg {
+  width: 32px;
+  height: 32px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+.bonusCupIcon {
+  width: 18px;
+  height: 18px;
+}
+
+.bonusTextBlock {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-right: 12px;
+}
+
+.bonusLabel {
+  color: #FFF;
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 0;
+  border-radius: 11px;
+}
+
+.bonusActivated {
+  color: #FFF;
+  font-size: 10px;
+  font-weight: 500;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.bonusSubscribeBtn {
+  display: inline-flex;
+  padding: 3px 6px;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+  border-radius: 19px;
+  background: #FFF;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  height: fit-content;
+  margin-left: auto;
+}
+
+.bonusSubscribeText {
+  color: #00AFFF;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 500;
+  font-family: inherit;
+}
+
+.bonusTgIcon {
+  width: 18px;
+  height: 18px;
+}
+
+.bonusNewsText {
+  color: #FFF;
+  font-size: 10px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.bonusPromoBlock {
+  display: flex;
+  width: 100%;
+  height: 44px;
+  padding: 12px 0 12px 11px;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  margin-bottom: 0;
+  background: #FFF;
+  border-radius: 90px;
+
+}
+
+.bonusPromoLabel {
+  color: #8DCBE8;
+  font-family: "SF Pro Text", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.bonusPromoIcon {
+  width: 48px;
+  height: 45px;
+}
+
+.bonusPromoInput {
+  color: #8DCBE8;
+  font-family: "SF Pro Text", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  background: transparent;
+  border: none;
+  outline: none;
+  flex: 1;
+  padding: 0;
+  margin-right: 8px;
+  min-width: 0;
+}
+
+.bonusCopyBtn {
+  padding: 3px 6px;
+  background: #FF2B54;
+  border-radius: 19px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.bonusCopyText {
+  color: white;
+  font-size: 10px;
+  font-family: 'Inter', 'SF Pro Text', Arial, sans-serif;
+  font-weight: 500;
+}
+
+.bonusFriendsList {
+  background: #191919;
+  border-radius: 11px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 17px;
+  box-sizing: border-box;
+  width: calc(100% - 24px);
+  margin-left: 12px;
+  margin-right: 12px;
+  padding: 12px 20px;
+}
+
+.bonusInviteBtn {
+  width: 100%;
+  height: 46px;
+  background: #FF2B54;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.18s cubic-bezier(0.4,0,0.2,1), box-shadow 0.18s;
+}
+
+.bonusInviteText {
+  color: white;
+  font-size: 18px;
+  font-family: 'Inter', 'SF Pro Text', Arial, sans-serif;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.bonusInviteBtn:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+}
+
+.bonusEmptyList {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.bonusBigFriendsIcon {
+  width: 63px;
+  height: 62px;
+}
+
+.bonusEmptyTitle {
+  color: #878787;
+  font-size: 14px;
+  font-family: 'Inter', Arial, sans-serif;
+  font-weight: 700;
+  text-align: center;
+}
+
+.bonusEmptyDesc {
+  color: #878787;
+  font-size: 12px;
+  font-family: 'Inter', Arial, sans-serif;
+  font-weight: 400;
+  text-align: center;
+}
+
+.friendsListBlock {
+  margin-top: 0;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: calc(100% - 24px);
+  margin-left: 12px;
+  margin-right: 12px;
+}
+
+.friendsListHeaderRow {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.friendsListIconBg {
+  width: 32px;
+  height: 32px;
+  background: #2F2F2F;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.friendsListIcon {
+  width: 18px;
+  height: 18px;
+}
+
+.friendsListTextBlock {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+}
+
+.friendsListTitle {
+  color: #FFF;
+  font-size: 14px;
+  font-family: 'Inter', 'SF Pro Text', Arial, sans-serif;
+  font-weight: 700;
+  word-wrap: break-word;
+  align-self: stretch;
+}
+
+.friendsListSubtitle {
+  color: #767676;
+  font-size: 10px;
+  font-family: 'SF Pro Text', Arial, sans-serif;
+  font-weight: 500;
+  word-wrap: break-word;
+  align-self: stretch;
+  text-align: start;
+}
+
+.friendsReloadBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-right: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.friendsReloadBtnBg {
+  width: 24px;
+  height: 24px;
+  background: #FF2B54;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.friendsReloadIcon {
+  /* transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); */
+  /* Больше никаких анимаций или transition */
+}
+
+/* Удаляю анимацию по hover */
+/* .friendsReloadBtn:hover .friendsReloadIcon {
+  animation: reload-spin 0.7s linear infinite;
+} */
+
+.friendsReloadBtn:active .friendsReloadIcon {
+  animation: reload-press-spin 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes reload-press-spin {
+  0% { transform: scale(1) rotate(0deg); }
+  40% { transform: scale(0.92) rotate(120deg); }
+  70% { transform: scale(1.08) rotate(270deg); }
+  100% { transform: scale(1) rotate(360deg); }
+}
+
+.copyInviteBtn {
+  padding: 3px 6px;
+  background: #FF2B54;
+  border-radius: 19px;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+  display: inline-flex;
+  border: none;
+  cursor: pointer;
+}
+
+.copyInviteText {
+  color: #FFF;
+  font-size: 10px;
+  font-family: 'SF Pro Text', Arial, sans-serif;
+  font-weight: 500;
+  text-align: center;
+}
+
+.copyInviteIconBg {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.copyInviteIcon {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Удаляю анимацию по hover для copyInviteIcon */
+/*
+.copyInviteBtn:hover .copyInviteIcon {
+  animation: jump 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+*/
+
+.copyInviteBtn:active .copyInviteIcon {
+  animation: press-bounce 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes press-bounce {
+  0% { transform: scale(1) translateY(0); }
+  40% { transform: scale(0.92) translateY(2px); }
+  60% { transform: scale(1.08) translateY(-4px); }
+  100% { transform: scale(1) translateY(0); }
+}
+
+.friendsListInfoText {
+  font-size: 10px;
+  font-family: 'SF Pro Text', Arial, sans-serif;
+  line-height: 15px;
+  color: #FFF;
+  word-wrap: break-word;
+}
+
+.friendsListInfoTextBold {
+  font-weight: 700;
+}
+
+.friendsListInfoTextNormal {
+  font-weight: 500;
+}
+
+.container {
+  width: calc(100% - 24px);
+  margin-left: 12px;
+  margin-right: 12px;
+  padding: 12px 20px;
+  background: #191919;
+  border-radius: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+}
+
+.list {
+  max-height: 223px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+  padding-right: 4px;
+
+  /* Кастомный скроллбар */
+  scrollbar-width: thin;
+  scrollbar-color: #FF2B54 #2F2F2F;
+}
+
+.list::-webkit-scrollbar {
+  width: 3px;
+  border-radius: 23px;
+}
+
+.list::-webkit-scrollbar-track {
+  background: #2F2F2F;
+  border-radius: 23px;
+}
+
+.list::-webkit-scrollbar-thumb {
+  background-color: #FF2B54;
+  border-radius: 23px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #373737;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.username {
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.bonus {
+  color: #878787;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.inviteButton {
+  width: 100%;
+  height: 46px;
+  background-color: #FF2B54;
+  border: none;
+  border-radius: 9px;
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.inviteButton:hover {
+  background-color: #e8264c;
+}
+
+.friendsReloadIconActive {
+  animation: reload-spin 0.7s linear infinite;
+}
+
+@keyframes reload-spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.copyInviteIconActive {
+  animation: jump 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes jump {
+  0% { transform: translateY(0); }
+  30% { transform: translateY(-7px) scale(1.1); }
+  50% { transform: translateY(-10px) scale(1.15); }
+  70% { transform: translateY(-7px) scale(1.1); }
+  100% { transform: translateY(0); }
+}
+
+/* Удаляю анимацию по hover */
+/* .copyInviteBtn:hover .copyInviteIcon {
+  animation: jump 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+} */
+
+.marqueeWrapper {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  height: 24px;
+}
+
+.marqueeTrack {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 24s linear infinite;
+}
+
+.marqueeText {
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  padding-right: 4px;
+}
+
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}

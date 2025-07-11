@@ -6,8 +6,8 @@ const api = axios.create({
     baseURL: 'http://localhost:3001'
 })
 
-const BOT_ID = '8073549037'
-const USER_ID = '633214694'
+const BOT_ID = '7182696236'
+const USER_ID = '5599145134'
 
 const getIsRegistered = (botId: string, userId: string) => {
     return api.get<GetIsRegisterdResponse>(`/api/webapp/${userId}/isRegistered/${botId}`)
@@ -37,4 +37,15 @@ const addSignupBonus = (botId: string, userId: string) => {
     return api.post<{ status: number, bonus: number }>(`/api/webapp/add-signup-bonus`, { userId, botId });
 }
 
-export { api, getIsRegistered, BOT_ID, USER_ID, register, getProfile, getVideos, getRateWithBalance, doAction, addSignupBonus }
+const getReferralUrl = (botId: string, userId: string) => {
+    return api.get<{status: 'success',
+    referralLink: string}>(`/api/webapp/${botId}/referral/${userId}`);
+}
+
+const getReferrals = (botId: string, userId: string) => {
+    return api.get<{referredId: string,
+        username: string,
+        bonus: number}>(`/api/webapp/${botId}/referrals/${userId}`)
+}
+
+export { api, getIsRegistered, BOT_ID, USER_ID, register, getProfile, getVideos, getRateWithBalance, doAction, addSignupBonus, getReferralUrl, getReferrals }

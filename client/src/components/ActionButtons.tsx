@@ -5,13 +5,18 @@ interface ActionButtonsProps {
   showRegistration: boolean;
   onNext: () => void;
   onCreateAccount: () => void;
+  isAgeValid: boolean;
 }
 
-function ActionButtons({ showRegistration, onNext, onCreateAccount }: ActionButtonsProps) {
+function ActionButtons({ showRegistration, onNext, onCreateAccount, isAgeValid }: ActionButtonsProps) {
   return (
     <>
       {showRegistration ? (
-        <button className={`${styles.nextBtn} ${styles.registrationAccountBtn}`} onClick={onCreateAccount}>
+        <button
+          className={`${styles.nextBtn} ${styles.registrationAccountBtn}`}
+          onClick={onCreateAccount}
+          disabled={!isAgeValid}
+        >
           CREATE AN ACCOUNT
         </button>
       ) : (

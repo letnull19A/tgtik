@@ -7,9 +7,10 @@ interface VideoTopBarProps {
   onGiftClick?: () => void;
   maxVideos: number
   rate: number
+  onProfileClick?: () => void;
 }
 
-function VideoTopBar({ onGiftClick, rate, maxVideos }: VideoTopBarProps) {
+function VideoTopBar({ onGiftClick, rate, maxVideos, onProfileClick }: VideoTopBarProps) {
   return (
     <div className={styles.videoTopBar}>
       <GiftIcon className={styles.topbarGiftIcon} onClick={onGiftClick} style={{cursor: 'pointer'}} />
@@ -18,7 +19,7 @@ function VideoTopBar({ onGiftClick, rate, maxVideos }: VideoTopBarProps) {
         <span className={styles.topbarDivider} />
         <span className={styles.topbarTitle}>Rate video</span>
       </div>
-      <InfoIcon className={styles.topbarInfoIcon} />
+      <InfoIcon className={styles.topbarInfoIcon} onClick={onProfileClick} style={{cursor: 'pointer'}} />
     </div>
   );
 }

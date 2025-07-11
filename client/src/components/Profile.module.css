@@ -1,20 +1,29 @@
-.profileContainer {
+.profileModal {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: calc(100% - 94px);
   z-index: 30000;
-  background: rgba(217, 217, 217, 0.50);
-  backdrop-filter: blur(9.3px);
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(6px);
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  padding: 18px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, backdrop-filter 0.3s;
+}
+.profileModal.open {
+  opacity: 1;
+  pointer-events: auto;
+  backdrop-filter: blur(10px);
 }
 
-.profileCard {
-  width: calc(100% - 32px);
+.profileModalCard {
+  width: 100%;
+  max-width: 360px;
   height: 460px;
   background: #191919;
   border-radius: 17px;
@@ -22,7 +31,14 @@
   display: flex;
   flex-direction: column;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  margin: 0 16px;
+  transform: scale(0.85);
+  opacity: 0;
+  transition: transform 0.3s cubic-bezier(.4,0,.2,1), opacity 0.3s cubic-bezier(.4,0,.2,1);
+  will-change: transform, opacity;
+}
+.profileModalCard.open {
+  transform: scale(1);
+  opacity: 1;
 }
 
 .profileHeader {
@@ -86,7 +102,7 @@
   flex-direction: column;
   align-items: center;
   flex: 1;
-  padding: 0 24px;
+  padding: 0 16px;
 }
 
 .profileAvatar {
@@ -172,7 +188,7 @@
 }
 
 .verificationButton {
-  width: calc(100% - 30px);
+  width: 100%;
   height: 46px;
   padding: 10px;
   background: #FF2B54;
@@ -210,11 +226,6 @@
     height: 420px;
     padding: 20px;
   }
-  
-  .verificationButton {
-    width: 280px;
-    padding: 10px 120px;
-  }
 }
 
 @media (max-width: 360px) {
@@ -223,9 +234,4 @@
     height: 400px;
     padding: 16px;
   }
-  
-  .verificationButton {
-    width: 260px;
-    padding: 10px 100px;
-  }
-} 
+}

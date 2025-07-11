@@ -1,14 +1,13 @@
 import React from 'react';
 import styles from './VideoBalanceBar.module.css';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../store';
 
-interface VideoBalanceBarProps {
-  balance?: number;
-}
-
-function VideoBalanceBar({ balance = 0 }: VideoBalanceBarProps) {
+export default function VideoBalanceBar() {
+  const balance = useSelector((state: RootState) => state.balance.value);
   return (
-    <div className={styles.videoBalanceBar}>${balance}</div>
+    <div className={styles.videoBalanceBar}>
+      <span>${balance}</span>
+    </div>
   );
-}
-
-export default VideoBalanceBar; 
+} 

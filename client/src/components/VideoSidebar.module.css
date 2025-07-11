@@ -46,12 +46,24 @@
 .sidebarIconBlock {
   width: 70px;
   height: 70px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.37);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  position: relative;
+  background: transparent;
+  border-radius: 50%;
+}
+
+.sidebarIconBlockFill {
+  content: '';
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 90deg, rgba(255, 255, 255, 0.37) 360deg, transparent 360deg);
 }
 
 .sidebarIcon {
@@ -100,4 +112,132 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.rewardLabel {
+  color: #FFF;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  padding: 0px 6px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 21px;
+  background: rgba(255, 43, 84, 0.75);
+  margin-top: 0;
+}
+
+.rewardLabelFlyIn {
+  animation: reward-fly-in 0.5s cubic-bezier(.4,0,.2,1) both;
+}
+
+.rewardLabelFlyOut {
+  animation: reward-fly-out 0.5s cubic-bezier(.4,0.2,.2,1) both;
+  transform-origin: left bottom;
+}
+
+@keyframes reward-fly-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.7);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(8px) scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes reward-fly-out {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.7) rotate(-60deg);
+  }
+}
+
+.sidebarIconBlockGlow {
+  box-shadow: 0 0 24px 0 rgba(255, 43, 84, 0.75), 0 0 0 8px rgba(255, 43, 84, 0.15);
+}
+
+.rewardLabelAbsolute {
+  position: absolute;
+  left: 27%;
+  transform: translate(-50%, 8px);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.sidebarIconGlow {
+  filter: drop-shadow(0 0 16px rgba(255, 43, 84, 0.35)) drop-shadow(0 0 8px rgba(255, 43, 84, 0.35));
+}
+
+.rewardLabelPulse {
+  animation: reward-pulse 1.1s cubic-bezier(.4,0,.2,1) infinite;
+}
+
+@keyframes reward-pulse {
+  0% {
+    transform: scale(1) translateY(0);
+  }
+  20% {
+    transform: scale(1.12, 0.92) translateY(-2px);
+  }
+  40% {
+    transform: scale(0.96, 1.08) translateY(2px);
+  }
+  60% {
+    transform: scale(1.08, 0.96) translateY(-1px);
+  }
+  80% {
+    transform: scale(0.98, 1.04) translateY(1px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+
+.sidebarIconLabelHolder {
+  height: 22px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.animatedDollar {
+  display: flex;
+  padding: 0px 6px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 21px;
+  background: rgba(255, 43, 84, 0.75);
+  color: #FFF;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: inherit;
+  animation: dollarPulse 0.7s infinite alternate, dollarBounce 1.2s infinite;
+}
+
+@keyframes dollarPulse {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.18); opacity: 0.85; }
+}
+
+@keyframes dollarBounce {
+  0%, 100% { transform: translateY(0); }
+  20% { transform: translateY(-6px); }
+  40% { transform: translateY(0); }
+  60% { transform: translateY(-3px); }
+  80% { transform: translateY(0); }
 } 

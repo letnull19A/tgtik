@@ -14,19 +14,37 @@ import styles from './HomePage.module.css';
 import { BOT_ID, getProfile, getVideos, USER_ID, getRateWithBalance, doAction, addSignupBonus } from '../api/api';
 import { GetProfileResponse, Video as VideoType } from '../api/types';
 import axios from 'axios';
+import { useSelector, useDispatch } from 'react-redux';
+import { setBalance } from '../store';
+import type { RootState, AppDispatch } from '../store';
 
-function HomePage() {
+function HomePage({ onSelect, activeTab, setMoney, showToast }: { onSelect?: (tab: 'home' | 'bonus' | 'money') => void, activeTab?: 'home' | 'bonus' | 'money' , setMoney: (v: number) => void, showToast: (title: string, description: string) => void }) {
   const [showGiftToast, setShowGiftToast] = useState(false);
   const [showGiftWindow, setShowGiftWindow] = useState(false);
+  const [isGiftOpen, setIsGiftOpen] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [progress, setProgress] = useState(0);
   const [profile, setProfile] = useState<GetProfileResponse | null>(null)
   const [videos, setVideos] = useState<VideoType[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fade, setFade] = useState(false);
-  const [balance, setBalance] = useState(0);
   const [rate, setRate] = useState(0);
   const [maxVideos, setMaxVideos] = useState(0)
+  const [isVideoLoading, setIsVideoLoading] = useState(true);
+  const [timerFinished, setTimerFinished] = useState(false);
+  const [playing, setPlaying] = useState(true);
+  const dispatch = useDispatch<AppDispatch>();
+  const balance = useSelector((state: RootState) => state.balance.value);
+
+  useEffect(() => {
+    setMoney(balance);
+  }, [balance, setMoney]);
+
+  useEffect(() => {
+    if (!isVideoLoading) {
+      setTimerFinished(false);
+    }
+  }, [isVideoLoading]);
 
   const fetchProfile = async () => {
     try {
@@ -41,7 +59,7 @@ function HomePage() {
   const fetchRate = async () => {
     try {
       const response = await getRateWithBalance(BOT_ID, USER_ID);
-      setBalance(response.data.balance)
+      dispatch(setBalance(response.data.balance));
       setRate(response.data.rate)
       setMaxVideos(response.data.maxVideos)
     } catch (error) {
@@ -102,7 +120,7 @@ function HomePage() {
       }
       handleNextVideo();
       setRate(v => v + 1)
-      setBalance(response.data.newBalance)
+      dispatch(setBalance(response.data.newBalance));
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 403) {
         console.error('Достигнут лимит видео за день!');
@@ -128,7 +146,7 @@ function HomePage() {
       }
       handleNextVideo();
       setRate(v => v + 1)
-      setBalance(response.data.newBalance)
+      dispatch(setBalance(response.data.newBalance));
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 403) {
         console.error('Достигнут лимит видео за день!');
@@ -139,21 +157,40 @@ function HomePage() {
   };
 
   const handleGiftClick = async () => {
-    try {
-      const response = await addSignupBonus(BOT_ID, USER_ID);
-      console.log(response.data.bonus)
-      setBalance(response.data.bonus)
-      setShowGiftWindow(true)
-    } catch (error) {
-      setShowGiftToast(true)
-    }
+    // try {
+    //   const response = await addSignupBonus(BOT_ID, USER_ID);
+    //   setBalance(v => v + response.data.bonus)
+    //   setShowGiftWindow(true)
+    // } catch (error) {
+    //   showToast('You dont have a sponsor subscription', 'Subscribe and try again');
+    // }
+
+    setShowGiftWindow(true);
+    setIsGiftOpen(true);
+  };
+
+  const handleCloseProfile = () => {
+    setShowProfile(false);
+    setTimeout(() => setProfile(null), 300);
+  };
+
+  const handleCloseGiftToast = () => {
+    setShowGiftToast(false);
   };
 
   return (
     <>
-      {showGiftToast && <GiftToast onClose={() => setShowGiftToast(false)} />}
-      {showGiftWindow && <GiftWindow onClose={() => setShowGiftWindow(false)} />}
-      {showProfile && profile && (
+      {showGiftWindow && (
+        <GiftWindow
+          open={isGiftOpen}
+          onClose={() => {
+            setIsGiftOpen(false);
+            setTimeout(() => setShowGiftWindow(false), 300);
+          }}
+          onClaimGift={() => showToast('Gift claimed!', 'You received + $100')}
+        />
+      )}
+      {profile && (
         <Profile 
           username={profile.username}
           registrationDate={profile.registrationDate ? new Date(profile.registrationDate).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }) : ''}
@@ -163,26 +200,36 @@ function HomePage() {
           earnings={profile.earnings?.toString()}
           isVerified={false}
           onPassVerification={handlePassVerification}
-          onClose={() => setShowProfile(false)}
+          onClose={handleCloseProfile}
+          open={showProfile}
         />
       )}
-      <VideoPlayer setProgress={setProgress} videos={videos} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} fade={fade} />
+      <VideoPlayer setProgress={setProgress} videos={videos} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} fade={fade} 
+        setIsVideoLoading={setIsVideoLoading}
+        playing={playing}
+        setPlaying={setPlaying}
+      />
       <VideoProgressBar progress={progress} />
-      <VideoTopBar onGiftClick={handleGiftClick} rate={rate} maxVideos={maxVideos}/>
-      <VideoBalanceBar balance={balance} />
+      <VideoTopBar onGiftClick={handleGiftClick} rate={rate} maxVideos={maxVideos} onProfileClick={handleOpenProfile}/>
+      <VideoBalanceBar />
       <VideoPromoBar />
       <div className={styles.homePage}>
         <VideoSidebar
-          onProfileClick={handleOpenProfile}
+          key={currentIndex}
           onLike={handleLike}
           onDislike={handleDislike}
-          likes={videos[currentIndex]?.likes_count || 0}
-          dislikes={videos[currentIndex]?.dislikes_count || 0}
+          likes={timerFinished ? (videos[currentIndex]?.likes_count || 0) : 373.8}
+          dislikes={timerFinished ? (videos[currentIndex]?.dislikes_count || 0) : 11.79}
           rate={rate}
+          isVideoReady={!isVideoLoading}
+          currentIndex={currentIndex}
+          activeTab={activeTab}
+          playing={playing}
+          isVideoLoading={isVideoLoading}
         />
         <VideoInfoBlock video={videos[currentIndex]} />
       </div>
-      <BottomNavBar />
+      <BottomNavBar onSelect={onSelect} activeTab={activeTab} />
     </>
   );
 }

@@ -27,12 +27,12 @@ const router = new Router(fastify, userController, botController)
 
 ;(async () => {
    await fastify.register(cors, {
-      origin: 'http://localhost:3000',
+      origin: true,
       credentials: true
    })
    await database.migrate()
    router.init()
-   fastify.listen({ port: PORT, host: 'localhost' }, async (err: any) => {
+   fastify.listen({ port: PORT, host: '0.0.0.0' }, async (err: any) => {
       if (err) {
          fastify.log.error(err)
          process.exit(1)

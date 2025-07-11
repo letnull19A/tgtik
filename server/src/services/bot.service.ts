@@ -136,7 +136,36 @@ export class BotService {
          )
          .execute()
       if (!videos || videos.length === 0) {
-         return { error: 'No videos found' }
+         // Если нет новых видео, пробуем вернуть одно следующее, которое пользователь не смотрел
+         const nextVideo = await this.db.pool
+            .selectFrom('videos')
+            .select([
+               'videos.id',
+               'videos.url',
+               'videos.hashtags',
+               'videos.description',
+               'videos.profileId',
+               sql<number>`CAST((SELECT COUNT(*) FROM actions WHERE actions."videoId" = videos.id AND actions.action = 'like') AS INTEGER)`.as('likes_count'),
+               sql<number>`CAST((SELECT COUNT(*) FROM actions WHERE actions."videoId" = videos.id AND actions.action = 'dislike') AS INTEGER)`.as('dislikes_count')
+            ])
+            .where('botId', '=', data.botId)
+            .where(eb =>
+               eb.not(
+                  eb.exists(
+                     eb
+                        .selectFrom('actions')
+                        .select(['videoId'])
+                        .whereRef('actions.videoId', '=', 'videos.id')
+                        .where('actions.userId', '=', data.userId)
+                  )
+               )
+            )
+            .limit(1)
+            .executeTakeFirst();
+         if (!nextVideo) {
+            return { error: 'User not found', status: 404 };
+         }
+         return [nextVideo];
       }
       return videos
    }

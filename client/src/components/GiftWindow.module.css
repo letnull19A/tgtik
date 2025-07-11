@@ -5,22 +5,22 @@
   width: 100%;
   height: calc(100% - 94px);
   z-index: 30000;
-  background: rgba(217, 217, 217, 0.50);
-  backdrop-filter: blur(9.3px);
-}
-
-.giftWindowVisible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.giftWindowHidden {
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(6px);
   opacity: 0;
-  transform: translateY(-20px);
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(.4,0,.2,1), backdrop-filter 0.3s cubic-bezier(.4,0,.2,1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-
+.giftWindow.open {
+  opacity: 1;
+  pointer-events: auto;
+  backdrop-filter: blur(10px);
+}
 .giftContentWindow {
-  margin: 155px 10px 0;
+  margin: 0 10px;
   height: 293px;
   display: flex;
   justify-content: center;
@@ -31,6 +31,14 @@
   height: 100%;
   max-width: 347px;
   position: relative;
+  transform: scale(0.85);
+  opacity: 0;
+  transition: transform 0.3s cubic-bezier(.4,0,.2,1), opacity 0.3s cubic-bezier(.4,0,.2,1);
+  will-change: transform, opacity;
+}
+.giftContentWindowContainer.open {
+  transform: scale(1);
+  opacity: 1;
 }
 
 .giftContentWindowImage {

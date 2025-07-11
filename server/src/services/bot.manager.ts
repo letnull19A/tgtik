@@ -4,6 +4,7 @@ import { BotConfig } from '../utils/types'
 import Fastify, { FastifyRequest, FastifyReply } from 'fastify'
 import { getTranslation } from '../utils/i18n'
 import { sql } from 'kysely'
+import path from "path";
 
 export type BotConfigWithOffset = BotConfig & { offset: number, botId: string }
 
@@ -102,21 +103,41 @@ export class BotManager {
             }
          })
 
+         const videoPath = path.join(__dirname, '../../public/videos/video.mp4');
+         await ctx.replyWithVideo(
+             { source: videoPath }, // Путь к MP4-файлу на сервере
+             {
+                caption: getTranslation(config.country, 'welcome'), // Текст сообщения
+                reply_markup: {
+                   inline_keyboard: [
+                      [
+                         {
+                            text: 'Open WebApp',
+                            web_app: {
+                               url: `https://${process.env.DOMAIN || 'your-domain.com'}/webapp/${config.token}`
+                            }
+                         }
+                      ]
+                   ]
+                }
+             }
+         );
+
          // Отправка сообщения (как было)
-         ctx.reply(getTranslation(config.country, 'welcome'), {
-            reply_markup: {
-               inline_keyboard: [
-                  [
-                     {
-                        text: 'Open WebApp',
-                        web_app: {
-                           url: `https://${process.env.DOMAIN || 'your-domain.com'}/webapp/${config.token}`
-                        }
-                     }
-                  ]
-               ]
-            }
-         })
+         // ctx.reply(getTranslation(config.country, 'welcome'), {
+         //    reply_markup: {
+         //       inline_keyboard: [
+         //          [
+         //             {
+         //                text: 'Open WebApp',
+         //                web_app: {
+         //                   url: `https://${process.env.DOMAIN || 'your-domain.com'}/webapp/${config.token}`
+         //                }
+         //             }
+         //          ]
+         //       ]
+         //    }
+         // })
       })
 
       bot.on('chat_member', async ctx => {

@@ -1,0 +1,318 @@
+.subscriptionWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.subscriptionIconWrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin-bottom: 8px;
+  margin-top: 155px;
+}
+
+.moneyWarningIconContainer {
+  width: 64px;
+  height: 64px;
+  background-color: #353535;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 18px;
+  top: 24px;
+}
+
+.moneyFullBar {
+  width: 102px;
+  height: 102px;
+  background-color: #353535;
+  border-radius: 50%;
+  margin-top: 132px;
+  text-align: center;
+  color: #FFF;
+  font-size: 25px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wrapper {
+  width: 358px;
+  margin: 40px auto;
+  background: #2D2D2D;
+  border-radius: 11px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+}
+
+.svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.svgFilled {
+  position: absolute;
+  top: calc(100% - 24px);
+  left: 7px;
+  width: 14px;
+  height: 16px;
+}
+
+.svgCircle {
+  position: absolute;
+  width: 17px;
+  height: 17px;
+  top: calc(100% - 34px);
+  left: -2px;
+  transform: rotate(51.906deg);
+  flex-shrink: 0;
+}
+
+.marker {
+  position: absolute;
+  pointer-events: none;
+}
+
+.moneyValueContainer {
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.moneyCurrentValue {
+  color: #FFF;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.moneyMaxValue {
+  color: #FFF;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.moneyWarningIcon {
+  position: absolute;
+  top: calc(50% - 12px);
+  left: calc(50% - 19px);
+  width: 39px;
+  height: 39px;
+}
+
+.bgBlurred {
+  width: 64%;
+  height: 54%;
+  background: rgba(255, 255, 255, 0.1);
+  position: absolute;
+  top: 28%;
+  left: 29%;
+  z-index: 0;
+  border-radius: 50%;
+  filter: blur(10px);
+}
+
+.redLine {
+  width: 14%;
+  height: 16.5%;
+  background: #ff2b54;
+  position: absolute;
+  top: 94.7%;
+  left: 34.4%;
+  z-index: 1;
+  border-radius: 2px;
+  transform: translateY(-100%);
+}
+
+.rotatedBox {
+  width: 17%;
+  height: 17%;
+  background: white;
+  outline: 3px solid #ff2b54;
+  outline-offset: -1.5px;
+  transform: rotate(52deg);
+  transform-origin: top left;
+  position: absolute;
+  top: 80.2%;
+  left: 35.6%;
+  z-index: 2;
+}
+
+.iconCircle {
+  width: 64%;
+  height: 64%;
+  background: #353535;
+  border-radius: 50%;
+  position: absolute;
+  left: 47%;
+  top: 47%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconInner {
+  width: 39%;
+  height: 39%;
+  position: absolute;
+  left: 60%;
+  top: 60%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.subscriptionTitle {
+  text-align: center;
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 16px;
+}
+
+.subscriptionText {
+  text-align: center;
+  color: #878787;
+  font-size: 12px;
+  margin-top: 12px;
+  max-width: 280px;
+}
+
+.subscribeBtn {
+  margin-top: 32px;
+  width: 327px;
+  height: 46px;
+  background: #ff2b54;
+  border: none;
+  border-radius: 9px;
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header {
+  width: 100%;
+  padding-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  word-wrap: break-word;
+}
+
+.icon {
+  position: relative;
+}
+
+.iconOutlineBtn {
+  width: 24px;
+  height: 24px;
+  right: 0;
+  top: -12px;
+  position: absolute;
+}
+
+.iconOutline {
+  width: 100%;
+  height: 100%;
+}
+
+.instruction {
+  width: 326px;
+  color: #999999;
+  font-size: 14px;
+  font-weight: 500;
+  word-wrap: break-word;
+}
+
+.option {
+  width: 326px;
+  padding: 12px 11px;
+  background: #191919;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.optionContent {
+  width: 253px;
+  height: 24px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
+}
+
+.optionLabel {
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  word-wrap: break-word;
+}
+
+.separator {
+  width: 1px;
+  height: 21px;
+  background: #999;
+  margin: 0 12px;
+  border-radius: 1px;
+  display: inline-block;
+}
+
+.optionPlaceholder {
+  color: #999999;
+  font-size: 14px;
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+.button {
+  width: 100%;
+  height: 46px;
+  padding: 10px 160px;
+  background: #FF2B54;
+  border-radius: 9px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.buttonText {
+  text-align: center;
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  word-wrap: break-word;
+}

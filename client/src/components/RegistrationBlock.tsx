@@ -19,6 +19,7 @@ const RegistrationBlock: React.FC<RegistrationBlockProps> = ({ onChangeAge, onCh
     // Только числа, не более 3 символов
     if (!/^\d{0,3}$/.test(value)) return;
     setAge(value);
+    onChangeAge(value);
     if (value === '') {
       setAgeError('');
       return;
@@ -28,7 +29,6 @@ const RegistrationBlock: React.FC<RegistrationBlockProps> = ({ onChangeAge, onCh
       setAgeError('Age must be from 16 to 100');
     } else {
       setAgeError('');
-      onChangeAge(value);
     }
   };
 
@@ -65,7 +65,7 @@ const RegistrationBlock: React.FC<RegistrationBlockProps> = ({ onChangeAge, onCh
           </div>
         </div>
         <div className={styles.registrationLabel}>Please indicate your age</div>
-        <div className={styles.registrationAgeBlock}>
+        <div className={ageError ? styles.registrationAgeBlockError : styles.registrationAgeBlock}>
           <div className={styles.registrationAgeRow}>
             <div
               className={styles.registrationAgeInput}>Age</div>
@@ -81,7 +81,6 @@ const RegistrationBlock: React.FC<RegistrationBlockProps> = ({ onChangeAge, onCh
                 maxLength={3}
             />
           </div>
-          {ageError && <div className={styles.registrationAgeError}>{ageError}</div>}
         </div>
       </div>
       <RegistrationInfoBlock />

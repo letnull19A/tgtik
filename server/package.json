@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc && cp -r src/config dist/config",
+    "build": "npx tsc && npx cp-cli src/config dist/config",
     "start": "npm run build && node dist/index.js",
     "format": "bun run prettier --write .",
     "lint": "bun run prettier --check ."
@@ -20,11 +20,14 @@
     "kysely": "^0.28.2",
     "pg": "^8.16.3",
     "telegraf": "^4.16.3",
+    "tslib": "^2.8.1",
     "zod": "^3.25.69"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
     "@types/pg": "^8.15.4",
+    "copyfiles": "^2.4.1",
+    "cp-cli": "^2.0.0",
     "prettier": "^3.6.2",
     "typescript": "^5.5.3"
   },

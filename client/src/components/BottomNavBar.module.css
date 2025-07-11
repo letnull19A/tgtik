@@ -7,10 +7,18 @@
   height: 94px;
   background: #0F0F0F;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   padding: 0 24px;
   z-index: 10000;
+}
+
+.bottomNavBarContainer {
+  max-width: 340px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .navItem {

@@ -1,6 +1,6 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Video as VideoType } from '../api/types';
-import {} from 'react-player'
+import Loader from './Loader';
 
 interface VideoPlayerProps {
   setProgress: (v: number) => void;
@@ -8,19 +8,25 @@ interface VideoPlayerProps {
   currentIndex: number;
   setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
   fade: boolean;
+  setIsVideoLoading: (loading: boolean) => void;
+  playing: boolean;
+  setPlaying: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function VideoPlayer({ setProgress, videos, currentIndex, setCurrentIndex, fade }: VideoPlayerProps) {
+export default function VideoPlayer({ setProgress, videos, currentIndex, setCurrentIndex, fade, setIsVideoLoading, playing, setPlaying }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [playing, setPlaying] = useState(true);
-
 
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.currentTime = 0;
-      videoRef.current.play();
+      videoRef.current.play().catch((err) => {
+        if (err.name !== 'AbortError') {
+          console.error('Video play error:', err);
+        }
+      });
     }
-  }, [currentIndex]);
+    setIsVideoLoading(true);
+  }, [currentIndex, setIsVideoLoading]);
 
   return (
     <div style={{
@@ -32,45 +38,59 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
       overflow: 'hidden',
       background: '#000'
     }}>
-      <video
-        ref={videoRef}
-        src={videos[currentIndex]?.url || ''}
-        width="100%"
-        height="100%"
-        controls={false}
-        muted={true}
-        onTimeUpdate={() => {
-          if (videoRef.current) {
-            setProgress(videoRef.current.currentTime / videoRef.current.duration);
-          }
-        }}
-        autoPlay={playing}
-        onClick={() => {
-          if (videoRef.current) {
-            if (playing) {
-              videoRef.current.pause();
-              setPlaying(false);
-            } else {
-              videoRef.current.play();
-              setPlaying(true);
+      {videos[currentIndex]?.url ? (
+        <video
+          ref={videoRef}
+          src={videos[currentIndex].url}
+          width="100%"
+          height="100%"
+          controls={false}
+          muted={true}
+          onTimeUpdate={() => {
+            if (videoRef.current) {
+              setProgress(videoRef.current.currentTime / videoRef.current.duration);
             }
-          }
-        }}
-        onEnded={() => {
-          if (videoRef.current) {
-            videoRef.current.currentTime = 0;
-            videoRef.current.play();
-          }
-        }}
-        style={{
-          width: '100vw',
-          height: '100vh',
-          objectFit: 'cover',
-          display: 'block',
-          background: '#000',
-          cursor: 'pointer',
-        }}
-      />
+          }}
+          autoPlay={playing}
+          onClick={() => {
+            if (videoRef.current) {
+              if (playing) {
+                videoRef.current.pause();
+                setPlaying(false);
+              } else {
+                videoRef.current.play().catch((err) => {
+                  if (err.name !== 'AbortError') {
+                    console.error('Video play error:', err);
+                  }
+                });
+                setPlaying(true);
+              }
+            }
+          }}
+          onEnded={() => {
+            if (videoRef.current) {
+              videoRef.current.currentTime = 0;
+              videoRef.current.play().catch((err) => {
+                if (err.name !== 'AbortError') {
+                  console.error('Video play error:', err);
+                }
+              });
+            }
+          }}
+          onLoadStart={() => setIsVideoLoading(true)}
+          onWaiting={() => setIsVideoLoading(true)}
+          onCanPlay={() => setIsVideoLoading(false)}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            display: 'block',
+            background: '#000',
+            cursor: 'pointer',
+          }}
+        />
+      ) : null}
+      {/* Loader is now handled by parent via isVideoLoading state */}
     </div>
   );
 }
