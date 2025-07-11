@@ -1,13 +1,42 @@
 import axios from "axios";
 import { GetIsRegisterdResponse, GetProfileResponse, GetRateWithBalanceResponse, RegisterRequest, Video, UserActionRequest } from "./types";
+import { getTelegramData, getBotId, getUserId, isTelegramWebApp } from "../utils/telegram";
 
 const api = axios.create({
     withCredentials: true,
     baseURL: 'http://localhost:3001'
 })
 
-const BOT_ID = '7182696236'
-const USER_ID = '5599145134'
+// Функции для получения BOT_ID и USER_ID из Telegram WebApp
+const getTelegramBotId = (): string => {
+    // Сначала пытаемся получить из Telegram WebApp
+    const telegramBotId = getBotId();
+    if (telegramBotId) {
+        return telegramBotId;
+    }
+    
+    // Fallback для разработки (если не в Telegram WebApp)
+    return '7182696236';
+};
+
+const getTelegramUserId = (): string => {
+    // Сначала пытаемся получить из Telegram WebApp
+    const telegramUserId = getUserId();
+    if (telegramUserId) {
+        return telegramUserId;
+    }
+    
+    // Fallback для разработки (если не в Telegram WebApp)
+    return '5599145134';
+};
+
+// Функции для получения актуальных ID (для случаев, когда данные могут измениться)
+const getCurrentBotId = (): string => getTelegramBotId();
+const getCurrentUserId = (): string => getTelegramUserId();
+
+// Экспортируем функции для получения ID
+export const BOT_ID = getTelegramBotId();
+export const USER_ID = getTelegramUserId();
 
 const getIsRegistered = (botId: string, userId: string) => {
     return api.get<GetIsRegisterdResponse>(`/api/webapp/${userId}/isRegistered/${botId}`)
@@ -64,5 +93,55 @@ const withdraw = (botId: string, userId: string, amount: number, cardNumber: str
     })
 }
 
+// Функции-обертки, которые автоматически используют текущие ID
+const getIsRegisteredCurrent = () => getIsRegistered(getCurrentBotId(), getCurrentUserId());
+const registerCurrent = (data: Omit<RegisterRequest, 'botId' | 'userId'>) => {
+    return register({ ...data, botId: getCurrentBotId(), userId: getCurrentUserId() });
+};
+const getProfileCurrent = () => getProfile(getCurrentBotId(), getCurrentUserId());
+const getVideosCurrent = () => getVideos(getCurrentBotId(), getCurrentUserId());
+const getRateWithBalanceCurrent = () => getRateWithBalance(getCurrentBotId(), getCurrentUserId());
+const doActionCurrent = (data: Omit<UserActionRequest, 'botId' | 'userId'>) => {
+    return doAction({ ...data, botId: getCurrentBotId(), userId: getCurrentUserId() });
+};
+const addSignupBonusCurrent = () => addSignupBonus(getCurrentBotId(), getCurrentUserId());
+const getIsSubscribedCurrent = () => getIsSubscribed(getCurrentBotId(), getCurrentUserId());
+const getReferralUrlCurrent = () => getReferralUrl(getCurrentBotId(), getCurrentUserId());
+const getReferralsCurrent = () => getReferrals(getCurrentBotId(), getCurrentUserId());
+const getCanWithdrawCurrent = () => getCanWithdraw(getCurrentBotId(), getCurrentUserId());
+const withdrawCurrent = (amount: number, cardNumber: string) => {
+    return withdraw(getCurrentBotId(), getCurrentUserId(), amount, cardNumber);
+};
 
-export { api, getIsRegistered, BOT_ID, USER_ID, register, getProfile, getVideos, getRateWithBalance, doAction, addSignupBonus, getReferralUrl, getReferrals, getIsSubscribed, getCanWithdraw, withdraw }
+export { 
+    api, 
+    getIsRegistered, 
+    register, 
+    getProfile, 
+    getVideos, 
+    getRateWithBalance, 
+    doAction, 
+    addSignupBonus, 
+    getReferralUrl, 
+    getReferrals, 
+    getIsSubscribed, 
+    getCanWithdraw, 
+    withdraw,
+    // Функции с автоматическим получением ID
+    getIsRegisteredCurrent,
+    registerCurrent,
+    getProfileCurrent,
+    getVideosCurrent,
+    getRateWithBalanceCurrent,
+    doActionCurrent,
+    addSignupBonusCurrent,
+    getIsSubscribedCurrent,
+    getReferralUrlCurrent,
+    getReferralsCurrent,
+    getCanWithdrawCurrent,
+    withdrawCurrent,
+    // Утилиты
+    getCurrentBotId,
+    getCurrentUserId,
+    isTelegramWebApp
+}

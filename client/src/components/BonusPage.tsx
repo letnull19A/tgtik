@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './BonusPage.module.css';
 import { ReactComponent as BonusBigFriendsIcon } from '../assets/BonusBigFriendsIcon.svg';
-import { getReferralUrl, BOT_ID, USER_ID, getReferrals, getRateWithBalance } from '../api/api';
+import { getReferralUrlCurrent, getReferralsCurrent, getRateWithBalanceCurrent } from '../api/api';
 import GiftToast from './GiftToast';
 import { useSelector, useDispatch } from 'react-redux';
 import { incrementBalance, setBalance } from '../store';
@@ -61,12 +61,12 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
   const fetchReferrals = async () => {
     setIsReloading(true);
     try {
-      const res = await getReferrals(BOT_ID, USER_ID);
+      const res = await getReferralsCurrent();
       const data = Array.isArray(res.data) ? res.data : [res.data];
       setReferrals(data as Referral[]);
       // Получаем актуальный баланс с сервера:
       try {
-        const balanceRes = await getRateWithBalance(BOT_ID, USER_ID);
+        const balanceRes = await getRateWithBalanceCurrent();
         dispatch(setBalance(balanceRes.data.balance));
       } catch (e) {}
     } catch (e) {
@@ -82,7 +82,7 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
   const handleCopyInvite = async () => {
     setIsCopying(true);
     try {
-      const res = await getReferralUrl(BOT_ID, USER_ID);
+      const res = await getReferralUrlCurrent();
       const link = res.data?.referralLink;
       if (link) {
         await navigator.clipboard.writeText(link);
@@ -96,7 +96,7 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
   // Функция для обработки клика по кнопке "Поделиться"
   const handleShare = async () => {
     try {
-      const res = await getReferralUrl(BOT_ID, USER_ID);
+      const res = await getReferralUrlCurrent();
       const shareUrl = res.data?.referralLink || window.location.href;
       const shareText = '';
 

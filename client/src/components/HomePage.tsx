@@ -11,7 +11,7 @@ import GiftToast from './GiftToast';
 import GiftWindow from './GiftWindow';
 import Profile from './Profile';
 import styles from './HomePage.module.css';
-import { BOT_ID, getProfile, getVideos, USER_ID, getRateWithBalance, doAction, addSignupBonus, getIsSubscribed } from '../api/api';
+import { getProfileCurrent, getVideosCurrent, getRateWithBalanceCurrent, doActionCurrent, addSignupBonusCurrent, getIsSubscribedCurrent } from '../api/api';
 import { GetProfileResponse, Video as VideoType } from '../api/types';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
@@ -57,11 +57,11 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
 
   const fetchProfile = async () => {
     try {
-      const response = await getProfile(BOT_ID, USER_ID)
+      const response = await getProfileCurrent()
       const data = response.data
       setProfile(data)
       // Получаем статус подписки
-      const subRes = await getIsSubscribed(BOT_ID, USER_ID);
+      const subRes = await getIsSubscribedCurrent();
       setIsSubscribed(!!subRes.data.isSubscribed);
     } catch (error) {
       console.error('Ошибка при получении профиля:', error)
@@ -70,7 +70,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
 
   const fetchRate = async () => {
     try {
-      const response = await getRateWithBalance(BOT_ID, USER_ID);
+      const response = await getRateWithBalanceCurrent();
       dispatch(setBalance(response.data.balance));
       setRate(response.data.rate)
       setMaxVideos(response.data.maxVideos)
@@ -83,7 +83,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
 
   const fetchVideos = async () => {
     try {
-      const response = await getVideos(BOT_ID, USER_ID);
+      const response = await getVideosCurrent();
       console.log(response.data)
       if (response.data && response.data.length > 0) {
         const firstVideo = response.data[0]
@@ -127,9 +127,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
     if (videos.length === 0) return;
     const video = videos[currentIndex];
     try {
-      const response = await doAction({
-        botId: BOT_ID,
-        userId: USER_ID,
+      const response = await doActionCurrent({
         videoId: video.id,
         action: 'like',
       });
@@ -149,9 +147,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
     if (videos.length === 0) return;
     const video = videos[currentIndex];
     try {
-      const response = await doAction({
-        botId: BOT_ID,
-        userId: USER_ID,
+      const response = await doActionCurrent({
         videoId: video.id,
         action: 'dislike',
       });
@@ -169,7 +165,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
 
   const handleGiftClick = async () => {
     try {
-        const response = await getIsSubscribed(BOT_ID, USER_ID)
+        const response = await getIsSubscribedCurrent()
         const {isSubscribed, hasBonus} = response.data
         if(!isSubscribed) {
           showToast('You dont have a sponsor subscription', 'Subscribe and try again');
@@ -188,7 +184,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
 
   const onClaimGift = async () => {
     try {
-      const response = await addSignupBonus(BOT_ID, USER_ID)
+      const response = await addSignupBonusCurrent()
       dispatch(setBalance(balance + response.data.bonus))
       showToast('Gift claimed!', `You received + ${response.data.bonus}$`)
     }catch(err) {

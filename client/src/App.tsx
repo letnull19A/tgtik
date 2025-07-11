@@ -7,7 +7,7 @@ import BonusPage from './components/BonusPage';
 import BottomNavBar from './components/BottomNavBar';
 import SubscriptionBlock from './components/SubscriptionBlock';
 import { WithdrawalForm } from './components/SubscriptionBlock';
-import { BOT_ID, getIsRegistered, register, USER_ID, getRateWithBalance, getCanWithdraw, withdraw } from "./api/api";
+import { getIsRegisteredCurrent, registerCurrent, getRateWithBalanceCurrent, getCanWithdrawCurrent, withdrawCurrent, isTelegramWebApp } from "./api/api";
 import { Sex } from "./components/RegistrationBlock";
 import HelloLoader from './components/HelloLoader';
 import GiftToast from './components/GiftToast';
@@ -15,6 +15,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from './store';
 import { setLoading, setRegistered, setBalance } from './store';
 import { AxiosError } from "axios";
+import { initTelegramWebApp } from './utils/telegram';
 
 function BackgroundModal({ open, onClose, children }: { open: boolean, onClose: () => void, children: React.ReactNode }) {
   const [animate, setAnimate] = useState(false);
@@ -73,11 +74,18 @@ export default function App() {
   const dispatch = useDispatch<AppDispatch>();
   const balance = useSelector((state: RootState) => state.balance.value);
 
+  // Инициализация Telegram WebApp
+  useEffect(() => {
+    if (isTelegramWebApp()) {
+      initTelegramWebApp();
+    }
+  }, []);
+
   useEffect(() => {
     const checkRegistration = async () => {
       setLocalIsLoading(true)
       try {
-        const v = await getIsRegistered(BOT_ID, USER_ID)
+        const v = await getIsRegisteredCurrent()
         setLocalIsRegistered(v.data.isRegistered);
         dispatch(setRegistered(v.data.isRegistered));
       } catch (err) {
@@ -91,7 +99,7 @@ export default function App() {
 
   const fetchCanWithdraw = async () => {
     try {
-      const response = await getCanWithdraw(BOT_ID, USER_ID)
+      const response = await getCanWithdrawCurrent()
       console.log(response.data)
       setCanWithdraw(response.data.canWithdraw)
       setMinWithdraw(response.data.withdrawalLimit)
@@ -112,7 +120,7 @@ export default function App() {
 
   const handleCreateAccount = async (age: number, sex: Sex) => {
     try {
-      const response = await register({age, sex, botId: BOT_ID, userId: USER_ID})
+      const response = await registerCurrent({age, sex})
       console.log(response.data)
       setLocalIsRegistered(response.data.isRegistered)
       dispatch(setRegistered(response.data.isRegistered));
@@ -134,7 +142,7 @@ export default function App() {
   const onWithdraw = async (data: { cardData: string; amount: string }) => {
     try {
       const amount = Number(data.amount)
-      const response = await withdraw(BOT_ID, USER_ID, amount, data.cardData)
+      const response = await withdrawCurrent(amount, data.cardData)
       showToast('Operation in progress', response.data.message)
       setIsOpenBackgroundModal(false)
       dispatch(setBalance(balance - amount))
@@ -154,7 +162,7 @@ export default function App() {
         return;
       }
       try {
-        const response = await getRateWithBalance(BOT_ID, USER_ID);
+        const response = await getRateWithBalanceCurrent();
         dispatch(setBalance(response.data.balance));
       } catch (e) {}
       setIsOpenBackgroundModal(true);
