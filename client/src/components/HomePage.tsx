@@ -227,12 +227,6 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
 
   return (
     <>
-      {/* Отладочный блок для вывода ссылок и botId */}
-      <div style={{ position: 'fixed', top: 10, right: 10, background: 'rgba(0,0,0,0.8)', color: '#fff', zIndex: 30000, padding: 10, borderRadius: 8, fontSize: 12 }}>
-        <div><b>channelUrl (inviteLink):</b> {channelUrl}</div>
-        <div><b>botLink:</b> {botLink}</div>
-        <div><b>botId:</b> {botId}</div>
-      </div>
       {showGiftWindow && (
         <GiftWindow
           open={isGiftOpen}

@@ -311,7 +311,6 @@ export default function App() {
       {activeTab === 'bonus' && <BonusPage showToast={showToast} translations={translations} />}
       {activeTab !== 'bonus' && <HomePage translations={translations} onSelect={handleTabSelect} activeTab={activeTab} setMoney={() => {}} showToast={showToast} showErrorModal={undefined} setIsOpenBackgroundModal={setIsOpenBackgroundModal} />}
       <BottomNavBar onSelect={handleTabSelect} activeTab={activeTab} isModalOpen={isOpenBackgroundModal} translations={translations} />
-      <DebugBlock />
     </>;
   }
 
@@ -329,7 +328,6 @@ export default function App() {
           translations={translations}
         />
       </div>
-      <DebugBlock />
     </div>
   );
 }
