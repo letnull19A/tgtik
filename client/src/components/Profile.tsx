@@ -36,6 +36,7 @@ const Profile: React.FC<ProfileProps> = ({
 }) => {
   const [visible, setVisible] = useState(open);
   const [animate, setAnimate] = useState(false);
+  const channelUrl = useSelector((state: RootState) => state.channel.inviteLink);
 
   useEffect(() => {
     if (open) {
@@ -52,8 +53,6 @@ const Profile: React.FC<ProfileProps> = ({
 
   if (!visible) return null;
 
-  const channelUrl = useSelector((state: RootState) => state.channel.inviteLink);
-  
   const openTelegramChannel = () => {
     if (!channelUrl) return;
     if (window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
