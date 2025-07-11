@@ -11,6 +11,7 @@ import { getIsRegisteredCurrent, registerCurrent, getRateWithBalanceCurrent, get
 import { Sex } from "./components/RegistrationBlock";
 import HelloLoader from './components/HelloLoader';
 import GiftToast from './components/GiftToast';
+import DebugBlock from './components/DebugBlock';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from './store';
 import { setLoading, setRegistered, setBalance, setChannelInviteLink, setChannelLoading, setBotLink } from './store';
@@ -295,6 +296,7 @@ export default function App() {
       {activeTab === 'bonus' && <BonusPage showToast={showToast} translations={translations} />}
       {activeTab !== 'bonus' && <HomePage translations={translations} onSelect={handleTabSelect} activeTab={activeTab} setMoney={() => {}} showToast={showToast} showErrorModal={undefined} setIsOpenBackgroundModal={setIsOpenBackgroundModal} />}
       <BottomNavBar onSelect={handleTabSelect} activeTab={activeTab} isModalOpen={isOpenBackgroundModal} translations={translations} />
+      <DebugBlock />
     </>;
   }
 
@@ -312,6 +314,7 @@ export default function App() {
           translations={translations}
         />
       </div>
+      <DebugBlock />
     </div>
   );
 }
