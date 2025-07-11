@@ -7,9 +7,10 @@ export type Sex = 'male' | 'female' | 'other'
 type RegistrationBlockProps = {
   onChangeAge: (value: string) => void
   onChangeGender: (value: Sex) => void
+  translations: any
 }
 
-const RegistrationBlock: React.FC<RegistrationBlockProps> = ({ onChangeAge, onChangeGender }) => {
+const RegistrationBlock: React.FC<RegistrationBlockProps> = ({ onChangeAge, onChangeGender, translations }) => {
   const [sex, setSex] = useState<Sex>('female');
   const [age, setAge] = useState('');
   const [ageError, setAgeError] = useState('');
@@ -26,7 +27,7 @@ const RegistrationBlock: React.FC<RegistrationBlockProps> = ({ onChangeAge, onCh
     }
     const num = Number(value);
     if (num < 16 || num > 100) {
-      setAgeError('Age must be from 16 to 100');
+      setAgeError(translations.specifyAge);
     } else {
       setAgeError('');
     }
@@ -41,39 +42,39 @@ const RegistrationBlock: React.FC<RegistrationBlockProps> = ({ onChangeAge, onCh
     <>
       <div className={styles.registrationPopup}>
         <div className={styles.registrationTitle}>
-          Registration is required to <br />continue so we can better <br />collect data on ratings
+          {translations.registrationRequired}
         </div>
-        <div className={styles.registrationLabel}>Please indicate your gender</div>
+        <div className={styles.registrationLabel}>{translations.pleaseIndicateGender}</div>
         <div className={styles.registrationGenderBlock}>
           <div className={styles.registrationGenderRow} onClick={() => handleGenderChange('male')} style={{cursor: 'pointer'}}>
-            <div className={styles.registrationGenderText}>Male</div>
+            <div className={styles.registrationGenderText}>{translations.male}</div>
             <div className={styles.registrationGenderRadio + (sex === 'male' ? ' ' + styles.selected : '')}>
               {sex === 'male' && <div className={styles.registrationGenderRadioDot} />}
             </div>
           </div>
           <div className={styles.registrationGenderRow} onClick={() => handleGenderChange('female')} style={{cursor: 'pointer'}}>
-            <div className={styles.registrationGenderText}>Female</div>
+            <div className={styles.registrationGenderText}>{translations.female}</div>
             <div className={styles.registrationGenderRadio + (sex === 'female' ? ' ' + styles.selected : '')}>
               {sex === 'female' && <div className={styles.registrationGenderRadioDot} />}
             </div>
           </div>
           <div className={styles.registrationGenderRow} onClick={() => handleGenderChange('other')} style={{cursor: 'pointer'}}>
-            <div className={styles.registrationGenderText}>Other</div>
+            <div className={styles.registrationGenderText}>{translations.other}</div>
             <div className={styles.registrationGenderRadio + (sex === 'other' ? ' ' + styles.selected : '')}>
               {sex === 'other' && <div className={styles.registrationGenderRadioDot} />}
             </div>
           </div>
         </div>
-        <div className={styles.registrationLabel}>Please indicate your age</div>
+        <div className={styles.registrationLabel}>{translations.pleaseIndicateAge}</div>
         <div className={ageError ? styles.registrationAgeBlockError : styles.registrationAgeBlock}>
           <div className={styles.registrationAgeRow}>
             <div
-              className={styles.registrationAgeInput}>Age</div>
+              className={styles.registrationAgeInput}>{translations.age}</div>
             <div className={styles.registrationAgeDivider} />
             <input
                 type="number"
                 className={styles.registrationAgeDesc}
-                placeholder="from 16 to 100 years"
+                placeholder={translations.ageRange}
                 value={age}
                 onChange={handleAgeChange}
                 min={16}

@@ -41,7 +41,7 @@ function ContentSection({
           {/* Logos are handled by BackgroundSection */}
         </div>
         {showRegistration ? (
-          <RegistrationBlock onChangeAge={v => setAge(v ? Number(v) : null)} onChangeGender={v => setSex(v)}/>
+          <RegistrationBlock onChangeAge={v => setAge(v ? Number(v) : null)} onChangeGender={v => setSex(v)} translations={translations}/>
         ) : (
           <div className={styles.phoneCard}>
             <img

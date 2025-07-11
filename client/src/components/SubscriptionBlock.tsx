@@ -57,7 +57,7 @@ export const WithdrawalForm: React.FC<WithdrawFormProps> = ({ onClose, minWithdr
     return (
         <form className={styles.wrapper} onSubmit={handleSubmit}>
             <div className={styles.header}>
-                <div className={styles.title}>Withdrawal</div>
+                <div className={styles.title}>{translations.amountToWithdraw}</div>
                 <div className={styles.icon}>
                     <button className={styles.iconOutlineBtn} type="button">
                         <CloseGiftWindowIcon className={styles.iconOutline} style={{ cursor: 'pointer'}} onClick={onClose}/>
@@ -119,7 +119,7 @@ export const WithdrawalForm: React.FC<WithdrawFormProps> = ({ onClose, minWithdr
                     cursor: isFormValid ? 'pointer' : 'not-allowed'
                 }}
             >
-                <div className={styles.buttonText}>Withdraw</div>
+                <div className={styles.buttonText}>{translations.amountToWithdraw}</div>
             </button>
         </form>
     );
@@ -154,13 +154,12 @@ const SubscriptionBlock: React.FC<SubscriptionBlockProps> = ({ onContinue, money
         <div className={styles.moneyWarningIconContainer}></div>
         <ProgressPath money={money} minWithdraw={minWithdraw} translations={translations}/>
       </div>
-      <div className={styles.subscriptionTitle}>Insufficient Funds</div>
+      <div className={styles.subscriptionTitle}>{translations.insufficientFunds}</div>
       <div className={styles.subscriptionText}>
-        The minimum withdrawal limit is ${minWithdraw}. Keep
-        earning by watching and rating videos
+        {translations.minimumWithdrawalLimit.replace('{currency}', translations.currency).replace('{amount}', minWithdraw.toString())}
       </div>
       <button className={styles.subscribeBtn} onClick={onContinue}>
-        <span>Continue working</span>
+        <span>{translations.continueWorking}</span>
       </button>
     </div>
   );
