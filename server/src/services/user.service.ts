@@ -64,7 +64,8 @@ export class UserService {
          return { error: 'Daily video limit reached', status: 403 }
       }
 
-      const reward = data.action === 'like' ? bot.likeReward : bot.dislikeReward
+      const reward =
+         data.action === 'like' ? video.likeReward : video.dislikeReward
       await this.db.pool
          .updateTable('users')
          .set({ balance: sql`balance + ${reward}` })
@@ -160,8 +161,8 @@ export class UserService {
          .where('telegramId', '=', data.userId)
          .where('botId', '=', data.botId)
          .executeTakeFirst()
-      if(!user) {
-         return {error: 'User not found', status: 404}
+      if (!user) {
+         return { error: 'User not found', status: 404 }
       }
       return { balance: user?.balance }
    }
@@ -185,11 +186,11 @@ export class UserService {
          .select(['token'])
          .where('botId', '=', botId)
          .executeTakeFirst()
-      
+
       if (!botFromDb) {
          return { error: 'Bot not found', status: 404 }
       }
-   
+
       const botName = await this.botManager.getName(botFromDb.token)
       console.log(botName)
       if (!botName) {
@@ -205,53 +206,59 @@ export class UserService {
       }
    }
 
-   public async getProfile({ userId, botId }: { userId: string, botId: string }) {
+   public async getProfile({
+      userId,
+      botId
+   }: {
+      userId: string
+      botId: string
+   }) {
       const user = await this.db.pool
          .selectFrom('users')
          .selectAll()
          .where('telegramId', '=', userId)
          .where('botId', '=', botId)
-         .executeTakeFirst();
+         .executeTakeFirst()
       if (!user) {
-         return { error: 'User not found', status: 404 };
+         return { error: 'User not found', status: 404 }
       }
       // Количество приглашённых друзей
       const invited = await this.db.pool
-        .selectFrom('referrals')
-        .select(sql<number>`COUNT(*)`.as('count'))
-        .where('referrerId', '=', userId)
-        .where('botId', '=', botId)
-        .executeTakeFirst();
-    
+         .selectFrom('referrals')
+         .select(sql<number>`COUNT(*)`.as('count'))
+         .where('referrerId', '=', userId)
+         .where('botId', '=', botId)
+         .executeTakeFirst()
+
       // Количество лайков
       const likes = await this.db.pool
-        .selectFrom('actions')
-        .select(sql<number>`COUNT(*)`.as('count'))
-        .where('userId', '=', userId)
-        .where('botId', '=', botId)
-        .where('action', '=', 'like')
-        .executeTakeFirst();
-    
+         .selectFrom('actions')
+         .select(sql<number>`COUNT(*)`.as('count'))
+         .where('userId', '=', userId)
+         .where('botId', '=', botId)
+         .where('action', '=', 'like')
+         .executeTakeFirst()
+
       // Количество дизлайков
       const dislikes = await this.db.pool
-        .selectFrom('actions')
-        .select(sql<number>`COUNT(*)`.as('count'))
-        .where('userId', '=', userId)
-        .where('botId', '=', botId)
-        .where('action', '=', 'dislike')
-        .executeTakeFirst();
-    
+         .selectFrom('actions')
+         .select(sql<number>`COUNT(*)`.as('count'))
+         .where('userId', '=', userId)
+         .where('botId', '=', botId)
+         .where('action', '=', 'dislike')
+         .executeTakeFirst()
+
       // Баланс (Earnings)
-      const earnings = user?.balance ?? 0;
+      const earnings = user?.balance ?? 0
       return {
-        username: user?.username ?? null,
-        registrationDate: user?.createdAt ?? null, // если есть поле createdAt
-        invitedFriends: Number(invited?.count ?? 0),
-        likes: Number(likes?.count ?? 0),
-        dislikes: Number(dislikes?.count ?? 0),
-        earnings,
-      };
-    }
+         username: user?.username ?? null,
+         registrationDate: user?.createdAt ?? null, // если есть поле createdAt
+         invitedFriends: Number(invited?.count ?? 0),
+         likes: Number(likes?.count ?? 0),
+         dislikes: Number(dislikes?.count ?? 0),
+         earnings
+      }
+   }
 
    public async getReferralsByUserId(userId: string, botId: string) {
       // Проверяем, существует ли пользователь
@@ -260,40 +267,40 @@ export class UserService {
          .select(['telegramId'])
          .where('telegramId', '=', userId)
          .where('botId', '=', botId)
-         .executeTakeFirst();
+         .executeTakeFirst()
       if (!user) {
-         return { error: 'User not found', status: 404 };
+         return { error: 'User not found', status: 404 }
       }
       // Получаем бонус за реферала из таблицы bots
       const bot = await this.db.pool
          .selectFrom('bots')
          .select(['referralReward'])
          .where('botId', '=', botId)
-         .executeTakeFirst();
+         .executeTakeFirst()
 
       const referrals = await this.db.pool
          .selectFrom('referrals')
          .select(['referredId', 'botId'])
          .where('referrerId', '=', userId)
          .where('botId', '=', botId)
-         .execute();
+         .execute()
 
-      const result = [];
+      const result = []
       for (const ref of referrals) {
          const user = await this.db.pool
             .selectFrom('users')
             .select(['telegramId', 'username'])
             .where('telegramId', '=', ref.referredId)
             .where('botId', '=', botId)
-            .executeTakeFirst();
+            .executeTakeFirst()
 
          result.push({
             referredId: ref.referredId,
             username: user?.username ?? null,
             bonus: bot?.referralReward ?? 0
-         });
+         })
       }
-      return result;
+      return result
    }
 
    public async getIsRegistered(userId: string, botId: string) {
@@ -302,35 +309,42 @@ export class UserService {
          .select(['isRegistered'])
          .where('telegramId', '=', userId)
          .where('botId', '=', botId)
-         .executeTakeFirst();
+         .executeTakeFirst()
       if (!user) {
-         return { isRegistered: false };
+         return { isRegistered: false }
       }
-      return { isRegistered: !!user.isRegistered };
+      return { isRegistered: !!user.isRegistered }
    }
 
-   public async register(userId: string, botId: string, age: number, sex: string) {
+   public async register(
+      userId: string,
+      botId: string,
+      age: number,
+      sex: string
+   ) {
       // Проверка на существование пользователя
       const user = await this.db.pool
          .selectFrom('users')
          .select(['telegramId'])
          .where('telegramId', '=', userId)
          .where('botId', '=', botId)
-         .executeTakeFirst();
+         .executeTakeFirst()
       if (!user) {
-         return { error: 'User not found', status: 404 };
+         return { error: 'User not found', status: 404 }
       }
-      const sexValue = (['male', 'female', 'other'].includes(sex) ? sex : undefined) as 'male' | 'female' | 'other' | undefined;
+      const sexValue = (
+         ['male', 'female', 'other'].includes(sex) ? sex : undefined
+      ) as 'male' | 'female' | 'other' | undefined
       const result = await this.db.pool
          .updateTable('users')
          .set({ age, isRegistered: true, sex: sexValue })
          .where('telegramId', '=', userId)
          .where('botId', '=', botId)
-         .execute();
+         .execute()
       if (!result || result.length === 0) {
-         return { error: 'User not found', status: 404 };
+         return { error: 'User not found', status: 404 }
       }
-      return { status: true };
+      return { status: true }
    }
 
    public async getRateWithBalance(botId: string, userId: string) {
@@ -340,47 +354,50 @@ export class UserService {
          .select(['balance'])
          .where('telegramId', '=', userId)
          .where('botId', '=', botId)
-         .executeTakeFirst();
+         .executeTakeFirst()
       if (!user) {
-         return { error: 'User not found', status: 404 };
+         return { error: 'User not found', status: 404 }
       }
       // Получаем количество оценённых видео за сегодня
-      const today = new Date().toISOString().slice(0, 10);
+      const today = new Date().toISOString().slice(0, 10)
       const rateResult = await this.db.pool
          .selectFrom('actions')
          .select(sql<number>`count(*)`.as('rate'))
          .where('userId', '=', userId)
          .where('botId', '=', botId)
          .where('date', '=', today)
-         .executeTakeFirst();
+         .executeTakeFirst()
       // Получаем максимальное количество видео из таблицы bots
       const bot = await this.db.pool
          .selectFrom('bots')
          .select(['dailyVideoLimit'])
          .where('botId', '=', botId)
-         .executeTakeFirst();
+         .executeTakeFirst()
       return {
          balance: user.balance,
          rate: Number(rateResult?.rate || 0),
          maxVideos: bot?.dailyVideoLimit ?? null
-      };
+      }
    }
 
-   public async addSignupBonus(userId: string, botId: string): Promise<{ status: number, bonus?: number }> {
+   public async addSignupBonus(
+      userId: string,
+      botId: string
+   ): Promise<{ status: number; bonus?: number }> {
       // Получаем пользователя и бота
       const user = await this.db.pool
          .selectFrom('users')
          .select(['isSubscribed', 'hasBonus'])
          .where('telegramId', '=', userId)
          .where('botId', '=', botId)
-         .executeTakeFirst();
-      if (!user || !user.isSubscribed || user.hasBonus) return { status: 403 };
+         .executeTakeFirst()
+      if (!user || !user.isSubscribed || user.hasBonus) return { status: 403 }
       const bot = await this.db.pool
          .selectFrom('bots')
          .select(['signupBonus'])
          .where('botId', '=', botId)
-         .executeTakeFirst();
-      if (!bot) return { status: 403 };
+         .executeTakeFirst()
+      if (!bot) return { status: 403 }
       await this.db.pool
          .updateTable('users')
          .set({
@@ -389,7 +406,41 @@ export class UserService {
          })
          .where('telegramId', '=', userId)
          .where('botId', '=', botId)
-         .execute();
-      return { status: 200, bonus: bot.signupBonus };
+         .execute()
+      return { status: 200, bonus: bot.signupBonus }
+   }
+
+   public async getIsSubscribed(userId: string, botId: string) {
+      const user = await this.db.pool
+         .selectFrom('users')
+         .select(['isSubscribed', 'hasBonus'])
+         .where('telegramId', '=', userId)
+         .where('botId', '=', botId)
+         .executeTakeFirst()
+      if (!user) {
+         return false
+      }
+
+      return user
+   }
+
+   public async canWithdraw(userId: string, botId: string) {
+      const user = await this.db.pool
+         .selectFrom('users')
+         .select(['balance'])
+         .where('telegramId', '=', userId)
+         .where('botId', '=', botId)
+         .executeTakeFirst()
+      if (!user) return { canWithdraw: false, error: 'User not found' }
+      const bot = await this.db.pool
+         .selectFrom('bots')
+         .select(['withdrawalLimit'])
+         .where('botId', '=', botId)
+         .executeTakeFirst()
+      if (!bot) return { canWithdraw: false, error: 'Bot not found' }
+      return {
+         canWithdraw: user.balance >= bot.withdrawalLimit,
+         withdrawalLimit: bot.withdrawalLimit
+      }
    }
 }

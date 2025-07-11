@@ -32,10 +32,10 @@ export class BotService {
             .execute()
          return { status: 'started' }
       }
-      const botId = config.token.split(":")[0]
+      const botId = config.token.split(':')[0]
       await this.db.pool
          .insertInto('bots')
-         .values({ ...config, status: 'running', offset: 0, botId: botId  })
+         .values({ ...config, status: 'running', offset: 0, botId: botId })
          .execute()
 
       await this.botManager.launchBot({
@@ -99,28 +99,23 @@ export class BotService {
          .select(['telegramId'])
          .where('telegramId', '=', data.userId)
          .where('botId', '=', data.botId)
-         .executeTakeFirst();
+         .executeTakeFirst()
       if (!user) {
-         return { error: 'User not found', status: 404 };
+         return { error: 'User not found', status: 404 }
       }
       const videos = await this.db.pool
          .selectFrom('videos')
          .select([
-            'videos.id', 
-            'videos.url', 
+            'videos.id',
+            'videos.url',
             'videos.hashtags',
             'videos.description',
             'videos.profileId',
-            sql<number>`CAST((
-               SELECT COUNT(*) 
-               FROM actions 
-               WHERE actions."videoId" = videos.id AND actions.action = 'like'
-            ) AS INTEGER)` .as('likes_count'),
-            sql<number>`CAST((
-               SELECT COUNT(*) 
-               FROM actions 
-               WHERE actions."videoId" = videos.id AND actions.action = 'dislike'
-            ) AS INTEGER)` .as('dislikes_count')
+            'videos.dislikeReward',
+            'videos.likeReward',
+            'videos.dislikes',
+            'videos.likes',
+            'videos.redirectChannelUrl'
          ])
          .where('botId', '=', data.botId)
          .where(eb =>
@@ -137,7 +132,19 @@ export class BotService {
          .execute()
       if (!videos || videos.length === 0) {
          // Если нет новых видео, пробуем вернуть одно следующее, которое пользователь не смотрел
-         const nextVideo = await this.db.pool
+         const lastAction = await this.db.pool
+            .selectFrom('actions')
+            .select(['videoId'])
+            .where('userId', '=', data.userId)
+            .where('botId', '=', data.botId)
+            .orderBy('date', 'desc')
+            .limit(1)
+            .executeTakeFirst()
+         console.log(lastAction)
+         if (!lastAction) {
+            return { error: 'No watched videos' }
+         }
+         const lastWatchedVideo = await this.db.pool
             .selectFrom('videos')
             .select([
                'videos.id',
@@ -145,27 +152,16 @@ export class BotService {
                'videos.hashtags',
                'videos.description',
                'videos.profileId',
-               sql<number>`CAST((SELECT COUNT(*) FROM actions WHERE actions."videoId" = videos.id AND actions.action = 'like') AS INTEGER)`.as('likes_count'),
-               sql<number>`CAST((SELECT COUNT(*) FROM actions WHERE actions."videoId" = videos.id AND actions.action = 'dislike') AS INTEGER)`.as('dislikes_count')
+               'videos.dislikeReward',
+               'videos.likeReward',
+               'videos.dislikes',
+               'videos.likes',
+               'videos.redirectChannelUrl'
             ])
-            .where('botId', '=', data.botId)
-            .where(eb =>
-               eb.not(
-                  eb.exists(
-                     eb
-                        .selectFrom('actions')
-                        .select(['videoId'])
-                        .whereRef('actions.videoId', '=', 'videos.id')
-                        .where('actions.userId', '=', data.userId)
-                  )
-               )
-            )
-            .limit(1)
-            .executeTakeFirst();
-         if (!nextVideo) {
-            return { error: 'User not found', status: 404 };
-         }
-         return [nextVideo];
+            .where('id', '=', lastAction.videoId)
+            .executeTakeFirst()
+         console.log(lastWatchedVideo)
+         return [lastWatchedVideo]
       }
       return videos
    }
@@ -197,7 +193,18 @@ export class BotService {
       const parsedHashtags = data.hashtags.join(' ')
       await this.db.pool
          .insertInto('videos')
-         .values({ botId: botData.botId, url: data.url, hashtags: parsedHashtags, description: data.description, profileId: data.profileId })
+         .values({
+            botId: botData.botId,
+            url: data.url,
+            hashtags: parsedHashtags,
+            description: data.description,
+            profileId: data.profileId,
+            likeReward: data.likeReward,
+            dislikeReward: data.dislikeReward,
+            dislikes: data.likes,
+            likes: data.dislikes,
+            redirectChannelUrl: data.redirectChannelUrl
+         })
          .execute()
       return { message: 'Sucess added video' }
    }
@@ -208,18 +215,18 @@ export class BotService {
          .selectFrom('bots')
          .select(['token', 'botId'])
          .where('token', '=', token)
-         .executeTakeFirst();
+         .executeTakeFirst()
 
       if (!bot) {
-         return { error: 'Bot not found' };
+         return { error: 'Bot not found' }
       }
-   
+
       // Количество пользователей
       const usersCount = await this.db.pool
          .selectFrom('users')
          .select(sql<number>`COUNT(*)`.as('count'))
          .where('botId', '=', bot.botId)
-         .executeTakeFirst();
+         .executeTakeFirst()
 
       // Сумма денег к выводу (pending withdrawals)
       const pendingWithdrawals = await this.db.pool
@@ -227,20 +234,20 @@ export class BotService {
          .select(sql<number>`COALESCE(SUM(amount), 0)`.as('sum'))
          .where('botId', '=', bot.botId)
          .where('status', '=', 'pending')
-         .executeTakeFirst();
+         .executeTakeFirst()
 
       // Количество видео
       const videosCount = await this.db.pool
          .selectFrom('videos')
          .select(sql<number>`COUNT(*)`.as('count'))
          .where('botId', '=', bot.botId)
-         .executeTakeFirst();
+         .executeTakeFirst()
 
       return {
          usersCount: Number(usersCount?.count ?? 0),
          pendingWithdrawals: Number(pendingWithdrawals?.sum ?? 0),
          videosCount: Number(videosCount?.count ?? 0)
-      };
+      }
    }
 
    public async getChannelInviteLink(botId: string): Promise<string | null> {
@@ -250,7 +257,40 @@ export class BotService {
          .selectFrom('bots')
          .select(['channelInviteLink'])
          .where('botId', '=', botId)
-         .executeTakeFirst();
-      return botFromDb?.channelInviteLink || null;
+         .executeTakeFirst()
+      return botFromDb?.channelInviteLink || null
+   }
+
+   public async getLastWatchedVideo(userId: string, botId: string) {
+      const lastAction = await this.db.pool
+         .selectFrom('actions')
+         .select(['videoId'])
+         .where('userId', '=', userId)
+         .where('botId', '=', botId)
+         .orderBy('date', 'desc')
+         .limit(1)
+         .executeTakeFirst()
+      if (!lastAction) {
+         return { error: 'No watched videos' }
+      }
+      const video = await this.db.pool
+         .selectFrom('videos')
+         .select([
+            'videos.id',
+            'videos.url',
+            'videos.hashtags',
+            'videos.description',
+            'videos.profileId',
+            'videos.dislikeReward',
+            'videos.likeReward',
+            'videos.dislikes',
+            'videos.likes'
+         ])
+         .where('id', '=', lastAction.videoId)
+         .executeTakeFirst()
+      if (!video) {
+         return { error: 'Video not found' }
+      }
+      return video
    }
 }

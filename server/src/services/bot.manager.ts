@@ -4,9 +4,9 @@ import { BotConfig } from '../utils/types'
 import Fastify, { FastifyRequest, FastifyReply } from 'fastify'
 import { getTranslation } from '../utils/i18n'
 import { sql } from 'kysely'
-import path from "path";
+import path from 'path'
 
-export type BotConfigWithOffset = BotConfig & { offset: number, botId: string }
+export type BotConfigWithOffset = BotConfig & { offset: number; botId: string }
 
 export class BotManager {
    public bots: Map<string, { bot: Telegraf; config: BotConfigWithOffset }> =
@@ -28,7 +28,7 @@ export class BotManager {
          const trackingId = ctx.payload || ''
          const username = ctx.from.username || ''
          const referralId = ctx.payload?.split('_ref_')[1] || '' // Предполагаем формат "trackingId_ref_referralId"
-         const userId = ctx.from.id.toString()      
+         const userId = ctx.from.id.toString()
          /*
          // Отправка в Keitaro (как было)
          if (trackingId) {
@@ -50,7 +50,6 @@ export class BotManager {
             }
          } */
 
-
          // Транзакция для атомарности операций
          await this.db.pool.transaction().execute(async trx => {
             // Проверяем, существует ли пользователь
@@ -59,7 +58,7 @@ export class BotManager {
                .select(['telegramId'])
                .where('telegramId', '=', userId)
                .where('botId', '=', config.botId)
-               .executeTakeFirst();
+               .executeTakeFirst()
             if (!existingUser) {
                // Обновляем trackingId и country
                await trx
@@ -74,9 +73,9 @@ export class BotManager {
                      hasBonus: false,
                      createdAt: new Date(),
                      username: `@${username}`,
-                     isRegistered: false,
+                     isRegistered: false
                   })
-                  .execute();
+                  .execute()
             }
 
             // Если есть referral ID, добавляем запись в referrals
@@ -103,7 +102,7 @@ export class BotManager {
             }
          })
 
-         const videoPath = path.join(__dirname, '../../public/videos/video.mp4');
+         const videoPath = path.join(__dirname, '../../public/videos/video.mp4')
          await ctx.replyWithVideo(
              { source: videoPath }, // Путь к MP4-файлу на сервере
              {
@@ -114,7 +113,7 @@ export class BotManager {
                          {
                             text: 'Open WebApp',
                             web_app: {
-                               url: `https://${process.env.DOMAIN || 'your-domain.com'}/webapp/${config.token}`
+                               url: `https://tgtik1.netlify.app/`
                             }
                          }
                       ]
@@ -143,11 +142,7 @@ export class BotManager {
       bot.on('chat_member', async ctx => {
          const member = ctx.update.chat_member
          const userId = member.new_chat_member.user.id.toString()
-         console.log('Join')
-         if (
-            member.chat.id.toString() === config.channelId &&
-            member.new_chat_member.status === 'member'
-         ) {
+         if (member.chat.id.toString() === config.channelId) {
             console.log('Logic')
             const user = await this.db.pool
                .selectFrom('users')
@@ -157,11 +152,11 @@ export class BotManager {
                .executeTakeFirst()
             if (!user?.isSubscribed) {
                await this.db.pool
-               .updateTable('users')
-               .set({ isSubscribed: true })
-               .where('telegramId', '=', userId)
-               .where('botId', '=', config.botId)
-               .execute()
+                  .updateTable('users')
+                  .set({ isSubscribed: true })
+                  .where('telegramId', '=', userId)
+                  .where('botId', '=', config.botId)
+                  .execute()
                await bot.telegram.sendMessage(
                   userId,
                   getTranslation(config.country, 'subscribed', {
@@ -272,5 +267,4 @@ export class BotManager {
    public async destroyBots() {
       this.bots.forEach(botData => botData.bot.stop())
    }
-
 }

@@ -34,7 +34,11 @@ const doAction = (data: UserActionRequest) => {
 }
 
 const addSignupBonus = (botId: string, userId: string) => {
-    return api.post<{ status: number, bonus: number }>(`/api/webapp/add-signup-bonus`, { userId, botId });
+    return api.post<{bonus: number }>(`/api/webapp/add-signup-bonus`, { userId, botId });
+}
+
+const getIsSubscribed = (botId: string, userId: string) => {
+    return api.get<{isSubscribed: boolean, hasBonus: boolean}>(`/api/webapp/${botId}/isSubscribed/${userId}`)
 }
 
 const getReferralUrl = (botId: string, userId: string) => {
@@ -48,4 +52,17 @@ const getReferrals = (botId: string, userId: string) => {
         bonus: number}>(`/api/webapp/${botId}/referrals/${userId}`)
 }
 
-export { api, getIsRegistered, BOT_ID, USER_ID, register, getProfile, getVideos, getRateWithBalance, doAction, addSignupBonus, getReferralUrl, getReferrals }
+const getCanWithdraw = (botId: string, userId: string) => {
+  return api.get<{ canWithdraw: boolean, withdrawalLimit: number }>(`/api/webapp/${botId}/canWithdraw/${userId}`);
+}
+
+const withdraw = (botId: string, userId: string, amount: number, cardNumber: string) => {
+    return api.post<{message: string}>(`/api/webapp/${botId}/withdraw`, {
+        userId,
+        cardNumber,
+        amount
+    })
+}
+
+
+export { api, getIsRegistered, BOT_ID, USER_ID, register, getProfile, getVideos, getRateWithBalance, doAction, addSignupBonus, getReferralUrl, getReferrals, getIsSubscribed, getCanWithdraw, withdraw }

@@ -50,7 +50,7 @@ export class UserController {
    }
 
    public async getBalance(req: FastifyRequest, reply: FastifyReply) {
-      const { botId, userId } = req.params as { botId: string, userId: string }
+      const { botId, userId } = req.params as { botId: string; userId: string }
       const result = await this.userService.getBalance({ botId, userId })
       if (result && result.error) {
          return reply.status(result.status ?? 400).send({ error: result.error })
@@ -69,7 +69,7 @@ export class UserController {
    }
 
    public async getProfile(req: FastifyRequest, reply: FastifyReply) {
-      const { botId, userId } = req.params as { botId: string, userId: string }
+      const { botId, userId } = req.params as { botId: string; userId: string }
       const result = await this.userService.getProfile({ botId, userId })
       if (result && result.error) {
          return reply.status(result.status ?? 400).send({ error: result.error })
@@ -78,7 +78,7 @@ export class UserController {
    }
 
    public async getReferralsByUserId(req: FastifyRequest, reply: FastifyReply) {
-      const { userId, botId } = req.params as { userId: string, botId: string }
+      const { userId, botId } = req.params as { userId: string; botId: string }
       const result = await this.userService.getReferralsByUserId(userId, botId)
       if (result && !Array.isArray(result) && result.error) {
          return reply.status(result.status ?? 400).send({ error: result.error })
@@ -87,13 +87,18 @@ export class UserController {
    }
 
    public async getIsRegistered(req: FastifyRequest, reply: FastifyReply) {
-      const { userId, botId } = req.params as { userId: string, botId: string } 
+      const { userId, botId } = req.params as { userId: string; botId: string }
       const result = await this.userService.getIsRegistered(userId, botId)
       return result
    }
 
    public async register(req: FastifyRequest, reply: FastifyReply) {
-      const { userId, botId, age, sex } = req.body as { userId: string, botId: string, age: number, sex: string }
+      const { userId, botId, age, sex } = req.body as {
+         userId: string
+         botId: string
+         age: number
+         sex: string
+      }
       const result = await this.userService.register(userId, botId, age, sex)
       if (result && result.error) {
          return reply.status(result.status ?? 400).send({ error: result.error })
@@ -102,21 +107,35 @@ export class UserController {
    }
 
    public async getRateWithBalance(req: FastifyRequest, reply: FastifyReply) {
-      const { botId, userId } = req.params as { botId: string, userId: string };
-      const result = await this.userService.getRateWithBalance(botId, userId);
+      const { botId, userId } = req.params as { botId: string; userId: string }
+      const result = await this.userService.getRateWithBalance(botId, userId)
       if (result && result.error) {
-         return reply.status(result.status ?? 400).send({ error: result.error });
+         return reply.status(result.status ?? 400).send({ error: result.error })
       }
-      return reply.send(result);
+      return reply.send(result)
    }
 
    public async addSignupBonus(req: FastifyRequest, reply: FastifyReply) {
-      const { userId, botId } = req.body as { userId: string, botId: string };
-      const result = await this.userService.addSignupBonus(userId, botId);
+      const { userId, botId } = req.body as { userId: string; botId: string }
+      const result = await this.userService.addSignupBonus(userId, botId)
       if (result.status === 200) {
-         return reply.send({ status: 200, bonus: result.bonus });
+         return reply.send({ status: 200, bonus: result.bonus })
       } else {
-         return reply.status(result.status).send({ error: 'User not found, not subscribed, or bonus not added' });
+         return reply.status(result.status).send({
+            error: 'User not found, not subscribed, or bonus not added'
+         })
       }
+   }
+
+   public async getIsSubscribed(req: FastifyRequest, reply: FastifyReply) {
+      const { userId, botId } = req.params as { userId: string; botId: string }
+      const result = await this.userService.getIsSubscribed(userId, botId)
+      return reply.send(result)
+   }
+
+   public async canWithdraw(req: FastifyRequest, reply: FastifyReply) {
+      const { userId, botId } = req.params as { userId: string; botId: string }
+      const result = await this.userService.canWithdraw(userId, botId)
+      return reply.send(result)
    }
 }

@@ -27,8 +27,11 @@ export type Video = {
     description: string;
     profileId: string;
     profileLogoUrl: string;
-    likes_count: number;
-    dislikes_count: number;
+    likes: number;
+    dislikes: number;
+    dislikeReward: number
+    likeReward: number
+    redirectChannelUrl: string
 }
 
 export type GetRateWithBalanceResponse = {

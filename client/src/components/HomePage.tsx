@@ -11,14 +11,14 @@ import GiftToast from './GiftToast';
 import GiftWindow from './GiftWindow';
 import Profile from './Profile';
 import styles from './HomePage.module.css';
-import { BOT_ID, getProfile, getVideos, USER_ID, getRateWithBalance, doAction, addSignupBonus } from '../api/api';
+import { BOT_ID, getProfile, getVideos, USER_ID, getRateWithBalance, doAction, addSignupBonus, getIsSubscribed } from '../api/api';
 import { GetProfileResponse, Video as VideoType } from '../api/types';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import { setBalance } from '../store';
 import type { RootState, AppDispatch } from '../store';
 
-function HomePage({ onSelect, activeTab, setMoney, showToast }: { onSelect?: (tab: 'home' | 'bonus' | 'money') => void, activeTab?: 'home' | 'bonus' | 'money' , setMoney: (v: number) => void, showToast: (title: string, description: string) => void }) {
+function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, setIsOpenBackgroundModal }: { onSelect?: (tab: 'home' | 'bonus' | 'money') => void, activeTab?: 'home' | 'bonus' | 'money' , setMoney: (v: number) => void, showToast: (title: string, description: string) => void, showErrorModal?: (msg: string) => void, setIsOpenBackgroundModal: (value: boolean) => void}) {
   const [showGiftToast, setShowGiftToast] = useState(false);
   const [showGiftWindow, setShowGiftWindow] = useState(false);
   const [isGiftOpen, setIsGiftOpen] = useState(false);
@@ -26,6 +26,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast }: { onSelect?: (ta
   const [progress, setProgress] = useState(0);
   const [profile, setProfile] = useState<GetProfileResponse | null>(null)
   const [videos, setVideos] = useState<VideoType[]>([]);
+  const [reward, setReward] = useState<{dislikeReward: number, likeReward: number}>({ dislikeReward: 0, likeReward: 0})
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fade, setFade] = useState(false);
   const [rate, setRate] = useState(0);
@@ -45,6 +46,13 @@ function HomePage({ onSelect, activeTab, setMoney, showToast }: { onSelect?: (ta
       setTimerFinished(false);
     }
   }, [isVideoLoading]);
+
+  // Пример: если лимит достигнут, открываем VideoLimitModal
+  useEffect(() => {
+    if (activeTab === 'home' && videos.length > 0 && currentIndex >= videos.length - 1) {
+      setIsOpenBackgroundModal(true);
+    }
+  }, [activeTab, videos.length, currentIndex, setIsOpenBackgroundModal]);
 
   const fetchProfile = async () => {
     try {
@@ -67,11 +75,16 @@ function HomePage({ onSelect, activeTab, setMoney, showToast }: { onSelect?: (ta
     }
   }
 
+  
+
   const fetchVideos = async () => {
     try {
       const response = await getVideos(BOT_ID, USER_ID);
+      console.log(response.data)
       if (response.data && response.data.length > 0) {
+        const firstVideo = response.data[0]
         setVideos(response.data);
+        setReward({ likeReward: firstVideo.likeReward, dislikeReward: firstVideo.dislikeReward})
       }
     } catch (error) {
       console.error('Ошибка при получении видео:', error);
@@ -100,6 +113,8 @@ function HomePage({ onSelect, activeTab, setMoney, showToast }: { onSelect?: (ta
     setFade(true);
     setTimeout(() => {
       setCurrentIndex((prev) => prev + 1);
+      const nextVideo = videos[currentIndex + 1]
+      setReward({ likeReward: nextVideo.likeReward, dislikeReward: nextVideo.dislikeReward})
       setFade(false);
     }, 300);
   };
@@ -114,16 +129,12 @@ function HomePage({ onSelect, activeTab, setMoney, showToast }: { onSelect?: (ta
         videoId: video.id,
         action: 'like',
       });
-      if (String(response.data?.status) === '403') {
-        console.error('Достигнут лимит видео за день!');
-        return;
-      }
       handleNextVideo();
       setRate(v => v + 1)
       dispatch(setBalance(response.data.newBalance));
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 403) {
-        console.error('Достигнут лимит видео за день!');
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        setIsOpenBackgroundModal(true)
         return;
       }
       console.error('Ошибка при отправке лайка:', error);
@@ -140,16 +151,12 @@ function HomePage({ onSelect, activeTab, setMoney, showToast }: { onSelect?: (ta
         videoId: video.id,
         action: 'dislike',
       });
-      if (String(response.data?.status) === '403') {
-        console.error('Достигнут лимит видео за день!');
-        return;
-      }
       handleNextVideo();
       setRate(v => v + 1)
       dispatch(setBalance(response.data.newBalance));
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 403) {
-        console.error('Достигнут лимит видео за день!');
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        setIsOpenBackgroundModal(true)
         return;
       }
       console.error('Ошибка при отправке дизлайка:', error);
@@ -157,17 +164,33 @@ function HomePage({ onSelect, activeTab, setMoney, showToast }: { onSelect?: (ta
   };
 
   const handleGiftClick = async () => {
-    // try {
-    //   const response = await addSignupBonus(BOT_ID, USER_ID);
-    //   setBalance(v => v + response.data.bonus)
-    //   setShowGiftWindow(true)
-    // } catch (error) {
-    //   showToast('You dont have a sponsor subscription', 'Subscribe and try again');
-    // }
-
-    setShowGiftWindow(true);
-    setIsGiftOpen(true);
+    try {
+        const response = await getIsSubscribed(BOT_ID, USER_ID)
+        const {isSubscribed, hasBonus} = response.data
+        if(!isSubscribed) {
+          showToast('You dont have a sponsor subscription', 'Subscribe and try again');
+          return
+        }
+        if (hasBonus) {
+          showToast('You already get bonus', 'Thanks');
+          return
+        }
+        setShowGiftWindow(true);
+        setIsGiftOpen(true)
+    } catch (error) {
+       showToast('You dont have a sponsor subscription', 'Subscribe and try again');
+     } 
   };
+
+  const onClaimGift = async () => {
+    try {
+      const response = await addSignupBonus(BOT_ID, USER_ID)
+      dispatch(setBalance(balance + response.data.bonus))
+      showToast('Gift claimed!', `You received + ${response.data.bonus}$`)
+    }catch(err) {
+      showToast('Server error', 'Boun not recieved')
+    }
+  }
 
   const handleCloseProfile = () => {
     setShowProfile(false);
@@ -187,7 +210,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast }: { onSelect?: (ta
             setIsGiftOpen(false);
             setTimeout(() => setShowGiftWindow(false), 300);
           }}
-          onClaimGift={() => showToast('Gift claimed!', 'You received + $100')}
+          onClaimGift={onClaimGift}
         />
       )}
       {profile && (
@@ -218,14 +241,17 @@ function HomePage({ onSelect, activeTab, setMoney, showToast }: { onSelect?: (ta
           key={currentIndex}
           onLike={handleLike}
           onDislike={handleDislike}
-          likes={timerFinished ? (videos[currentIndex]?.likes_count || 0) : 373.8}
-          dislikes={timerFinished ? (videos[currentIndex]?.dislikes_count || 0) : 11.79}
+          likes={videos[currentIndex]?.likes}
+          dislikes={videos[currentIndex]?.dislikes}
           rate={rate}
+          likeReward={reward.likeReward}
+          dislikeReward={reward?.dislikeReward}
           isVideoReady={!isVideoLoading}
           currentIndex={currentIndex}
           activeTab={activeTab}
           playing={playing}
           isVideoLoading={isVideoLoading}
+          redirectChannelUrl={videos[currentIndex]?.redirectChannelUrl}
         />
         <VideoInfoBlock video={videos[currentIndex]} />
       </div>

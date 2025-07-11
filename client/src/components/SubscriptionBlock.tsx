@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './SubscriptionBlock.module.css';
 import { ReactComponent as CloseGiftWindowIcon } from '../assets/CloseGiftWindowIcon.svg';
 import { ReactComponent as MoneyWarningIcon } from '../assets/MoneyWarningIcon.svg';
@@ -9,51 +9,121 @@ import type { RootState, AppDispatch } from '../store';
 export interface SubscriptionBlockProps {
   onContinue?: () => void;
   money: number
+  minWithdraw: number
 }
 
-export const WithdrawalForm = () => {
+type WithdrawFormProps = {
+    minWithdraw: number
+    onClose: () => void
+    onWithdraw: (data: { cardData: string; amount: string }) => void
+}
+
+export const WithdrawalForm: React.FC<WithdrawFormProps> = ({ onClose, minWithdraw, onWithdraw }) => {
+    const [card, setCard] = useState('');
+    const [iban, setIban] = useState('');
+    const [amount, setAmount] = useState('');
+
+    const isCardValid = /^\d{4} ?\d{4} ?\d{4} ?\d{4}$/.test(card);
+    const isIbanValid = iban.length >= 15 && iban.length <= 34;
+    const isAmountValid = !!amount && !isNaN(Number(amount)) && Number(amount) >= minWithdraw && Number(amount) <= 1000;
+    // Форма валидна, если заполнено либо валидное поле карты, либо валидное поле IBAN, и сумма валидна
+    const isFormValid = (isCardValid || isIbanValid) && isAmountValid;
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (isFormValid) {
+            let cardData = '';
+            if (isCardValid) {
+                cardData = card;
+            } else if (isIbanValid) {
+                cardData = iban;
+            }
+            onWithdraw({ cardData, amount });
+        }
+    };
+    const handleCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        // Удаляем всё, кроме цифр
+        let value = e.target.value.replace(/\D/g, "");
+        // Ограничиваем длину (16 цифр)
+        value = value.slice(0, 16);
+        // Добавляем пробелы после каждых 4 цифр
+        const formatted = value.replace(/(.{4})/g, "$1 ").trim();
+        setCard(formatted);
+      };
+      
+
     return (
-        <div className={styles.wrapper}>
+        <form className={styles.wrapper} onSubmit={handleSubmit}>
             <div className={styles.header}>
                 <div className={styles.title}>Withdrawal</div>
                 <div className={styles.icon}>
-                    <button className={styles.iconOutlineBtn}>
-                        <CloseGiftWindowIcon className={styles.iconOutline} />
+                    <button className={styles.iconOutlineBtn} type="button">
+                        <CloseGiftWindowIcon className={styles.iconOutline} style={{ cursor: 'pointer'}} onClick={onClose}/>
                     </button>
                 </div>
             </div>
             <div className={styles.instruction}>Please indicate your card number</div>
             <div className={styles.option}>
-                <div className={styles.optionContent}>
-                    <div className={styles.optionLabel}>Card</div>
-                    <div className={styles.separator} />
-                    <div className={styles.optionPlaceholder}>**** **** **** ****</div>
+            <div className={styles.optionContent}>
+                <div className={styles.optionLabel}>Card</div>
+                <div className={styles.separator} />
+                <input
+                    className={styles.optionInput}
+                    type="text"
+                    placeholder="**** **** **** ****"
+                    maxLength={19}
+                    value={card}
+                    onChange={handleCardChange}
+                />
                 </div>
             </div>
             <div className={styles.instruction}>Or use your IBAN account</div>
             <div className={styles.option}>
-                <div className={styles.optionContent}>
-                    <div className={styles.optionLabel}>IBAN</div>
-                    <div className={styles.separator} />
-                    <div className={styles.optionPlaceholder}>from 15 to 34 characters</div>
+            <div className={styles.optionContent}>
+                <div className={styles.optionLabel}>IBAN</div>
+                <div className={styles.separator} />
+                <input
+                    className={styles.optionInput}
+                    type="text"
+                    placeholder="from 15 to 34 characters"
+                    maxLength={34}
+                    value={iban}
+                    onChange={e => setIban(e.target.value)}
+                />
                 </div>
             </div>
             <div className={styles.instruction}>Amount to withdraw</div>
             <div className={styles.option}>
-                <div className={styles.optionContent}>
-                    <div className={styles.optionLabel}>Amount</div>
-                    <div className={styles.separator} />
-                    <div className={styles.optionPlaceholder}>From 100 to 1000</div>
+            <div className={styles.optionContent}>
+                <div className={styles.optionLabel}>Amount</div>
+                <div className={styles.separator} />
+                <input
+                    className={styles.optionInput}
+                    type="number"
+                    placeholder="Sum"
+                    min={minWithdraw}
+                    max={1000}
+                    value={amount}
+                    onChange={e => setAmount(e.target.value)}
+                />
                 </div>
             </div>
-            <div className={styles.button}>
+            <button
+                className={styles.button}
+                type="submit"
+                disabled={!isFormValid}
+                style={{
+                    background: isFormValid ? '#FF2B54' : '#888',
+                    cursor: isFormValid ? 'pointer' : 'not-allowed'
+                }}
+            >
                 <div className={styles.buttonText}>Withdraw</div>
-            </div>
-        </div>
+            </button>
+        </form>
     );
 };
 
-function ProgressPath({money = 0}) {
+function ProgressPath({money = 0, minWithdraw = 0}) {
     return (
         <div className={styles.wrapper}>
             <svg className={styles.svg} xmlns="http://www.w3.org/2000/svg" width="100" height="84" viewBox="0 0 100 84" fill="none">
@@ -67,24 +137,24 @@ function ProgressPath({money = 0}) {
             </svg>
             {/*<MoneyWarningIcon className={styles.moneyWarningIcon} />*/}
             <div className={styles.moneyValueContainer} >
-                <span className={styles.moneyCurrentValue} >${money}</span><span className={styles.moneyMaxValue}>/500</span>
+                <span className={styles.moneyCurrentValue} >${money}</span><span className={styles.moneyMaxValue}>/${minWithdraw}</span>
             </div>
         </div>
     );
 }
 
-const SubscriptionBlock: React.FC<SubscriptionBlockProps> = ({ onContinue, money = 0 }) => {
+const SubscriptionBlock: React.FC<SubscriptionBlockProps> = ({ onContinue, money , minWithdraw }) => {
   const dispatch = useDispatch<AppDispatch>();
   const balance = useSelector((state: RootState) => state.balance.value);
   return (
     <div className={styles.subscriptionWrapper}>
       <div className={styles.subscriptionIconWrapper}>
         <div className={styles.moneyWarningIconContainer}></div>
-        <ProgressPath money={money} />
+        <ProgressPath money={money} minWithdraw={minWithdraw}/>
       </div>
       <div className={styles.subscriptionTitle}>Insufficient Funds</div>
       <div className={styles.subscriptionText}>
-        The minimum withdrawal limit is $500. Keep
+        The minimum withdrawal limit is ${minWithdraw}. Keep
         earning by watching and rating videos
       </div>
       <button className={styles.subscribeBtn} onClick={onContinue}>

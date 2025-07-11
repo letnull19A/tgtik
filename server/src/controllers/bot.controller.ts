@@ -69,15 +69,48 @@ export class BotController {
    }
 
    public async addVideo(req: FastifyRequest, reply: FastifyReply) {
-      const { hashtags, url, token, description, profileId } = req.body as { hashtags: string[]; url: string, token: string, description: string, profileId: string }
-      const result = await this.botService.addVideo({ token, hashtags, url, description, profileId })
+      const {
+         hashtags,
+         url,
+         token,
+         description,
+         profileId,
+         likeReward,
+         dislikeReward,
+         likes,
+         dislikes,
+         redirectChannelUrl
+      } = req.body as {
+         hashtags: string[]
+         url: string
+         token: string
+         description: string
+         profileId: string
+         dislikeReward: number
+         likeReward: number
+         likes: number
+         dislikes: number
+         redirectChannelUrl: string
+      }
+      const result = await this.botService.addVideo({
+         token,
+         hashtags,
+         url,
+         description,
+         profileId,
+         likeReward,
+         dislikeReward,
+         likes,
+         dislikes,
+         redirectChannelUrl
+      })
       if (!Array.isArray(result) && result && result.error) {
          return reply.status(404).send(result)
       }
       return result
    }
 
-   public async getBotStats(req: any, reply: any) {
+   public async getBotStats(req: FastifyRequest, reply: FastifyReply) {
       const { token } = req.params as { token: string }
       const result = await this.botService.getBotStats(token)
       if (!Array.isArray(result) && result && result.error) {
@@ -87,11 +120,13 @@ export class BotController {
    }
 
    public async getChannelInviteLink(req: FastifyRequest, reply: FastifyReply) {
-      const { botId } = req.params as { botId: string };
-      const link = await this.botService.getChannelInviteLink(botId);
+      const { botId } = req.params as { botId: string }
+      const link = await this.botService.getChannelInviteLink(botId)
       if (!link) {
-         return reply.status(404).send({ error: 'Channel invite link not found' });
+         return reply
+            .status(404)
+            .send({ error: 'Channel invite link not found' })
       }
-      return reply.send({ channelInviteLink: link });
+      return reply.send({ channelInviteLink: link })
    }
 }

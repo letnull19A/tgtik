@@ -44,14 +44,14 @@
 .wrapper {
   width: 358px;
   margin: 40px auto;
-  background: #2D2D2D;
+  background: none;
   border-radius: 11px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 16px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+  padding: 24px 20px;
 }
 
 .svg {
@@ -211,6 +211,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: transform 0.1s cubic-bezier(.4,0,.2,1);
+}
+.subscribeBtn:active {
+  transform: scale(0.94);
 }
 
 .header {
@@ -315,4 +319,38 @@
   font-size: 18px;
   font-weight: 600;
   word-wrap: break-word;
+}
+
+.optionInput {
+  background: transparent;      /* или #232323 для лёгкой тёмности */
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 15px;
+  width: 100%;
+  outline: none;
+  box-shadow: none;             /* убирает белую тень в Safari */
+  transition: border 0.2s;
+}
+
+.optionInput::placeholder {
+  color: #999;
+  font-size: 14px;
+}
+
+.optionInput:focus {
+  outline: none;
+  box-shadow: none;
+  border: none;
+}
+
+.optionInput[type="number"]::-webkit-outer-spin-button,
+.optionInput[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.optionInput[type="number"] {
+  -moz-appearance: textfield;
 }

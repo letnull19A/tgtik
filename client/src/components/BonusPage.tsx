@@ -7,6 +7,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { incrementBalance, setBalance } from '../store';
 import type { RootState, AppDispatch } from '../store';
 
+// Add this at the very top of the file
+declare global {
+  interface Window {
+    Telegram?: any;
+  }
+}
+
 type Referral = { referredId: string; username: string; bonus: number };
 
 const InviteList: React.FC<{refs: Referral[]}> = ({refs}) =>  {
@@ -36,6 +43,16 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
   const [isCopying, setIsCopying] = React.useState(false);
   const [isInvitePressed, setIsInvitePressed] = React.useState(false);
   const [promoCode, setPromoCode] = React.useState('');
+  const [message, setMessage] = React.useState('');
+  const [isTelegram, setIsTelegram] = React.useState(false);
+
+  // Проверяем, что мы в Telegram Mini App
+  React.useEffect(() => {
+    if (window.Telegram?.WebApp) {
+      window.Telegram.WebApp.ready();
+      setIsTelegram(true);
+    }
+  }, []);
 
   const handlePromoApply = () => {
     showToast('Promocode error', 'Promocode is not found!');
@@ -76,10 +93,41 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
     setTimeout(() => setIsCopying(false), 400);
   };
 
+  // Функция для обработки клика по кнопке "Поделиться"
+  const handleShare = async () => {
+    const shareUrl = window.location.href; // Или ваша кастомная ссылка
+    const shareText = 'Посмотрите это крутое приложение!'; // Текст для шаринга
+
+    try {
+      if (isTelegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.shareMessage({
+          text: `${shareText} ${shareUrl}`,
+        });
+        window.Telegram.WebApp.onEvent('shareMessageSent', () => {
+          setMessage('Ссылка успешно отправлена!');
+        });
+        window.Telegram.WebApp.onEvent('shareMessageFailed', () => {
+          setMessage('Ошибка при отправке ссылки.');
+        });
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        setMessage('Ссылка скопирована в буфер обмена!');
+      }
+    } catch (error) {
+      console.error('Ошибка:', error);
+      setMessage('Ошибка при копировании или отправке ссылки.');
+    }
+  };
+
+  // handleInviteClick теперь вызывает handleShare если isTelegram, иначе handleCopyInvite
   const handleInviteClick = () => {
     setIsInvitePressed(true);
     setTimeout(() => setIsInvitePressed(false), 300);
-    handleCopyInvite();
+    if (isTelegram) {
+      handleShare();
+    } else {
+      handleCopyInvite();
+    }
   };
 
   return (

@@ -5,10 +5,10 @@ export interface Database {
       token: string
       botId: string
       country: string
-      channelId: string 
+      channelId: string
+      likReward: number
+      dislikeReward: number
       channelInviteLink: string
-      likeReward: number // Changed from float to number
-      dislikeReward: number // Changed from float to number
       referralReward: number // Changed from float to number
       signupBonus: number // Changed from float to number
       withdrawalLimit: number // Changed from float to number
@@ -36,8 +36,13 @@ export interface Database {
       botId: string
       description: string
       profileId: string
+      likeReward: number
+      dislikeReward: number
+      likes: number
+      dislikes: number
       url: string
       hashtags: string
+      redirectChannelUrl: string
    }
    actions: {
       id: Generated<number>
@@ -67,7 +72,7 @@ export interface BotConfig {
    token: string
    country: string
    channelId: string
-   likeReward: number
+   likReward: number
    dislikeReward: number
    referralReward: number
    signupBonus: number
@@ -117,6 +122,11 @@ export type AddVideo = {
    hashtags: string[]
    description: string
    profileId: string
+   likeReward: number
+   dislikeReward: number
+   likes: number
+   dislikes: number
+   redirectChannelUrl: string
 }
 
 export type GetVideos = {

@@ -144,6 +144,16 @@
   font-weight: 400;
 }
 
+.registrationAgeDesc::-webkit-outer-spin-button,
+.registrationAgeDesc::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.registrationAgeDesc[type=number] {
+  -moz-appearance: textfield;
+}
+
 .registrationAgeInput {
   color: white;
   background: transparent;

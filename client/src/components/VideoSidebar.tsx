@@ -21,9 +21,12 @@ interface VideoSidebarProps {
   activeTab?: 'home' | 'bonus' | 'money';
   playing: boolean;
   isVideoLoading: boolean;
+  likeReward: number
+  dislikeReward: number
+  redirectChannelUrl: string
 }
 
-function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, currentIndex, isVideoReady, activeTab, playing, isVideoLoading }: VideoSidebarProps) {
+function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, currentIndex, isVideoReady, activeTab, playing, isVideoLoading, likeReward, dislikeReward, redirectChannelUrl }: VideoSidebarProps) {
     const timerFillLike = useRef<HTMLDivElement>(null);
     const timerFillDislike = useRef<HTMLDivElement>(null);
     const [timeStart, setTimeStart] = useState(0);
@@ -109,6 +112,7 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
           src={Profile1Image} 
           alt="profile" 
           className={styles.sidebarProfileImg} 
+          onClick={() => { window.location.href = redirectChannelUrl }}
           style={{ cursor: 'pointer' }}
         />
         <div className={styles.sidebarPlusVideo}>
@@ -141,7 +145,7 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
         <LikeIcon className={styles.sidebarIcon + (timerStatus === 'finished' ? ' ' + styles.sidebarIconGlow : '')} />
         {(timerStatus === 'finished' && !isBlocked) ? (
           <div className={styles.sidebarIconLabelHolder}>
-            <div className={styles.animatedDollar}>1$</div>
+            <div className={styles.animatedDollar}>{likeReward}$</div>
           </div>
         ) : (
           <div className={styles.sidebarIconLabelHolder}>
@@ -173,7 +177,7 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
         <DislikeIcon className={styles.sidebarIcon + (timerStatus === 'finished' ? ' ' + styles.sidebarIconGlow : '')} />
         {timerStatus === 'finished' && !isBlocked ? (
           <div className={styles.sidebarIconLabelHolder}>
-            <div className={styles.animatedDollar}>1$</div>
+            <div className={styles.animatedDollar}>{dislikeReward}$</div>
           </div>
         ) : (
           <div className={styles.sidebarIconLabelHolder}>
