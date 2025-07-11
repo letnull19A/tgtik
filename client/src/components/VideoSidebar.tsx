@@ -42,6 +42,7 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
     const timerState = useSelector((state: RootState) => state.timer);
     const [isTelegram, setIsTelegram] = useState(false);
     const [shareMessage, setShareMessage] = useState('');
+    const [isSharePressed, setIsSharePressed] = useState(false);
 
     const totalDuration = 3;
 
@@ -110,15 +111,33 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
 
     useEffect(() => {
       if (window.Telegram?.WebApp) {
+        window.Telegram.WebApp.ready?.();
         setIsTelegram(true);
       }
     }, []);
 
+    const handleCopyInvite = async () => {
+      try {
+        const res = await getReferralUrl(BOT_ID, USER_ID);
+        const link = res.data?.referralLink;
+        if (link) {
+          await navigator.clipboard.writeText(link);
+        }
+        setShareMessage('Ссылка скопирована в буфер обмена!');
+        setTimeout(() => setShareMessage(''), 2000);
+      } catch (e) {
+        setShareMessage('Ошибка при получении ссылки');
+        setTimeout(() => setShareMessage(''), 2000);
+      }
+    };
+
     const handleShare = async () => {
+      setIsSharePressed(true);
+      setTimeout(() => setIsSharePressed(false), 300);
       try {
         const res = await getReferralUrl(BOT_ID, USER_ID);
         const shareUrl = res.data?.referralLink || window.location.href;
-        const shareText = 'Посмотрите это крутое приложение!';
+        const shareText = '';
         if (isTelegram && window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
           const tgLink = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
           window.Telegram.WebApp.openTelegramLink(tgLink);
@@ -187,7 +206,7 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
           </div>
         ) : (
           <div className={styles.sidebarIconLabelHolder}>
-            <div className={styles.sidebarIconLabel}>{typeof likes === 'number' ? likes + 'k' : '--'}</div>
+            <div className={styles.sidebarIconLabel}>{typeof dislikes === 'number' ? dislikes + 'k' : '--'}</div>
           </div>
         )}
       </div>
@@ -219,14 +238,19 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
           </div>
         ) : (
           <div className={styles.sidebarIconLabelHolder}>
-            <div className={styles.sidebarIconLabel}>{typeof dislikes === 'number' ? dislikes + 'k' : '--'}</div>
+            <div className={styles.sidebarIconLabel}>{typeof likes === 'number' ? likes + 'k' : '--'}</div>
           </div>
         )}
       </div>
       <div className={styles.sidebarShareBlock} onClick={handleShare} style={{ cursor: 'pointer' }}>
-        <ShareIcon className={styles.sidebarShareIcon} />
+        <ShareIcon className={styles.sidebarShareIcon + (isSharePressed ? ' ' + styles.sidebarShareIconActive : '')} />
         <div className={styles.sidebarIconLabel}>Share</div>
       </div>
+      {shareMessage && (
+        <div style={{ position: 'absolute', bottom: 8, left: 0, right: 0, textAlign: 'center', color: '#fff', background: 'rgba(0,0,0,0.7)', borderRadius: 8, padding: '4px 12px', fontSize: 12, zIndex: 10000 }}>
+          {shareMessage}
+        </div>
+      )}
     </div>
   );
 }

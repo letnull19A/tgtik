@@ -98,7 +98,7 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
     try {
       const res = await getReferralUrl(BOT_ID, USER_ID);
       const shareUrl = res.data?.referralLink || window.location.href;
-      const shareText = 'Посмотрите это крутое приложение!';
+      const shareText = '';
 
       console.log('isTelegram:', isTelegram);
       console.log('window.Telegram:', window.Telegram);
