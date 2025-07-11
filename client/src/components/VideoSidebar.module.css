@@ -1,0 +1,103 @@
+.videoSidebar {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 17px;
+  z-index: 10003;
+}
+
+.sidebarProfileWrapper {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  margin-bottom: 0;
+}
+
+.sidebarProfileImg {
+  width: 50px;
+  height: 50px;
+  border-radius: 100px;
+  border: 1px solid #FFF;
+  object-fit: cover;
+  aspect-ratio: 1/1;
+  display: block;
+}
+
+.sidebarPlusVideo {
+  position: absolute;
+  left: 50%;
+  bottom: -10px;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  z-index: 1;
+}
+
+.sidebarIconBlock {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.37);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebarIcon {
+  width: 52px;
+  height: 46px;
+}
+
+.sidebarIconLabel {
+  color: #FFF;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.sidebarShareBlock {
+  width: 52px;
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebarShareIcon {
+  width: 52px;
+  height: 46px;
+}
+
+.sidebarPlusVideoDot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #FF2B54;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.sidebarPlusIcon {
+  width: 9px;
+  height: 9px;
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+} 

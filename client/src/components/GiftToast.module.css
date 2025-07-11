@@ -1,0 +1,69 @@
+.giftToast {
+  position: fixed;
+  top: 16px;
+  left: 10px;
+  right: 10px;
+  height: 43px;
+  background: #fff;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  z-index: 20000;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+  padding: 6px 7px 6px 11px;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 0.3s cubic-bezier(0.4,0,0.2,1), transform 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+.giftToastVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.giftToastHidden {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.giftToastWarning {
+  width: 28px;
+  height: 28px;
+  margin-right: 11px;
+  flex-shrink: 0;
+}
+
+.giftToastContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.giftToastTitle {
+  color: #000;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.giftToastDesc {
+  color: #808080;
+  font-size: 10px;
+  font-weight: 400;
+}
+
+.giftToastClose {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.giftToastClose svg {
+  width: 24px;
+  height: 24px;
+  display: block;
+} 

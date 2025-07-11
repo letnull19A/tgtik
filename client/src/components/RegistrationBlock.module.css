@@ -1,0 +1,160 @@
+.registrationPopup {
+  width: 320px;
+  padding: 20px 16px 16px 16px;
+  background: #2D2D2D;
+  border-radius: 11px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+.registrationTitle {
+  text-align: center;
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 30px;
+  word-wrap: break-word;
+}
+
+.registrationLabel {
+  width: 288px;
+  color: #999999;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 21px;
+  word-wrap: break-word;
+}
+
+.registrationGenderBlock {
+  width: 288px;
+  padding: 12px 11px;
+  background: #191919;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.registrationGenderRow {
+  align-self: stretch;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.registrationGenderText {
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  word-wrap: break-word;
+}
+
+.registrationGenderRadio {
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  border: 1px #5C5C5C solid;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.selected {
+  background: #FF2B54;
+  border: none;
+}
+
+.registrationGenderRadioDot {
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 9999px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+}
+
+.registrationAgeBlock {
+  width: 288px;
+  padding: 12px 11px;
+  background: #191919;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.registrationAgeRow {
+  width: 253px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.registrationAgeText {
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  word-wrap: break-word;
+}
+
+.registrationAgeDivider {
+  width: 21px;
+  height: 0;
+  border-top: 1px #999999 solid;
+  transform: rotate(90deg);
+}
+
+.registrationAgeDesc {
+  color: white;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  word-wrap: break-word;
+  background: transparent;
+  border: none;
+  outline: none;
+  text-align: left;
+  padding: 0;
+  width: 100%;
+}
+
+.registrationAgeDesc::placeholder {
+  color: #999999;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.registrationAgeInput {
+  color: white;
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  outline: none;
+  text-align: left;
+  padding: 0;
+}
+
+.registrationAgeInput::placeholder {
+  color: #999999;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.registrationAgeError {
+  color: #FF2B54;
+  font-size: 12px;
+  margin-top: 4px;
+  text-align: left;
+} 

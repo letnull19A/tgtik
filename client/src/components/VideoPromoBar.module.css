@@ -1,0 +1,40 @@
+.videoPromoBar {
+  position: fixed;
+  left: 0;
+  bottom: 94px;
+  width: 100%;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.70);
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0;
+  z-index: 10001;
+}
+
+.promoTelegramIcon {
+  width: 14px;
+  height: 14px;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.promoMain {
+  display: flex;
+  align-items: center;
+}
+
+.promoText {
+  color: #FFF;
+  font-size: 12px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.promoNextstepIcon {
+  width: 12px;
+  height: 24px;
+  flex-shrink: 0;
+} 

@@ -1,0 +1,40 @@
+.videoInfoBlock {
+  position: absolute;
+  left: 12px;
+  right: 32px;
+  bottom: calc(94px + 32px + 8px);
+  z-index: 10004;
+  display: flex;
+  flex-direction: column;
+}
+
+.videoInfoChannelRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 9px;
+}
+
+.videoInfoChannel {
+  color: #FFF;
+  font-size: 16px;
+  font-weight: 700;
+  margin-right: 8px;
+}
+
+.videoInfoVerification {
+  width: 19px;
+  height: 18px;
+}
+
+.videoInfoDesc {
+  color: #FFF;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.videoInfoTags {
+  color: #FFF;
+  font-size: 14px;
+  font-weight: 700;
+} 

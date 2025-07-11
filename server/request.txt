@@ -1,0 +1,57 @@
+
+http://localhost:3000/api/bot/start
+{
+    "token": "8073549037:AAFiVtGEXiI3U6P7g2JdOqPh6HZyJZSWwkA",
+    "country": "en",
+    "channelId": "1002849920311",
+    "likeReward": 10,
+    "dislikeReward": 5,
+    "referralReward": 3,
+    "signupBonus": 15,
+    "withdrawalLimit": 200,
+    "currency": "$",
+    "dailyVideoLimit": 20,
+    "status": "running"
+}
+
+http://localhost:3000/api/bot/stop
+{
+    "token": "8073549037:AAFiVtGEXiI3U6P7g2JdOqPh6HZyJZSWwkA"
+}
+
+http://localhost:3000/api/bots
+
+
+http://localhost:3000/api/webapp/8073549037:AAFiVtGEXiI3U6P7g2JdOqPh6HZyJZSWwkA/action
+
+{
+    "userId": "633214694",
+    "videoId": 1,
+    "action": "like"
+}
+
+http://localhost:3000/api/bot/8073549037:AAFiVtGEXiI3U6P7g2JdOqPh6HZyJZSWwkA
+
+{
+    "token": "8073549037:AAFiVtGEXiI3U6P7g2JdOqPh6HZyJZSWwkA",
+    "country": "en",
+    "channelId": "1002849920311",
+    "likeReward": 10,
+    "dislikeReward": 5,
+    "referralReward": 3,
+    "signupBonus": 15,
+    "withdrawalLimit": 200,
+    "currency": "$",
+    "dailyVideoLimit": 20,
+    "status": "running"
+}
+
+http://localhost:3000/api/bot/status/8073549037:AAFiVtGEXiI3U6P7g2JdOqPh6HZyJZSWwkA
+http://localhost:3000/api/webapp/8073549037:AAFiVtGEXiI3U6P7g2JdOqPh6HZyJZSWwkA/video/add
+{
+    "url": "yandex.ru",
+    "hashtags": [
+        "#key",
+        "#lol"
+    ]
+}

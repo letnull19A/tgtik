@@ -1,0 +1,26 @@
+version: '3.9'
+
+
+services:
+  postgres:
+    image: postgres:15.3
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: bot-database
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  app:
+    build: .
+    depends_on:
+      - postgres
+    ports:
+      - '3000:3000'
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

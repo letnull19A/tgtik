@@ -1,0 +1,11 @@
+.videoBalanceBar {
+  position: absolute;
+  top: 52px;
+  left: 0;
+  width: 100%;
+  color: #FFF;
+  text-align: center;
+  font-size: 39px;
+  font-weight: 600;
+  z-index: 10002;
+} 

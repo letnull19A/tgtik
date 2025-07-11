@@ -1,0 +1,34 @@
+.nextBtn {
+  background: #FF2B54;
+  color: white;
+  height: 46px;
+  font-size: 18px;
+  font-weight: 600;
+  border: none;
+  border-radius: 9px;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: background 0.2s;
+  width: calc(100% - 32px);
+  margin-right: 16px;
+  margin-left: 16px;
+}
+
+.nextBtn:hover {
+  background: #e5005f;
+}
+
+.registrationAccountBtn {
+  background: #2E2E2E;
+}
+
+.subscribeLink {
+  font-size: 0.8rem;
+  color: #fff;
+  border-bottom: 1px solid white;
+  cursor: pointer;
+}
+
+.subscribeLink:hover {
+  color: white;
+} 

@@ -1,0 +1,113 @@
+.giftWindow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 94px);
+  z-index: 30000;
+  background: rgba(217, 217, 217, 0.50);
+  backdrop-filter: blur(9.3px);
+}
+
+.giftWindowVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.giftWindowHidden {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.giftContentWindow {
+  margin: 155px 10px 0;
+  height: 293px;
+  display: flex;
+  justify-content: center;
+}
+
+.giftContentWindowContainer {
+  width: 100%;
+  height: 100%;
+  max-width: 347px;
+  position: relative;
+}
+
+.giftContentWindowImage {
+  width: 100%;
+  height: 100%;
+}
+
+.closeGiftWindowIconBtn {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  right: 20px;
+  top: 20px;
+  z-index: 31000;
+}
+
+.closeGiftWindowIcon {
+  width: 24px;
+  height: 24px;
+}
+
+.innerContentGiftWindow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.innerContentGiftWindowTitle {
+  text-align: center;
+  color: #FFF;
+  font-size: 16px;
+  font-weight: 400;
+  margin-top: 22px;
+  line-height: normal;
+}
+
+.innerContentGiftWindowInfoContainer {
+  margin-top: 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.innerContentGiftWindowInfoIconContainer {
+  width: 70px;
+  height: 70px;
+  padding: 18px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.20);
+}
+
+.innerContentGiftWindowInfoIcon {
+  width: 34px;
+  height: 34px;
+}
+
+.innerContentGiftWindowBalanceText {
+  color: #FFF;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.innerContentGiftWindowBalanceValue {
+  color: #FFF;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.innerContentGiftWindowClaim {
+  position: absolute;
+  bottom: 15px;
+  color: #FF2B54;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  width: 100%;
+} 

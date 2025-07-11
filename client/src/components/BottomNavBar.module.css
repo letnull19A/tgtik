@@ -1,0 +1,64 @@
+.bottomNavBar {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 94px;
+  background: #0F0F0F;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  z-index: 10000;
+}
+
+.navItem {
+  width: 54px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.navItem:hover {
+  opacity: 0.8;
+}
+
+.navItem:nth-child(2) {
+  width: 66px;
+}
+
+.navItem:nth-child(3) {
+  width: 54px;
+}
+
+.navIcon {
+  width: 33px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.navLabel {
+  text-align: center;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16.2px;
+  word-wrap: break-word;
+}
+
+.navLabelInactive {
+  color: rgba(255,255,255,0.5);
+}
+
+.navItemActive .navLabel {
+  color: #fff;
+} 

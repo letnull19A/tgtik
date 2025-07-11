@@ -1,0 +1,50 @@
+.videoTopBar {
+  position: absolute;
+  top: 20px;
+  width: calc(100% - 32px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 16px;
+  z-index: 10002;
+}
+
+.topbarGiftIcon {
+  width: 26px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.topbarInfoIcon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.topbarCenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.topbarProgress {
+  color: #FFF;
+  font-size: 16px;
+  font-weight: 600;
+  margin-right: 12px;
+}
+
+.topbarDivider {
+  width: 1px;
+  height: 20px;
+  background: #FFF;
+  margin-right: 12px;
+  display: inline-block;
+}
+
+.topbarTitle {
+  color: #FFF;
+  font-size: 16px;
+  font-weight: 600;
+} 
