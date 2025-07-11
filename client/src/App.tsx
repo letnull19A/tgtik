@@ -7,13 +7,13 @@ import BonusPage from './components/BonusPage';
 import BottomNavBar from './components/BottomNavBar';
 import SubscriptionBlock from './components/SubscriptionBlock';
 import { WithdrawalForm } from './components/SubscriptionBlock';
-import { getIsRegisteredCurrent, registerCurrent, getRateWithBalanceCurrent, getCanWithdrawCurrent, withdrawCurrent, isTelegramWebApp, getTranslations, getTranslationsByCountry, getCountry, getChannelInviteLink, getBotId } from "./api/api";
+import { getIsRegisteredCurrent, registerCurrent, getRateWithBalanceCurrent, getCanWithdrawCurrent, withdrawCurrent, isTelegramWebApp, getTranslations, getTranslationsByCountry, getCountry, getChannelInviteLink, getBotId, getBotStart } from "./api/api";
 import { Sex } from "./components/RegistrationBlock";
 import HelloLoader from './components/HelloLoader';
 import GiftToast from './components/GiftToast';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from './store';
-import { setLoading, setRegistered, setBalance, setChannelInviteLink } from './store';
+import { setLoading, setRegistered, setBalance, setChannelInviteLink, setChannelLoading, setBotLink } from './store';
 import { AxiosError } from "axios";
 import { initTelegramWebApp } from './utils/telegram';
 
@@ -124,18 +124,25 @@ export default function App() {
 
   // Загрузка ссылки на канал при инициализации
   useEffect(() => {
-    const fetchChannelLink = async () => {
+    const fetchBotStart = async () => {
       const botId = getBotId();
       if (botId) {
         try {
-          const res = await getChannelInviteLink(botId);
-          dispatch(setChannelInviteLink(res.data.channelInviteLink));
+          const res = await getBotStart(botId);
+          if (res.data) {
+            if (res.data.channelInviteLink) {
+              dispatch(setChannelInviteLink(res.data.channelInviteLink));
+            }
+            if (res.data.botLink) {
+              dispatch(setBotLink(res.data.botLink));
+            }
+          }
         } catch (e) {
-          console.error('Failed to fetch channel invite link:', e);
+          console.error('Failed to fetch bot start info:', e);
         }
       }
     };
-    fetchChannelLink();
+    fetchBotStart();
   }, [dispatch]);
 
   const fetchCanWithdraw = async () => {

@@ -36,6 +36,8 @@ const InviteList: React.FC<{refs: Referral[], onInvite: () => void, translations
 
 const BonusPage: React.FC<{ showToast: (title: string, description: string) => void, translations: any }> = ({ showToast, translations }) => {
   const channelUrl = useSelector((state: RootState) => state.channel.inviteLink);
+  const [promoCode, setPromoCode] = React.useState('');
+  const botLink = useSelector((state: RootState) => state.channel.botLink);
 
   // Проверяем, что мы в Telegram Mini App
   React.useEffect(() => {
@@ -67,33 +69,26 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
   }, []);
 
   const handleCopyInvite = async () => {
+    if (!botLink) return;
     try {
-      const res = await getReferralUrlCurrent();
-      const link = res.data?.referralLink;
-      if (link) {
-        await navigator.clipboard.writeText(link);
-      }
+      await navigator.clipboard.writeText(botLink);
     } catch (e) {
-      console.log('Ошибка при получении ссылки');
+      console.log('Ошибка при копировании ссылки');
     }
   };
 
   // Функция для обработки клика по кнопке "Поделиться"
   const handleShare = async () => {
-    try {
-      const res = await getReferralUrlCurrent();
-      const shareUrl = res.data?.referralLink || window.location.href;
-      const shareText = '';
+    if (!botLink) return;
+    const shareUrl = botLink;
+    const shareText = '';
 
-      if (window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
-        const tgLink = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
-        console.log('Opening Telegram link:', tgLink);
-        window.Telegram.WebApp.openTelegramLink(tgLink);
-      } else {
-        await navigator.clipboard.writeText(shareUrl);
-      }
-    } catch (error) {
-      console.error('Ошибка:', error);
+    if (window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
+      const tgLink = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
+      console.log('Opening Telegram link:', tgLink);
+      window.Telegram.WebApp.openTelegramLink(tgLink);
+    } else {
+      await navigator.clipboard.writeText(shareUrl);
     }
   };
 
@@ -152,8 +147,8 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
             className={styles.bonusPromoInput}
             type="text"
             placeholder={translations.promocode}
-            value=""
-            onChange={() => {}}
+            value={promoCode}
+            onChange={e => setPromoCode(e.target.value.toUpperCase())}
           />
           <img
             src={require('../assets/BonusApplyIcon.svg').default}

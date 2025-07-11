@@ -112,11 +112,13 @@ const balanceSlice = createSlice({
 // --- Channel Slice ---
 interface ChannelState {
   inviteLink: string;
+  botLink: string;
   isLoading: boolean;
 }
 
 const initialChannelState: ChannelState = {
   inviteLink: '',
+  botLink: '',
   isLoading: false,
 };
 
@@ -127,6 +129,9 @@ const channelSlice = createSlice({
     setChannelInviteLink(state, action: PayloadAction<string>) {
       state.inviteLink = action.payload;
     },
+    setBotLink(state, action: PayloadAction<string>) {
+      state.botLink = action.payload;
+    },
     setChannelLoading(state, action: PayloadAction<boolean>) {
       state.isLoading = action.payload;
     },
@@ -136,7 +141,7 @@ const channelSlice = createSlice({
 export const { setLoading, setRegistered } = appSlice.actions;
 export const { startTimer, pauseTimer, resumeTimer, resetTimer, finishTimer } = timerSlice.actions;
 export const { setBalance, incrementBalance, decrementBalance } = balanceSlice.actions;
-export const { setChannelInviteLink, setChannelLoading } = channelSlice.actions;
+export const { setChannelInviteLink, setChannelLoading, setBotLink } = channelSlice.actions;
 
 export const store = configureStore({
   reducer: {

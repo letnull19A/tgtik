@@ -105,6 +105,10 @@ const getTranslationsByCountry = (country: string) => {
     return api.get(`/api/i18n/by-country/${country}`);
 };
 
+const getBotStart = (botId: string) => {
+    return api.get(`/api/bot/start?botId=${botId}`);
+};
+
 // Функции-обертки, которые автоматически используют текущие ID
 const getIsRegisteredCurrent = () => getIsRegistered(getCurrentBotId(), getCurrentUserId());
 const registerCurrent = (data: Omit<RegisterRequest, 'botId' | 'userId'>) => {
@@ -160,5 +164,6 @@ export {
     isTelegramWebApp,
     getTranslations,
     getTranslationsByCountry,
-    getBotId
+    getBotId,
+    getBotStart
 }
