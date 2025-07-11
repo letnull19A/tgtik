@@ -48,6 +48,15 @@ const Profile: React.FC<ProfileProps> = ({
 
   if (!visible) return null;
 
+  const openTelegramChannel = () => {
+    const channelUrl = 'https://t.me/test_tik_tok1_bot_channel';
+    if (window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
+      window.Telegram.WebApp.openTelegramLink(channelUrl);
+    } else {
+      window.open(channelUrl, '_blank');
+    }
+  };
+
   return (
     <div
       className={styles.profileModal + (animate && open ? ' ' + styles.open : '')}
@@ -68,11 +77,12 @@ const Profile: React.FC<ProfileProps> = ({
             className={styles.profileAvatar} 
             src={avatarUrl} 
             alt="Profile avatar" 
+            onClick={openTelegramChannel}
           />
           <div className={styles.profileUsername}>{username}</div>
-          <div className={styles.verificationStatus}>
+          <div className={styles.verificationStatus} style={isVerified ? { background: '#09C46A' } : {}}>
             <span className={styles.verificationText}>
-              {isVerified ? 'Account verified' : 'Account not verified'}
+              {isVerified ? 'Account is verified' : 'Account not verified'}
             </span>
           </div>
           <div className={styles.statsContainer}>
@@ -101,12 +111,14 @@ const Profile: React.FC<ProfileProps> = ({
             <div className={styles.statValue}>{earnings}</div>
             <div className={styles.statLabel}>Earnings</div>
           </div>
-          <button 
-            className={styles.verificationButton}
-            onClick={onPassVerification}
-          >
-            Pass verification
-          </button>
+          {!isVerified && (
+            <button 
+              className={styles.verificationButton}
+              onClick={openTelegramChannel}
+            >
+              Pass verification
+            </button>
+          )}
         </div>
       </div>
     </div>

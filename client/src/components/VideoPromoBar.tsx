@@ -3,9 +3,9 @@ import { ReactComponent as TelegramIcon } from '../assets/TelegramIcon.svg';
 import { ReactComponent as NextStepIcon } from '../assets/NextStepIcon.svg';
 import styles from './VideoPromoBar.module.css';
 
-function VideoPromoBar() {
+function VideoPromoBar({ onOpenTelegramChannel }: { onOpenTelegramChannel: () => void }) {
   return (
-    <div className={styles.videoPromoBar}>
+    <div className={styles.videoPromoBar} onClick={onOpenTelegramChannel} style={{ cursor: 'pointer' }}>
       <div className={styles.promoMain}>
         <TelegramIcon className={styles.promoTelegramIcon} />
         <span className={styles.promoText}>How to earn more? • all this in the channel 🔥‍🔥‍🔥</span>

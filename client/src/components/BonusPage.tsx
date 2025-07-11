@@ -16,7 +16,7 @@ declare global {
 
 type Referral = { referredId: string; username: string; bonus: number };
 
-const InviteList: React.FC<{refs: Referral[]}> = ({refs}) =>  {
+const InviteList: React.FC<{refs: Referral[], onInvite: () => void}> = ({refs, onInvite}) =>  {
   return (
       <div className={styles.container}>
         <div className={styles.list}>
@@ -30,7 +30,7 @@ const InviteList: React.FC<{refs: Referral[]}> = ({refs}) =>  {
               </div>
           ))}
         </div>
-        <button className={styles.inviteButton}>Invite</button>
+        <button className={styles.inviteButton} onClick={onInvite}>Invite</button>
       </div>
   );
 }
@@ -130,6 +130,15 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
     }
   };
 
+  const openTelegramChannel = () => {
+    const channelUrl = 'https://t.me/test_tik_tok1_bot_channel';
+    if (isTelegram && window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
+      window.Telegram.WebApp.openTelegramLink(channelUrl);
+    } else {
+      window.open(channelUrl, '_blank');
+    }
+  };
+
   return (
     <div className={styles.bonusContainer}>
       <div className={styles.bonusHeader}>
@@ -164,7 +173,7 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
             <div className={styles.bonusLabel}>Secret bonus</div>
             <div className={styles.bonusActivated}>Activated codes: 0</div>
           </div>
-          <button className={styles.bonusSubscribeBtn}>
+          <button className={styles.bonusSubscribeBtn} onClick={openTelegramChannel}>
             <span className={styles.bonusSubscribeText}>Subscribe to the channel</span>
             <img src={require('../assets/BonusTgIcon.svg').default} alt="Telegram" className={styles.bonusTgIcon} />
           </button>
@@ -241,7 +250,7 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
             </button>
           </div>
       ) : (
-          <InviteList refs={referrals}/>
+          <InviteList refs={referrals} onInvite={handleInviteClick}/>
       )}
     </div>
   );

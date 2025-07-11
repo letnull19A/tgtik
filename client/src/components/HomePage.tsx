@@ -25,6 +25,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
   const [showProfile, setShowProfile] = useState(false);
   const [progress, setProgress] = useState(0);
   const [profile, setProfile] = useState<GetProfileResponse | null>(null)
+  const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
   const [videos, setVideos] = useState<VideoType[]>([]);
   const [reward, setReward] = useState<{dislikeReward: number, likeReward: number}>({ dislikeReward: 0, likeReward: 0})
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -59,6 +60,9 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
       const response = await getProfile(BOT_ID, USER_ID)
       const data = response.data
       setProfile(data)
+      // Получаем статус подписки
+      const subRes = await getIsSubscribed(BOT_ID, USER_ID);
+      setIsSubscribed(!!subRes.data.isSubscribed);
     } catch (error) {
       console.error('Ошибка при получении профиля:', error)
     }
@@ -201,6 +205,15 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
     setShowGiftToast(false);
   };
 
+  const openTelegramChannel = () => {
+    const channelUrl = 'https://t.me/test_tik_tok1_bot_channel';
+    if (window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
+      window.Telegram.WebApp.openTelegramLink(channelUrl);
+    } else {
+      window.open(channelUrl, '_blank');
+    }
+  };
+
   return (
     <>
       {showGiftWindow && (
@@ -221,7 +234,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
           likes={profile.likes}
           dislikes={profile.dislikes}
           earnings={profile.earnings?.toString()}
-          isVerified={false}
+          isVerified={isSubscribed}
           onPassVerification={handlePassVerification}
           onClose={handleCloseProfile}
           open={showProfile}
@@ -235,7 +248,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
       <VideoProgressBar progress={progress} />
       <VideoTopBar onGiftClick={handleGiftClick} rate={rate} maxVideos={maxVideos} onProfileClick={handleOpenProfile}/>
       <VideoBalanceBar />
-      <VideoPromoBar />
+      <VideoPromoBar onOpenTelegramChannel={openTelegramChannel} />
       <div className={styles.homePage}>
         <VideoSidebar
           key={currentIndex}
