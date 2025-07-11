@@ -93,6 +93,10 @@ const withdraw = (botId: string, userId: string, amount: number, cardNumber: str
     })
 }
 
+const getChannelInviteLink = (botId: string) => {
+    return api.get<{ channelInviteLink: string }>(`/api/bot/${botId}/channel-invite-link`);
+};
+
 const getTranslations = (lang: string) => {
     return api.get(`/api/i18n/${lang}`);
 };
@@ -135,6 +139,7 @@ export {
     getIsSubscribed, 
     getCanWithdraw, 
     withdraw,
+    getChannelInviteLink,
     // Функции с автоматическим получением ID
     getIsRegisteredCurrent,
     registerCurrent,
@@ -154,5 +159,6 @@ export {
     getCountry,
     isTelegramWebApp,
     getTranslations,
-    getTranslationsByCountry
+    getTranslationsByCountry,
+    getBotId
 }

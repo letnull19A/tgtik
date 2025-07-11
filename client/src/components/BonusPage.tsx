@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './BonusPage.module.css';
 import { ReactComponent as BonusBigFriendsIcon } from '../assets/BonusBigFriendsIcon.svg';
-import { getReferralUrlCurrent, getReferralsCurrent, getRateWithBalanceCurrent } from '../api/api';
+import { getReferralUrlCurrent, getReferralsCurrent, getRateWithBalanceCurrent, getChannelInviteLink, getBotId } from '../api/api';
 import GiftToast from './GiftToast';
 import { useSelector, useDispatch } from 'react-redux';
 import { incrementBalance, setBalance } from '../store';
@@ -16,7 +16,7 @@ declare global {
 
 type Referral = { referredId: string; username: string; bonus: number };
 
-const InviteList: React.FC<{refs: Referral[], onInvite: () => void}> = ({refs, onInvite}) =>  {
+const InviteList: React.FC<{refs: Referral[], onInvite: () => void, translations: any}> = ({refs, onInvite, translations}) =>  {
   return (
       <div className={styles.container}>
         <div className={styles.list}>
@@ -25,12 +25,12 @@ const InviteList: React.FC<{refs: Referral[], onInvite: () => void}> = ({refs, o
                 <img src={'https://placehold.co/40x40'} alt="avatar" className={styles.avatar} />
                 <div className={styles.text}>
                   <div className={styles.username}>{ref.username}</div>
-                  <div className={styles.bonus}>+${ref.bonus} bonus</div>
+                  <div className={styles.bonus}>+{translations.currency}{ref.bonus} {translations.bonus || 'bonus'}</div>
                 </div>
               </div>
           ))}
         </div>
-        <button className={styles.inviteButton} onClick={onInvite}>Invite</button>
+        <button className={styles.inviteButton} onClick={onInvite}>{translations.invite}</button>
       </div>
   );
 }
@@ -45,6 +45,7 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
   const [promoCode, setPromoCode] = React.useState('');
   const [message, setMessage] = React.useState('');
   const [isTelegram, setIsTelegram] = React.useState(false);
+  const [channelUrl, setChannelUrl] = React.useState<string>('');
 
   // Проверяем, что мы в Telegram Mini App
   React.useEffect(() => {
@@ -52,6 +53,22 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
       window.Telegram.WebApp.ready();
       setIsTelegram(true);
     }
+  }, []);
+
+  // Получаем ссылку на канал
+  React.useEffect(() => {
+    const fetchChannelUrl = async () => {
+      const botId = getBotId();
+      if (botId) {
+        try {
+          const res = await getChannelInviteLink(botId);
+          setChannelUrl(res.data.channelInviteLink);
+        } catch (e) {
+          setChannelUrl('');
+        }
+      }
+    };
+    fetchChannelUrl();
   }, []);
 
   const handlePromoApply = () => {
@@ -131,7 +148,7 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
   };
 
   const openTelegramChannel = () => {
-    const channelUrl = 'https://t.me/test_tik_tok1_bot_channel';
+    if (!channelUrl) return;
     if (isTelegram && window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
       window.Telegram.WebApp.openTelegramLink(channelUrl);
     } else {
@@ -154,12 +171,8 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
         <div className={styles.bonusTitle} style={{ textAlign: 'center' }}>
           <div className={styles.marqueeWrapper}>
             <div className={styles.marqueeTrack}>
-              <span className={styles.marqueeText}>
-                REFERAL SYSTEM BONUS REFERAL SYSTEM BONUS REFERAL SYSTEM BONUS REFERAL SYSTEM BONUS REFERAL SYSTEM BONUS REFERAL SYSTEM BONUS REFERAL SYSTEM BONUS REFERAL SYSTEM BONUS REFERAL SYSTEM BONUS REFERAL SYSTEM BONUS
-              </span>
-              <span className={styles.marqueeText}>
-                REFERAL SYSTEM BONUS REFERAL SYSTEM BONUS REFERAL SYSTEM BONUS REFERAL SYSTEM BONUS REFERAL SYSTEM BONUS REFERAL SYSTEM BONUS REFERAL SYSTEM BONUS REFERAL SYSTEM BONUS REFERAL SYSTEM BONUS REFERAL SYSTEM BONUS
-              </span>
+              <span className={styles.marqueeText}>{translations.referralSystemBonus}</span>
+              <span className={styles.marqueeText}>{translations.referralSystemBonus}</span>
             </div>
           </div>
         </div>
@@ -183,13 +196,13 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
           <input
             className={styles.bonusPromoInput}
             type="text"
-            placeholder="Promo code | ..."
+            placeholder={translations.promocode}
             value={promoCode}
             onChange={e => setPromoCode(e.target.value.toUpperCase())}
           />
           <img
             src={require('../assets/BonusApplyIcon.svg').default}
-            alt="Apply"
+            alt={translations.apply || 'Apply'}
             className={styles.bonusPromoIcon}
             style={{ cursor: 'pointer' }}
             onClick={handlePromoApply}
@@ -203,42 +216,40 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
             <img src={require('../assets/BonusFriendsIcon.svg').default} alt="Friends" className={styles.friendsListIcon} />
           </div>
           <div className={styles.friendsListTextBlock}>
-            <div className={styles.friendsListTitle}>Friends list</div>
-            <div className={styles.friendsListSubtitle}>Invited friends: {referrals.length}</div>
+            <div className={styles.friendsListTitle}>{translations.friendsList}</div>
+            <div className={styles.friendsListSubtitle}>{translations.invitedFriends.replace('{count}', referrals.length.toString())}</div>
           </div>
           <button className={styles.friendsReloadBtn} onClick={fetchReferrals}>
             <span className={styles.friendsReloadBtnBg}>
               <img
                 src={require('../assets/BonusReloadIcon.svg').default}
-                alt="Reload"
+                alt={translations.reload}
                 className={styles.friendsReloadIcon + (isReloading ? ' ' + styles.friendsReloadIconActive : '')}
               />
             </span>
           </button>
           <button className={styles.copyInviteBtn} onClick={handleCopyInvite}>
-            <span className={styles.copyInviteText}>Copy invitation link</span>
+            <span className={styles.copyInviteText}>{translations.copyInvitationLink}</span>
             <span className={styles.copyInviteIconBg}>
               <img
                 src={require('../assets/BonusCopyIcon.svg').default}
-                alt="Copy"
+                alt={translations.copy}
                 className={styles.copyInviteIcon + (isCopying ? ' ' + styles.copyInviteIconActive : '')}
               />
             </span>
           </button>
         </div>
         <div className={styles.friendsListInfoText}>
-          <span className={styles.friendsListInfoTextBold}>Invite your friends</span>
-          <span className={styles.friendsListInfoTextNormal}> and start earning! Share your link or send a direct invitation —</span>
-          <span className={styles.friendsListInfoTextBold}> get {translations.currency}100</span>
-          <span className={styles.friendsListInfoTextNormal}> for each friend you bring. Start earning today!</span>
+          <span className={styles.friendsListInfoTextBold}>{translations.inviteFriendsEarn.split('!')[0]}!</span>
+          <span className={styles.friendsListInfoTextNormal}>{translations.inviteFriendsEarn.split('!')[1]}</span>
         </div>
       </div>
       {referrals.length === 0 ? (
           <div className={styles.bonusFriendsList}>
             <div className={styles.bonusEmptyList}>
               <BonusBigFriendsIcon className={styles.bonusBigFriendsIcon}/>
-              <div className={styles.bonusEmptyTitle}>Invite friends to receive a bonus</div>
-              <div className={styles.bonusEmptyDesc}>All invited friends will appear in this list</div>
+              <div className={styles.bonusEmptyTitle}>{translations.inviteFriendsBonus}</div>
+              <div className={styles.bonusEmptyDesc}>{translations.invitedFriendsAppear}</div>
             </div>
             <button
               className={styles.bonusInviteBtn + (isInvitePressed ? ' ' + styles.bonusInviteBtnActive : '')}
@@ -248,7 +259,7 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
             </button>
           </div>
       ) : (
-          <InviteList refs={referrals} onInvite={handleInviteClick}/>
+        <InviteList refs={referrals} onInvite={handleInviteClick} translations={translations}/>
       )}
     </div>
   );

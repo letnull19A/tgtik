@@ -11,7 +11,7 @@ import GiftToast from './GiftToast';
 import GiftWindow from './GiftWindow';
 import Profile from './Profile';
 import styles from './HomePage.module.css';
-import { getProfileCurrent, getVideosCurrent, getRateWithBalanceCurrent, doActionCurrent, addSignupBonusCurrent, getIsSubscribedCurrent } from '../api/api';
+import { getProfileCurrent, getVideosCurrent, getRateWithBalanceCurrent, doActionCurrent, addSignupBonusCurrent, getIsSubscribedCurrent, getChannelInviteLink } from '../api/api';
 import { GetProfileResponse, Video as VideoType } from '../api/types';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
@@ -38,6 +38,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
   const [playing, setPlaying] = useState(true);
   const dispatch = useDispatch<AppDispatch>();
   const balance = useSelector((state: RootState) => state.balance.value);
+  const [channelUrl, setChannelUrl] = useState<string>('');
 
   useEffect(() => {
     setMoney(balance);
@@ -55,6 +56,22 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
       setIsOpenBackgroundModal(true);
     }
   }, [activeTab, videos.length, currentIndex, setIsOpenBackgroundModal]);
+
+  useEffect(() => {
+    // Получаем ссылку на канал
+    const fetchChannelUrl = async () => {
+      const botId = getBotId();
+      if (botId) {
+        try {
+          const res = await getChannelInviteLink(botId);
+          setChannelUrl(res.data.channelInviteLink);
+        } catch (e) {
+          setChannelUrl('');
+        }
+      }
+    };
+    fetchChannelUrl();
+  }, []);
 
   const fetchProfile = async () => {
     try {
@@ -203,7 +220,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
   };
 
   const openTelegramChannel = () => {
-    const channelUrl = 'https://t.me/test_tik_tok1_bot_channel';
+    if (!channelUrl) return;
     if (window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
       window.Telegram.WebApp.openTelegramLink(channelUrl);
     } else {
@@ -236,6 +253,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
           onPassVerification={handlePassVerification}
           onClose={handleCloseProfile}
           open={showProfile}
+          translations={translations}
         />
       )}
       <VideoPlayer setProgress={setProgress} videos={videos} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} fade={fade} 
@@ -244,7 +262,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
         setPlaying={setPlaying}
       />
       <VideoProgressBar progress={progress} />
-      <VideoTopBar onGiftClick={handleGiftClick} rate={rate} maxVideos={maxVideos} onProfileClick={handleOpenProfile}/>
+      <VideoTopBar onGiftClick={handleGiftClick} rate={rate} maxVideos={maxVideos} onProfileClick={handleOpenProfile} translations={translations}/>
       <VideoBalanceBar />
       <VideoPromoBar onOpenTelegramChannel={openTelegramChannel} translations={translations} />
       <div className={styles.homePage}>
@@ -263,6 +281,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
           playing={playing}
           isVideoLoading={isVideoLoading}
           redirectChannelUrl={videos[currentIndex]?.redirectChannelUrl}
+          translations={translations}
         />
         <VideoInfoBlock video={videos[currentIndex]} />
       </div>

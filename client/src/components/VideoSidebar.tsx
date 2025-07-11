@@ -8,7 +8,7 @@ import styles from './VideoSidebar.module.css';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../store';
 import { startTimer, pauseTimer, resumeTimer, resetTimer, finishTimer, TimerStatus } from '../store';
-import { getReferralUrl, BOT_ID, USER_ID } from '../api/api';
+import { getReferralUrl, BOT_ID, USER_ID, getChannelInviteLink, getBotId } from '../api/api';
 
 interface VideoSidebarProps {
   onProfileClick?: () => void;
@@ -25,9 +25,10 @@ interface VideoSidebarProps {
   likeReward: number
   dislikeReward: number
   redirectChannelUrl: string
+  translations: any;
 }
 
-function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, currentIndex, isVideoReady, activeTab, playing, isVideoLoading, likeReward, dislikeReward, redirectChannelUrl }: VideoSidebarProps) {
+function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, currentIndex, isVideoReady, activeTab, playing, isVideoLoading, likeReward, dislikeReward, redirectChannelUrl, translations }: VideoSidebarProps) {
     const timerFillLike = useRef<HTMLDivElement>(null);
     const timerFillDislike = useRef<HTMLDivElement>(null);
     const [timeStart, setTimeStart] = useState(0);
@@ -43,6 +44,7 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
     const [isTelegram, setIsTelegram] = useState(false);
     const [shareMessage, setShareMessage] = useState('');
     const [isSharePressed, setIsSharePressed] = useState(false);
+    const [channelUrl, setChannelUrl] = useState<string>('');
 
     const totalDuration = 3;
 
@@ -116,6 +118,22 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
       }
     }, []);
 
+    useEffect(() => {
+      // Получаем ссылку на канал
+      const fetchChannelUrl = async () => {
+        const botId = getBotId();
+        if (botId) {
+          try {
+            const res = await getChannelInviteLink(botId);
+            setChannelUrl(res.data.channelInviteLink);
+          } catch (e) {
+            setChannelUrl('');
+          }
+        }
+      };
+      fetchChannelUrl();
+    }, []);
+
     const handleCopyInvite = async () => {
       try {
         const res = await getReferralUrl(BOT_ID, USER_ID);
@@ -154,7 +172,7 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
     };
 
   const openTelegramChannel = () => {
-    const channelUrl = 'https://t.me/test_tik_tok1_bot_channel';
+    if (!channelUrl) return;
     if (window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
       window.Telegram.WebApp.openTelegramLink(channelUrl);
     } else {
@@ -202,7 +220,7 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
         <LikeIcon className={styles.sidebarIcon + (timerStatus === 'finished' ? ' ' + styles.sidebarIconGlow : '')} />
         {(timerStatus === 'finished' && !isBlocked) ? (
           <div className={styles.sidebarIconLabelHolder}>
-            <div className={styles.animatedDollar}>{likeReward}$</div>
+            <div className={styles.animatedDollar}>{likeReward}{translations.currency}</div>
           </div>
         ) : (
           <div className={styles.sidebarIconLabelHolder}>
@@ -234,7 +252,7 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
         <DislikeIcon className={styles.sidebarIcon + (timerStatus === 'finished' ? ' ' + styles.sidebarIconGlow : '')} />
         {timerStatus === 'finished' && !isBlocked ? (
           <div className={styles.sidebarIconLabelHolder}>
-            <div className={styles.animatedDollar}>{dislikeReward}$</div>
+            <div className={styles.animatedDollar}>{dislikeReward}{translations.currency}</div>
           </div>
         ) : (
           <div className={styles.sidebarIconLabelHolder}>
@@ -244,7 +262,7 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
       </div>
       <div className={styles.sidebarShareBlock} onClick={handleShare} style={{ cursor: 'pointer' }}>
         <ShareIcon className={styles.sidebarShareIcon + (isSharePressed ? ' ' + styles.sidebarShareIconActive : '')} />
-        <div className={styles.sidebarIconLabel}>Share</div>
+        <div className={styles.sidebarIconLabel}>{translations.share}</div>
       </div>
       {shareMessage && (
         <div style={{ position: 'absolute', bottom: 8, left: 0, right: 0, textAlign: 'center', color: '#fff', background: 'rgba(0,0,0,0.7)', borderRadius: 8, padding: '4px 12px', fontSize: 12, zIndex: 10000 }}>
