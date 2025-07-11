@@ -95,20 +95,20 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
 
   // Функция для обработки клика по кнопке "Поделиться"
   const handleShare = async () => {
-    const shareUrl = window.location.href; // Или ваша кастомная ссылка
-    const shareText = 'Посмотрите это крутое приложение!'; // Текст для шаринга
-
     try {
-      if (isTelegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.shareMessage({
-          text: `${shareText} ${shareUrl}`,
-        });
-        window.Telegram.WebApp.onEvent('shareMessageSent', () => {
-          setMessage('Ссылка успешно отправлена!');
-        });
-        window.Telegram.WebApp.onEvent('shareMessageFailed', () => {
-          setMessage('Ошибка при отправке ссылки.');
-        });
+      const res = await getReferralUrl(BOT_ID, USER_ID);
+      const shareUrl = res.data?.referralLink || window.location.href;
+      const shareText = 'Посмотрите это крутое приложение!';
+
+      console.log('isTelegram:', isTelegram);
+      console.log('window.Telegram:', window.Telegram);
+      console.log('window.Telegram.WebApp:', window.Telegram?.WebApp);
+
+      if (isTelegram && window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
+        const tgLink = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
+        console.log('Opening Telegram link:', tgLink);
+        window.Telegram.WebApp.openTelegramLink(tgLink);
+        setMessage('Меню шаринга открыто!');
       } else {
         await navigator.clipboard.writeText(shareUrl);
         setMessage('Ссылка скопирована в буфер обмена!');
