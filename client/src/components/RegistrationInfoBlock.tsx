@@ -1,11 +1,11 @@
 import React from 'react';
 import styles from './RegistrationInfoBlock.module.css';
 
-const RegistrationInfoBlock: React.FC = () => (
+const RegistrationInfoBlock: React.FC<{ translations: any }> = ({ translations }) => (
     <div className={styles.registrationInfoListContainer}>
         <ul className={styles.registrationInfoList}>
-          <li className={styles.registrationInfoItem}>Please specify your age (from 16 to 100)</li>
-          <li className={styles.registrationInfoItem}>Please also specify your gender.</li>
+          <li className={styles.registrationInfoItem}>{translations.specifyAge}</li>
+          <li className={styles.registrationInfoItem}>{translations.specifyGender}</li>
         </ul>
     </div>
 );

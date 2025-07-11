@@ -84,7 +84,7 @@ const RegistrationBlock: React.FC<RegistrationBlockProps> = ({ onChangeAge, onCh
           </div>
         </div>
       </div>
-      <RegistrationInfoBlock />
+      <RegistrationInfoBlock translations={translations} />
     </>
   );
 };
