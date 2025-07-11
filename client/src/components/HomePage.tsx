@@ -17,6 +17,7 @@ import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import { setBalance } from '../store';
 import type { RootState, AppDispatch } from '../store';
+import { getUserId, getBotId, isTelegramWebApp } from '../utils/telegram';
 
 function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, setIsOpenBackgroundModal }: { onSelect?: (tab: 'home' | 'bonus' | 'money') => void, activeTab?: 'home' | 'bonus' | 'money' , setMoney: (v: number) => void, showToast: (title: string, description: string) => void, showErrorModal?: (msg: string) => void, setIsOpenBackgroundModal: (value: boolean) => void}) {
   const [showGiftToast, setShowGiftToast] = useState(false);
@@ -212,6 +213,13 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
 
   return (
     <>
+      {/* ВРЕМЕННЫЙ ОТЛАДОЧНЫЙ ВЫВОД ДЛЯ ТЕЛЕГРАМ WEBAPP */}
+      {isTelegramWebApp() && (
+        <div style={{ position: 'fixed', top: 0, left: 0, background: 'rgba(0,0,0,0.7)', color: '#fff', zIndex: 99999, padding: 8, fontSize: 12 }}>
+          <div>userId: {getUserId() || 'нет данных'}</div>
+          <div>botId: {getBotId() || 'нет данных'}</div>
+        </div>
+      )}
       {showGiftWindow && (
         <GiftWindow
           open={isGiftOpen}
