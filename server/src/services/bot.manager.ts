@@ -113,7 +113,7 @@ export class BotManager {
                          {
                             text: 'Open WebApp',
                             web_app: {
-                               url: `https://tgtik1.netlify.app/`
+                               url: `https://tgtik1.netlify.app/?bot_id=${config.botId}`
                             }
                          }
                       ]
