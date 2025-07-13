@@ -1,5 +1,5 @@
 import axios from "axios";
-import { GetIsRegisterdResponse, GetProfileResponse, GetRateWithBalanceResponse, RegisterRequest, Video, UserActionRequest } from "./types";
+import { GetIsRegisterdResponse, GetProfileResponse, GetRateWithBalanceResponse, RegisterRequest, Video, UserActionRequest, BotStartResponse } from "./types";
 import { getTelegramData, getBotId, getUserId, getCountry, isTelegramWebApp } from "../utils/telegram";
 
 const api = axios.create({
@@ -106,7 +106,7 @@ const getTranslationsByCountry = (country: string) => {
 };
 
 const getBotStart = (botId: string) => {
-    return api.get(`/api/bot/start?botId=${botId}`);
+    return api.get<BotStartResponse>(`/api/bot/start?botId=${botId}`);
 };
 
 // Функции-обертки, которые автоматически используют текущие ID

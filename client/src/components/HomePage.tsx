@@ -19,7 +19,7 @@ import { setBalance } from '../store';
 import type { RootState, AppDispatch } from '../store';
 import { getUserId, getBotId, isTelegramWebApp } from '../utils/telegram';
 
-function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, setIsOpenBackgroundModal, translations }: { onSelect?: (tab: 'home' | 'bonus' | 'money') => void, activeTab?: 'home' | 'bonus' | 'money' , setMoney: (v: number) => void, showToast: (title: string, description: string) => void, showErrorModal?: (msg: string) => void, setIsOpenBackgroundModal: (value: boolean) => void, translations: any }) {
+function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, setIsOpenBackgroundModal, translations, timerDelay }: { onSelect?: (tab: 'home' | 'bonus' | 'money') => void, activeTab?: 'home' | 'bonus' | 'money' , setMoney: (v: number) => void, showToast: (title: string, description: string) => void, showErrorModal?: (msg: string) => void, setIsOpenBackgroundModal: (value: boolean) => void, translations: any, timerDelay?: number }) {
   const [showGiftToast, setShowGiftToast] = useState(false);
   const [showGiftWindow, setShowGiftWindow] = useState(false);
   const [isGiftOpen, setIsGiftOpen] = useState(false);
@@ -257,6 +257,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
         setIsVideoLoading={setIsVideoLoading}
         playing={playing}
         setPlaying={setPlaying}
+        muted={rate >= maxVideos}
       />
       <VideoProgressBar progress={progress} />
       <VideoTopBar onGiftClick={handleGiftClick} rate={rate} maxVideos={maxVideos} onProfileClick={handleOpenProfile} translations={translations}/>
@@ -279,6 +280,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
           isVideoLoading={isVideoLoading}
           redirectChannelUrl={videos[currentIndex]?.redirectChannelUrl}
           translations={translations}
+          timerDelay={timerDelay || 3000}
         />
         <VideoInfoBlock video={videos[currentIndex]} />
       </div>

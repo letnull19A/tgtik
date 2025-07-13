@@ -26,9 +26,10 @@ interface VideoSidebarProps {
   dislikeReward: number
   redirectChannelUrl: string
   translations: any;
+  timerDelay?: number;
 }
 
-function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, currentIndex, isVideoReady, activeTab, playing, isVideoLoading, likeReward, dislikeReward, redirectChannelUrl, translations }: VideoSidebarProps) {
+function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, currentIndex, isVideoReady, activeTab, playing, isVideoLoading, likeReward, dislikeReward, redirectChannelUrl, translations, timerDelay }: VideoSidebarProps) {
     const timerFillLike = useRef<HTMLDivElement>(null);
     const timerFillDislike = useRef<HTMLDivElement>(null);
     const [timeStart, setTimeStart] = useState(0);
@@ -46,7 +47,7 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
     const [isSharePressed, setIsSharePressed] = useState(false);
     const channelUrl = useSelector((state: RootState) => state.channel.inviteLink);
 
-    const totalDuration = 3;
+    const totalDuration = (timerDelay || 3000) / 1000; // Конвертируем миллисекунды в секунды
 
     // Сбросить все reward-состояния и таймер при смене видео
     useEffect(() => {
@@ -75,11 +76,11 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
         }
     }, [activeTab, playing, isVideoLoading, timerStatus, isVideoReady, isBlocked, dispatch]);
 
-    // Глобальный таймер: завершение через 3 секунды после старта
+    // Глобальный таймер: завершение через timerDelay миллисекунд после старта
     useEffect(() => {
         if (timerState.status !== 'running' || !timerState.startedAt) return;
         const elapsed = timerState.elapsedBeforePause + (Date.now() - timerState.startedAt);
-        const remaining = Math.max(3000 - elapsed, 0);
+        const remaining = Math.max((timerDelay || 3000) - elapsed, 0);
         if (remaining === 0) {
             dispatch(finishTimer());
             return;
@@ -88,7 +89,7 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
             dispatch(finishTimer());
         }, remaining);
         return () => clearTimeout(timeout);
-    }, [timerState.status, timerState.startedAt, timerState.elapsedBeforePause, dispatch]);
+    }, [timerState.status, timerState.startedAt, timerState.elapsedBeforePause, dispatch, timerDelay]);
 
     // Визуальный прогресс таймера
     useEffect(() => {
@@ -96,7 +97,7 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
         if (timerState.status === 'running' && timerState.startedAt) {
             const update = () => {
                 const elapsed = timerState.elapsedBeforePause + (Date.now() - timerState.startedAt!);
-                const prog = Math.min(elapsed / 3000, 1);
+                const prog = Math.min(elapsed / (timerDelay || 3000), 1);
                 setProgress(prog);
                 if (prog < 1 && timerState.status === 'running') {
                     raf = requestAnimationFrame(update);
@@ -106,10 +107,10 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
         } else if (timerState.status === 'finished') {
             setProgress(1);
         } else {
-            setProgress(timerState.elapsedBeforePause / 3000);
+            setProgress(timerState.elapsedBeforePause / (timerDelay || 3000));
         }
         return () => { if (raf !== undefined) cancelAnimationFrame(raf); };
-    }, [timerState.status, timerState.startedAt, timerState.elapsedBeforePause]);
+    }, [timerState.status, timerState.startedAt, timerState.elapsedBeforePause, timerDelay]);
 
     useEffect(() => {
       if (window.Telegram?.WebApp) {

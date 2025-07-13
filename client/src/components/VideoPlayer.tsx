@@ -11,9 +11,10 @@ interface VideoPlayerProps {
   setIsVideoLoading: (loading: boolean) => void;
   playing: boolean;
   setPlaying: React.Dispatch<React.SetStateAction<boolean>>;
+  muted?: boolean;
 }
 
-export default function VideoPlayer({ setProgress, videos, currentIndex, setCurrentIndex, fade, setIsVideoLoading, playing, setPlaying }: VideoPlayerProps) {
+export default function VideoPlayer({ setProgress, videos, currentIndex, setCurrentIndex, fade, setIsVideoLoading, playing, setPlaying, muted = false }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -45,6 +46,7 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
           width="100%"
           height="100%"
           controls={false}
+          muted={muted}
           onTimeUpdate={() => {
             if (videoRef.current) {
               setProgress(videoRef.current.currentTime / videoRef.current.duration);

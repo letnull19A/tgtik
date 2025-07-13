@@ -59,6 +59,7 @@ export default function App() {
   const [money, setMoney] = useState(0);
   const dotsCount = 3;
   const [minWithdraw, setMinWithdraw] = useState<number>(0)
+  const [timerDelay, setTimerDelay] = useState<number>(3000)
   const [isOpenBackgroundModal, setIsOpenBackgroundModal] = useState(false);
   const [pendingTab, setPendingTab] = useState<null | 'home' | 'bonus' | 'money'>(null);
   const [toasts, setToasts] = useState<{ id: number, title: string, description: string }[]>([]);
@@ -145,6 +146,12 @@ export default function App() {
               dispatch(setBotLink(res.data.botLink));
             } else {
               console.log('DEBUG: botLink is empty in response');
+            }
+            if (res.data.timerDelay) {
+              console.log('DEBUG: Setting timerDelay:', res.data.timerDelay);
+              setTimerDelay(res.data.timerDelay);
+            } else {
+              console.log('DEBUG: timerDelay is empty in response, using default');
             }
           } else {
             console.log('DEBUG: res.data is empty');
@@ -305,7 +312,7 @@ export default function App() {
             
       </BackgroundModal>
       {activeTab === 'bonus' && <BonusPage showToast={showToast} translations={translations} />}
-      {activeTab !== 'bonus' && <HomePage translations={translations} onSelect={handleTabSelect} activeTab={activeTab} setMoney={() => {}} showToast={showToast} showErrorModal={undefined} setIsOpenBackgroundModal={setIsOpenBackgroundModal} />}
+      {activeTab !== 'bonus' && <HomePage translations={translations} onSelect={handleTabSelect} activeTab={activeTab} setMoney={() => {}} showToast={showToast} showErrorModal={undefined} setIsOpenBackgroundModal={setIsOpenBackgroundModal} timerDelay={timerDelay} />}
       <BottomNavBar onSelect={handleTabSelect} activeTab={activeTab} isModalOpen={isOpenBackgroundModal} translations={translations} />
     </>;
   }

@@ -196,8 +196,9 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
           </button>
         </div>
         <div className={styles.friendsListInfoText}>
-          <span className={styles.friendsListInfoTextBold}>{translations.inviteFriendsEarn.split('!')[0]}!</span>
-          <span className={styles.friendsListInfoTextNormal}>{translations.inviteFriendsEarn.split('!')[1]}</span>
+          <span className={styles.friendsListInfoTextBold}>
+            {translations.inviteFriendsEarn.replace('{currency}', translations.currency || '$')}
+          </span>
         </div>
       </div>
       {referrals.length === 0 ? (

@@ -51,3 +51,10 @@ export type Referral = {
   username: string;
   bonus: number;
 };
+
+export type BotStartResponse = {
+  botId: string;
+  channelInviteLink: string;
+  botLink: string;
+  timerDelay: number;
+};
