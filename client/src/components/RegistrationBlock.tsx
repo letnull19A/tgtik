@@ -11,7 +11,7 @@ type RegistrationBlockProps = {
 }
 
 const RegistrationBlock: React.FC<RegistrationBlockProps> = ({ onChangeAge, onChangeGender, translations }) => {
-  const [sex, setSex] = useState<Sex>('female');
+  const [sex, setSex] = useState<Sex>('other');
   const [age, setAge] = useState('');
   const [ageError, setAgeError] = useState('');
 

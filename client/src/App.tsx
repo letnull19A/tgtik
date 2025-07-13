@@ -132,6 +132,7 @@ export default function App() {
       if (botId) {
         try {
           dispatch(setChannelLoading(true));
+          console.log('DEBUG: Making API request to getBotStart with botId:', botId);
           const res = await getBotStart(botId);
           console.log('DEBUG: getBotStart response:', res.data);
           if (res.data) {
