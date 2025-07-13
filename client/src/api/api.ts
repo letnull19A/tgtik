@@ -78,7 +78,7 @@ const getReferralUrl = (botId: string, userId: string) => {
 const getReferrals = (botId: string, userId: string) => {
     return api.get<{referredId: string,
         username: string,
-        bonus: number}>(`/api/webapp/${botId}/referrals/${userId}`)
+        bonus: number}[]>(`/api/webapp/${botId}/referrals/${userId}`)
 }
 
 const getCanWithdraw = (botId: string, userId: string) => {

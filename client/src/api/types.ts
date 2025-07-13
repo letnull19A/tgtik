@@ -45,3 +45,9 @@ export type UserActionRequest = {
   videoId: number;
   action: 'like' | 'dislike';
 };
+
+export type Referral = {
+  referredId: string;
+  username: string;
+  bonus: number;
+};
