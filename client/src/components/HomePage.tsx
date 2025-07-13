@@ -123,10 +123,11 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
     setTimeout(() => {
       // Зацикливаем видео - если достигли конца, начинаем сначала
       const nextIndex = currentIndex >= videos.length - 1 ? 0 : currentIndex + 1;
-      console.log('DEBUG: handleNextVideo - nextIndex:', nextIndex);
+      console.log('DEBUG: handleNextVideo - nextIndex:', nextIndex, 'videos.length:', videos.length);
       
       setCurrentIndex(nextIndex);
       const nextVideo = videos[nextIndex];
+      console.log('DEBUG: handleNextVideo - nextVideo:', nextVideo);
       setReward({ likeReward: nextVideo.likeReward, dislikeReward: nextVideo.dislikeReward})
       setFade(false);
     }, 300);
@@ -137,14 +138,20 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
     try {
       console.log('DEBUG: Refreshing videos for loop...');
       const response = await getVideosCurrent();
+      console.log('DEBUG: refreshVideosForLoop - response:', response.data);
       if (response.data && response.data.length > 0) {
         console.log('DEBUG: Got new videos:', response.data.length);
         setVideos(response.data);
-        // Сбрасываем индекс на начало
+        // Сбрасываем индекс на начало и обновляем reward
         setCurrentIndex(0);
         const firstVideo = response.data[0];
+        console.log('DEBUG: refreshVideosForLoop - firstVideo:', firstVideo);
         setReward({ likeReward: firstVideo.likeReward, dislikeReward: firstVideo.dislikeReward});
+        // Сбрасываем прогресс видео
+        setProgress(0);
         console.log('DEBUG: Reset to first video');
+      } else {
+        console.log('DEBUG: No videos received from server');
       }
     } catch (error) {
       console.error('Ошибка при обновлении видео:', error);
@@ -168,9 +175,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
         // Обновляем список видео для зацикливания
         await refreshVideosForLoop();
         // После обновления списка видео, переходим к следующему видео
-        setTimeout(() => {
-          handleNextVideo();
-        }, 100);
+        handleNextVideo();
       } else {
         console.log('DEBUG: Moving to next video...');
         handleNextVideo();
@@ -210,9 +215,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
         // Обновляем список видео для зацикливания
         await refreshVideosForLoop();
         // После обновления списка видео, переходим к следующему видео
-        setTimeout(() => {
-          handleNextVideo();
-        }, 100);
+        handleNextVideo();
       } else {
         console.log('DEBUG: Moving to next video...');
         handleNextVideo();

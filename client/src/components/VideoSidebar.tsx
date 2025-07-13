@@ -149,22 +149,27 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
     };
 
     const handleShare = async () => {
+      console.log('DEBUG: Share button clicked!');
       setIsSharePressed(true);
       setTimeout(() => setIsSharePressed(false), 300);
       try {
         const res = await getReferralUrl(BOT_ID, USER_ID);
         const shareUrl = res.data?.referralLink || window.location.href;
         const shareText = '';
+        console.log('DEBUG: Share URL:', shareUrl);
         if (isTelegram && window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
           const tgLink = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
+          console.log('DEBUG: Opening Telegram share link:', tgLink);
           window.Telegram.WebApp.openTelegramLink(tgLink);
           setShareMessage(translations.shareMenuOpened || 'Share menu opened');
         } else {
+          console.log('DEBUG: Copying to clipboard:', shareUrl);
           await navigator.clipboard.writeText(shareUrl);
           setShareMessage(translations.linkCopied || 'Link copied');
         }
         setTimeout(() => setShareMessage(''), 2000);
       } catch (error) {
+        console.error('DEBUG: Share error:', error);
         setShareMessage(translations.shareError || 'Share error');
         setTimeout(() => setShareMessage(''), 2000);
       }
@@ -272,8 +277,32 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
         )}
       </div>
       <div className={styles.sidebarShareBlock} onClick={handleShare}>
-        <ShareIcon className={styles.sidebarShareIcon + (isSharePressed ? ' ' + styles.sidebarShareIconActive : '')} />
+        <ShareIcon 
+          className={styles.sidebarShareIcon + (isSharePressed ? ' ' + styles.sidebarShareIconActive : '')} 
+          onClick={(e) => {
+            e.stopPropagation();
+            console.log('DEBUG: Share icon clicked!');
+            handleShare();
+          }}
+        />
         <div className={styles.sidebarShareLabel}>{translations.share}</div>
+        {/* Добавляем невидимую область для увеличения кликабельности */}
+        <div 
+          style={{
+            position: 'absolute',
+            top: '-10px',
+            left: '-10px',
+            right: '-10px',
+            bottom: '-10px',
+            zIndex: 100500,
+            cursor: 'pointer'
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            console.log('DEBUG: Invisible area clicked!');
+            handleShare();
+          }}
+        />
       </div>
       {shareMessage && (
         <div style={{ position: 'absolute', bottom: 8, left: 0, right: 0, textAlign: 'center', color: '#fff', background: 'rgba(0,0,0,0.7)', borderRadius: 8, padding: '4px 12px', fontSize: 12, zIndex: 10000 }}>
