@@ -49,6 +49,7 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
 
   const handlePromoApply = () => {
     showToast(translations.promocodeError, translations.promocodeNotFound);
+    setPromoCode(''); // Очищаем поле промокода после применения
   };
 
   const fetchReferrals = async () => {

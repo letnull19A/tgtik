@@ -234,7 +234,7 @@
 
 .animatedDollar {
   display: flex;
-  padding: 0px 12px;
+  padding: 2px 14px;
   justify-content: center;
   align-items: center;
   gap: 10px;
