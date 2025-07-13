@@ -1,23 +1,24 @@
 .textCard {
   width: 246px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .titleTextCard {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 600;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .contentTextCard {
   color: #B0B0B0;
-  font-size: 14px;
+  font-size: 13px;
+  line-height: 1.3;
 }
 
 .dots {
   display: flex;
-  gap: 24px;
-  margin-bottom: 16px;
+  gap: 20px;
+  margin-bottom: 12px;
 }
 
 .dot {
