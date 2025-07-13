@@ -7,6 +7,7 @@ import BonusPage from './components/BonusPage';
 import BottomNavBar from './components/BottomNavBar';
 import SubscriptionBlock from './components/SubscriptionBlock';
 import { WithdrawalForm } from './components/SubscriptionBlock';
+import VideoLimitModal from './components/VideoLimitModal';
 import { getIsRegisteredCurrent, registerCurrent, getRateWithBalanceCurrent, getCanWithdrawCurrent, withdrawCurrent, isTelegramWebApp, getTranslations, getTranslationsByCountry, getCountry, getChannelInviteLink, getBotId, getBotStart } from "./api/api";
 import { Sex } from "./components/RegistrationBlock";
 import HelloLoader from './components/HelloLoader';
@@ -63,6 +64,9 @@ export default function App() {
   const [isOpenBackgroundModal, setIsOpenBackgroundModal] = useState(false);
   const [pendingTab, setPendingTab] = useState<null | 'home' | 'bonus' | 'money'>(null);
   const [toasts, setToasts] = useState<{ id: number, title: string, description: string }[]>([]);
+  const [videoLimitReached, setVideoLimitReached] = useState(false);
+  const [videoRate, setVideoRate] = useState(0);
+  const [videoMaxVideos, setVideoMaxVideos] = useState(0);
   const showToast = (title: string, description: string) => {
     setToasts(prev => [...prev, { id: Date.now() + Math.random(), title, description }]);
   };
@@ -300,13 +304,39 @@ export default function App() {
             />
           ))}
         </div>
-        {canWithdraw
-              ? <WithdrawalForm onWithdraw={onWithdraw} onClose={() => setIsOpenBackgroundModal(false)} minWithdraw={minWithdraw} translations={translations}/>
-              : <SubscriptionBlock money={balance} onContinue={() => setIsOpenBackgroundModal(false)} minWithdraw={minWithdraw} translations={translations}/> }
+        {videoLimitReached 
+          ? <VideoLimitModal 
+              current={videoRate} 
+              max={videoMaxVideos} 
+              onContinue={() => {
+                setVideoLimitReached(false);
+                setIsOpenBackgroundModal(false);
+              }} 
+              translations={translations}
+            />
+          : canWithdraw
+            ? <WithdrawalForm onWithdraw={onWithdraw} onClose={() => setIsOpenBackgroundModal(false)} minWithdraw={minWithdraw} translations={translations}/>
+            : <SubscriptionBlock money={balance} onContinue={() => setIsOpenBackgroundModal(false)} minWithdraw={minWithdraw} translations={translations}/>
+        }
             
       </BackgroundModal>
       {activeTab === 'bonus' && <BonusPage showToast={showToast} translations={translations} />}
-      {activeTab !== 'bonus' && <HomePage translations={translations} onSelect={handleTabSelect} activeTab={activeTab} setMoney={() => {}} showToast={showToast} showErrorModal={undefined} setIsOpenBackgroundModal={setIsOpenBackgroundModal} timerDelay={timerDelay} />}
+      {activeTab !== 'bonus' && <HomePage 
+        translations={translations} 
+        onSelect={handleTabSelect} 
+        activeTab={activeTab} 
+        setMoney={() => {}} 
+        showToast={showToast} 
+        showErrorModal={undefined} 
+        setIsOpenBackgroundModal={setIsOpenBackgroundModal} 
+        timerDelay={timerDelay}
+        onVideoLimitReached={(rate, maxVideos) => {
+          setVideoRate(rate);
+          setVideoMaxVideos(maxVideos);
+          setVideoLimitReached(true);
+          setIsOpenBackgroundModal(true);
+        }}
+      />}
       <BottomNavBar onSelect={handleTabSelect} activeTab={activeTab} isModalOpen={isOpenBackgroundModal} translations={translations} />
     </>;
   }

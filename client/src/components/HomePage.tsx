@@ -19,7 +19,7 @@ import { setBalance } from '../store';
 import type { RootState, AppDispatch } from '../store';
 import { getUserId, getBotId, isTelegramWebApp } from '../utils/telegram';
 
-function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, setIsOpenBackgroundModal, translations, timerDelay }: { onSelect?: (tab: 'home' | 'bonus' | 'money') => void, activeTab?: 'home' | 'bonus' | 'money' , setMoney: (v: number) => void, showToast: (title: string, description: string) => void, showErrorModal?: (msg: string) => void, setIsOpenBackgroundModal: (value: boolean) => void, translations: any, timerDelay?: number }) {
+function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, setIsOpenBackgroundModal, translations, timerDelay, onVideoLimitReached }: { onSelect?: (tab: 'home' | 'bonus' | 'money') => void, activeTab?: 'home' | 'bonus' | 'money' , setMoney: (v: number) => void, showToast: (title: string, description: string) => void, showErrorModal?: (msg: string) => void, setIsOpenBackgroundModal: (value: boolean) => void, translations: any, timerDelay?: number, onVideoLimitReached?: (rate: number, maxVideos: number) => void }) {
   const [showGiftToast, setShowGiftToast] = useState(false);
   const [showGiftWindow, setShowGiftWindow] = useState(false);
   const [isGiftOpen, setIsGiftOpen] = useState(false);
@@ -55,12 +55,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
     }
   }, [isVideoLoading]);
 
-  // Пример: если лимит достигнут, открываем VideoLimitModal
-  useEffect(() => {
-    if (activeTab === 'home' && videos.length > 0 && currentIndex >= videos.length - 1) {
-      setIsOpenBackgroundModal(true);
-    }
-  }, [activeTab, videos.length, currentIndex, setIsOpenBackgroundModal]);
+  // Убираем этот useEffect - модалка должна появляться только при достижении дневного лимита
 
 
 
@@ -121,12 +116,13 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
 
   const handleNextVideo = () => {
     if (videos.length === 0) return;
-    if (currentIndex >= videos.length - 1) return;
     setProgress(0);
     setFade(true);
     setTimeout(() => {
-      setCurrentIndex((prev) => prev + 1);
-      const nextVideo = videos[currentIndex + 1]
+      // Зацикливаем видео - если достигли конца, начинаем сначала
+      const nextIndex = currentIndex >= videos.length - 1 ? 0 : currentIndex + 1;
+      setCurrentIndex(nextIndex);
+      const nextVideo = videos[nextIndex];
       setReward({ likeReward: nextVideo.likeReward, dislikeReward: nextVideo.dislikeReward})
       setFade(false);
     }, 300);
@@ -144,8 +140,14 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
       setRate(v => v + 1)
       dispatch(setBalance(response.data.newBalance));
     } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 403) {
+        // Daily video limit reached
+        onVideoLimitReached?.(rate + 1, maxVideos);
+        return;
+      }
       if (axios.isAxiosError(error) && error.response?.status === 404) {
-        setIsOpenBackgroundModal(true)
+        // Видео не найдено - просто переходим к следующему
+        handleNextVideo();
         return;
       }
       console.error('Ошибка при отправке лайка:', error);
@@ -164,8 +166,14 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
       setRate(v => v + 1)
       dispatch(setBalance(response.data.newBalance));
     } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 403) {
+        // Daily video limit reached
+        onVideoLimitReached?.(rate + 1, maxVideos);
+        return;
+      }
       if (axios.isAxiosError(error) && error.response?.status === 404) {
-        setIsOpenBackgroundModal(true)
+        // Видео не найдено - просто переходим к следующему
+        handleNextVideo();
         return;
       }
       console.error('Ошибка при отправке дизлайка:', error);

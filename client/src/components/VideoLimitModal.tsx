@@ -4,6 +4,7 @@ interface VideoLimitModalProps {
   current: number;
   max: number;
   onContinue: () => void;
+  translations: any;
 }
 
 const circleStyle: React.CSSProperties = {
@@ -63,17 +64,26 @@ const wrapperStyle: React.CSSProperties = {
   textAlign: 'center',
 };
 
-const VideoLimitModal: React.FC<VideoLimitModalProps> = ({ current, max, onContinue }) => {
+const VideoLimitModal: React.FC<VideoLimitModalProps> = ({ current, max, onContinue, translations }) => {
   return (
     <div style={wrapperStyle}>
       <div style={circleStyle}>{current}/{max}</div>
-      <div style={titleStyle}>You have rated {max} videos.</div>
-      <div style={descStyle}>
-        This is the maximum daily limit.<br/>
-        Come back tomorrow to continue earning<br/>
-        (videos are refreshed <span style={blueText}>every 24 hours</span>).
+      <div style={titleStyle}>
+        {translations.videoLimitTitle || `You have rated ${max} videos.`}
       </div>
-      <button style={buttonStyle} onClick={onContinue}>Continue</button>
+      <div style={descStyle}>
+        {translations.videoLimitDesc || 
+          `This is the maximum daily limit.
+          Come back tomorrow to continue earning
+          (videos are refreshed `}
+        <span style={blueText}>
+          {translations.videoLimitRefresh || 'every 24 hours'}
+        </span>
+        {translations.videoLimitDescEnd || ').'}
+      </div>
+      <button style={buttonStyle} onClick={onContinue}>
+        {translations.continue || 'Continue'}
+      </button>
     </div>
   );
 };

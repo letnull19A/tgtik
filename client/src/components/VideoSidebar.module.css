@@ -81,8 +81,8 @@
 }
 
 .sidebarShareBlock {
-  width: 70px;
-  height: 70px;
+  width: 80px;
+  height: 80px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -91,6 +91,8 @@
   position: relative;
   transition: transform 0.2s ease;
   border-radius: 50%;
+  padding: 8px;
+  z-index: 1000;
 }
 
 .sidebarShareBlock:hover {
@@ -106,8 +108,8 @@
 }
 
 .sidebarShareIcon {
-  width: 58px;
-  height: 52px;
+  width: 64px;
+  height: 58px;
 }
 
 .sidebarPlusVideoDot {
@@ -232,7 +234,7 @@
 
 .animatedDollar {
   display: flex;
-  padding: 0px 6px;
+  padding: 0px 12px;
   justify-content: center;
   align-items: center;
   gap: 10px;
@@ -244,6 +246,7 @@
   font-weight: 700;
   font-family: inherit;
   animation: dollarPulse 0.7s infinite alternate, dollarBounce 1.2s infinite;
+  min-width: 60px;
 }
 
 @keyframes dollarPulse {
