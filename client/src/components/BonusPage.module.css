@@ -1,11 +1,11 @@
 .bonusContainer {
   width: 100%;
-  padding: 16px 0 120px 0;
+  padding: 12px 0 120px 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   background: #0F0F0F;
-  min-height: 600px;
+  min-height: 500px;
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
@@ -14,15 +14,15 @@
   width: calc(100% + 24px);
   left: -12px;
   position: relative;
-  height: 56px;
+  height: 48px;
   background: linear-gradient(90deg, #06DED9 0%, black 40%, black 61%, #EC044C 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   margin-top: 0;
-  padding-top: 5px;
-  padding-bottom: 3px;
+  padding-top: 4px;
+  padding-bottom: 2px;
 }
 
 .bonusHeaderRow {
@@ -68,14 +68,14 @@
   background-position: center;
   padding-left: 12px;
   padding-right: 12px;
-  padding-top: 12px;
-  padding-bottom: 12px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   border-radius: 11px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-content: center;
-  margin-bottom: 17px;
+  margin-bottom: 14px;
 }
 
 .bonusBanner {
@@ -108,7 +108,7 @@
 .bonusTopRow {
   display: flex;
   align-items: flex-start;
-  margin-bottom: 13px;
+  margin-bottom: 10px;
 }
 
 .bonusCupBg {
@@ -183,14 +183,14 @@
   color: #FFF;
   font-size: 10px;
   font-weight: 700;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .bonusPromoBlock {
   display: flex;
   width: 100%;
-  height: 44px;
-  padding: 12px 0 12px 11px;
+  height: 40px;
+  padding: 10px 0 10px 11px;
   justify-content: space-between;
   align-items: center;
   flex-shrink: 0;
@@ -254,12 +254,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 17px;
+  gap: 14px;
   box-sizing: border-box;
   width: calc(100% - 24px);
   margin-left: 12px;
   margin-right: 12px;
-  padding: 12px 20px;
+  padding: 10px 20px;
 }
 
 .bonusInviteBtn {
@@ -293,17 +293,17 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .bonusBigFriendsIcon {
-  width: 63px;
-  height: 62px;
+  width: 56px;
+  height: 55px;
 }
 
 .bonusEmptyTitle {
   color: #878787;
-  font-size: 14px;
+  font-size: 13px;
   font-family: 'Inter', Arial, sans-serif;
   font-weight: 700;
   text-align: center;
@@ -311,7 +311,7 @@
 
 .bonusEmptyDesc {
   color: #878787;
-  font-size: 12px;
+  font-size: 11px;
   font-family: 'Inter', Arial, sans-serif;
   font-weight: 400;
   text-align: center;
@@ -319,7 +319,7 @@
 
 .friendsListBlock {
   margin-top: 0;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -332,7 +332,7 @@
   display: flex;
   align-items: center;
   width: 100%;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .friendsListIconBg {
@@ -491,20 +491,20 @@
   width: calc(100% - 24px);
   margin-left: 12px;
   margin-right: 12px;
-  padding: 12px 20px;
+  padding: 10px 20px;
   background: #191919;
   border-radius: 11px;
   display: flex;
   flex-direction: column;
-  gap: 17px;
+  gap: 14px;
 }
 
 .list {
-  max-height: 223px;
+  max-height: 200px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 17px;
+  gap: 14px;
   padding-right: 4px;
 
   /* Кастомный скроллбар */
@@ -530,8 +530,8 @@
 .item {
   display: flex;
   align-items: center;
-  gap: 17px;
-  padding-bottom: 10px;
+  gap: 14px;
+  padding-bottom: 8px;
   border-bottom: 1px solid #373737;
 }
 
