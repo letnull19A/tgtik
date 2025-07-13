@@ -140,16 +140,16 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
       const response = await getVideosCurrent();
       console.log('DEBUG: refreshVideosForLoop - response:', response.data);
       if (response.data && response.data.length > 0) {
-        console.log('DEBUG: Got new videos:', response.data.length);
-        setVideos(response.data);
-        // Сбрасываем индекс на начало и обновляем reward
-        setCurrentIndex(0);
-        const firstVideo = response.data[0];
-        console.log('DEBUG: refreshVideosForLoop - firstVideo:', firstVideo);
-        setReward({ likeReward: firstVideo.likeReward, dislikeReward: firstVideo.dislikeReward});
-        // Сбрасываем прогресс видео
-        setProgress(0);
-        console.log('DEBUG: Reset to first video');
+        // Сначала сбрасываем videos в пустой массив, чтобы форсировать ре-рендер
+        setVideos([]);
+        setTimeout(() => {
+          setVideos(response.data);
+          setCurrentIndex(0);
+          const firstVideo = response.data[0];
+          setReward({ likeReward: firstVideo.likeReward, dislikeReward: firstVideo.dislikeReward });
+          setProgress(0);
+          console.log('DEBUG: Reset to first video');
+        }, 0);
       } else {
         console.log('DEBUG: No videos received from server');
       }

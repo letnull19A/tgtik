@@ -38,7 +38,7 @@ function ActionButtons({ showRegistration, onNext, onCreateAccount, isAgeValid, 
     <>
       {showRegistration ? (
         <button
-          className={`${styles.nextBtn} ${styles.registrationAccountBtn}`}
+          className={`${styles.nextBtn} ${isAgeValid ? styles.registrationAccountBtnActive : styles.registrationAccountBtn}`}
           onClick={onCreateAccount}
           disabled={!isAgeValid}
         >
