@@ -1,7 +1,32 @@
+.textCard {
+  width: 246px;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 10;
+}
+
+.titleTextCard {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 10;
+}
+
+.contentTextCard {
+  color: #B0B0B0;
+  font-size: 13px;
+  line-height: 1.3;
+  position: relative;
+  z-index: 10;
+}
+
 .dots {
   display: flex;
   gap: 20px;
   margin-bottom: 12px;
+  position: relative;
+  z-index: 10;
 }
 
 .dot {

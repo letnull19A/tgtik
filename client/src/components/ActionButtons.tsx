@@ -13,22 +13,17 @@ interface ActionButtonsProps {
 
 function ActionButtons({ showRegistration, onNext, onCreateAccount, isAgeValid, translations }: ActionButtonsProps) {
   const channelUrl = useSelector((state: RootState) => state.channel.inviteLink);
+  const channelLoading = useSelector((state: RootState) => state.channel.isLoading);
 
   const handleSubscribeClick = () => {
     if (!channelUrl) {
-      console.warn('Channel URL not available');
+      console.log('Channel URL not available');
       return;
     }
     
-    try {
-      if (window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
-        window.Telegram.WebApp.openTelegramLink(channelUrl);
-      } else {
-        window.open(channelUrl, '_blank');
-      }
-    } catch (error) {
-      console.error('Error opening channel link:', error);
-      // Fallback: попробуем открыть в новой вкладке
+    if (window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
+      window.Telegram.WebApp.openTelegramLink(channelUrl);
+    } else {
       window.open(channelUrl, '_blank');
     }
   };
@@ -48,11 +43,16 @@ function ActionButtons({ showRegistration, onNext, onCreateAccount, isAgeValid, 
           {translations.next}
         </button>
       )}
-      {channelUrl && (
-        <div className={styles.subscribeLink} onClick={handleSubscribeClick} style={{ cursor: 'pointer' }}>
-          {translations.subscribeToCommunities}
-        </div>
-      )}
+      <div 
+        className={styles.subscribeLink} 
+        onClick={handleSubscribeClick}
+        style={{ 
+          opacity: channelLoading ? 0.6 : 1,
+          cursor: channelUrl ? 'pointer' : 'default'
+        }}
+      >
+        {translations.subscribeToCommunities}
+      </div>
     </>
   );
 }

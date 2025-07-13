@@ -320,7 +320,7 @@ export default function App() {
   return (
     <div className="app">
       <div className="content">
-        <BackgroundSection translations={translations} />
+        <BackgroundSection />
         <ContentSection
           showRegistration={showRegistration}
           isLoading={localIsLoading}

@@ -28,12 +28,8 @@
   color: #fff;
   border-bottom: 1px solid white;
   cursor: pointer;
-  transition: all 0.2s ease;
-  padding: 4px 0;
 }
 
 .subscribeLink:hover {
-  color: #FF2B54;
-  border-bottom-color: #FF2B54;
-  transform: translateY(-1px);
+  color: white;
 } 
