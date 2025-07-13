@@ -1,6 +1,6 @@
 .bonusContainer {
   width: 100%;
-  padding: 12px 0 120px 0;
+  padding: 12px 0 0 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,15 +14,15 @@
   width: calc(100% + 24px);
   left: -12px;
   position: relative;
-  height: 48px;
+  height: 56px;
   background: linear-gradient(90deg, #06DED9 0%, black 40%, black 61%, #EC044C 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-bottom: 10px;
   margin-top: 0;
-  padding-top: 4px;
-  padding-bottom: 2px;
+  padding-top: 6px;
+  padding-bottom: 4px;
 }
 
 .bonusHeaderRow {
@@ -51,7 +51,7 @@
   font-size: 12px;
   font-family: 'Inter', 'SF Pro Text', Arial, sans-serif;
   font-weight: 700;
-  line-height: 16px;
+  line-height: 18px;
   white-space: nowrap;
   overflow: hidden;
   width: 100%;
@@ -615,7 +615,7 @@
   width: 100%;
   overflow: hidden;
   position: relative;
-  height: 24px;
+  height: 28px;
 }
 
 .marqueeTrack {

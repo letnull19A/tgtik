@@ -75,26 +75,53 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
   }, []);
 
   const handleCopyInvite = async () => {
-    if (!botLink) return;
     try {
-      await navigator.clipboard.writeText(botLink);
+      // Получаем реферальную ссылку
+      const referralRes = await getReferralUrlCurrent();
+      const referralLink = referralRes.data.referralLink;
+      await navigator.clipboard.writeText(referralLink);
     } catch (e) {
-      console.log('Ошибка при копировании ссылки');
+      console.log('Ошибка при получении реферальной ссылки:', e);
+      // Fallback на botLink если реферальная ссылка недоступна
+      if (botLink) {
+        try {
+          await navigator.clipboard.writeText(botLink);
+        } catch (e) {
+          console.log('Ошибка при копировании ссылки');
+        }
+      }
     }
   };
 
   // Функция для обработки клика по кнопке "Поделиться"
   const handleShare = async () => {
-    if (!botLink) return;
-    const shareUrl = botLink;
-    const shareText = '';
+    try {
+      // Получаем реферальную ссылку
+      const referralRes = await getReferralUrlCurrent();
+      const shareUrl = referralRes.data.referralLink;
+      const shareText = '';
 
-    if (window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
-      const tgLink = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
-      console.log('Opening Telegram link:', tgLink);
-      window.Telegram.WebApp.openTelegramLink(tgLink);
-    } else {
-      await navigator.clipboard.writeText(shareUrl);
+      if (window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
+        const tgLink = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
+        console.log('Opening Telegram link:', tgLink);
+        window.Telegram.WebApp.openTelegramLink(tgLink);
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+      }
+    } catch (e) {
+      console.log('Ошибка при получении реферальной ссылки:', e);
+      // Fallback на botLink если реферальная ссылка недоступна
+      if (botLink) {
+        const shareUrl = botLink;
+        const shareText = '';
+        
+        if (window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
+          const tgLink = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
+          window.Telegram.WebApp.openTelegramLink(tgLink);
+        } else {
+          await navigator.clipboard.writeText(shareUrl);
+        }
+      }
     }
   };
 
