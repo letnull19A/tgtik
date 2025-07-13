@@ -128,26 +128,35 @@ export default function App() {
   useEffect(() => {
     const fetchBotStart = async () => {
       const botId = getBotId();
+      console.log('App: Fetching bot start info for botId:', botId);
       if (botId) {
         try {
           dispatch(setChannelLoading(true));
           const res = await getBotStart(botId);
+          console.log('App: getBotStart response:', res.data);
           if (res.data) {
             if (res.data.channelInviteLink) {
+              console.log('App: Setting channelInviteLink:', res.data.channelInviteLink);
               dispatch(setChannelInviteLink(res.data.channelInviteLink));
+            } else {
+              console.log('App: channelInviteLink is empty in response');
             }
             if (res.data.botLink) {
+              console.log('App: Setting botLink:', res.data.botLink);
               dispatch(setBotLink(res.data.botLink));
             }
             if (res.data.timerDelay) {
+              console.log('App: Setting timerDelay:', res.data.timerDelay);
               setTimerDelay(res.data.timerDelay);
             }
           }
         } catch (e) {
-          console.error('Failed to fetch bot start info:', e);
+          console.error('App: Failed to fetch bot start info:', e);
         } finally {
           dispatch(setChannelLoading(false));
         }
+      } else {
+        console.log('App: botId is empty');
       }
     };
     fetchBotStart();

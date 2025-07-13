@@ -45,8 +45,8 @@
 }
 
 .navIcon {
-  width: 33px;
-  height: 32px;
+  width: 38px;
+  height: 37px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -57,7 +57,7 @@
 .navLabel {
   text-align: center;
   color: white;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   line-height: 16.2px;
   word-wrap: break-word;

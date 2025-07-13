@@ -10,6 +10,16 @@ import type { RootState, AppDispatch } from '../store';
 import { startTimer, pauseTimer, resumeTimer, resetTimer, finishTimer, TimerStatus } from '../store';
 import { getReferralUrl, BOT_ID, USER_ID } from '../api/api';
 
+// Функция для форматирования чисел (тысячи, миллионы)
+const formatNumber = (num: number): string => {
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+  } else if (num >= 1000) {
+    return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+  }
+  return num.toString();
+};
+
 interface VideoSidebarProps {
   onProfileClick?: () => void;
   onLike: () => void;
@@ -46,6 +56,8 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
     const [shareMessage, setShareMessage] = useState('');
     const [isSharePressed, setIsSharePressed] = useState(false);
     const channelUrl = useSelector((state: RootState) => state.channel.inviteLink);
+    
+    console.log('VideoSidebar: channelUrl:', channelUrl);
 
     const totalDuration = (timerDelay || 3000) / 1000; // Конвертируем миллисекунды в секунды
 
@@ -128,10 +140,10 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
         if (link) {
           await navigator.clipboard.writeText(link);
         }
-        setShareMessage('Ссылка скопирована в буфер обмена!');
+        setShareMessage(translations.linkCopied || 'Link copied');
         setTimeout(() => setShareMessage(''), 2000);
       } catch (e) {
-        setShareMessage('Ошибка при получении ссылки');
+        setShareMessage(translations.copyError || 'Copy error');
         setTimeout(() => setShareMessage(''), 2000);
       }
     };
@@ -146,24 +158,36 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
         if (isTelegram && window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
           const tgLink = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
           window.Telegram.WebApp.openTelegramLink(tgLink);
-          setShareMessage('Меню шаринга открыто!');
+          setShareMessage(translations.shareMenuOpened || 'Share menu opened');
         } else {
           await navigator.clipboard.writeText(shareUrl);
-          setShareMessage('Ссылка скопирована в буфер обмена!');
+          setShareMessage(translations.linkCopied || 'Link copied');
         }
         setTimeout(() => setShareMessage(''), 2000);
       } catch (error) {
-        setShareMessage('Ошибка при копировании или отправке ссылки.');
+        setShareMessage(translations.shareError || 'Share error');
         setTimeout(() => setShareMessage(''), 2000);
       }
     };
 
   const openTelegramChannel = () => {
-    if (!channelUrl) return;
+    if (!channelUrl) {
+      console.log('Channel URL not available');
+      return;
+    }
+    
+    // Убеждаемся, что ссылка имеет правильный формат
+    let formattedUrl = channelUrl;
+    if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
+      formattedUrl = `https://${formattedUrl}`;
+    }
+    
+    console.log('Opening channel URL:', formattedUrl);
+    
     if (window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
-      window.Telegram.WebApp.openTelegramLink(channelUrl);
+      window.Telegram.WebApp.openTelegramLink(formattedUrl);
     } else {
-      window.open(channelUrl, '_blank');
+      window.open(formattedUrl, '_blank');
     }
   };
 
@@ -211,7 +235,7 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
           </div>
         ) : (
           <div className={styles.sidebarIconLabelHolder}>
-            <div className={styles.sidebarIconLabel}>{typeof dislikes === 'number' ? dislikes + 'k' : '--'}</div>
+            <div className={styles.sidebarIconLabel}>{typeof dislikes === 'number' ? formatNumber(dislikes) : '--'}</div>
           </div>
         )}
       </div>
@@ -243,11 +267,11 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
           </div>
         ) : (
           <div className={styles.sidebarIconLabelHolder}>
-            <div className={styles.sidebarIconLabel}>{typeof likes === 'number' ? likes + 'k' : '--'}</div>
+            <div className={styles.sidebarIconLabel}>{typeof likes === 'number' ? formatNumber(likes) : '--'}</div>
           </div>
         )}
       </div>
-      <div className={styles.sidebarShareBlock} onClick={handleShare} style={{ cursor: 'pointer' }}>
+      <div className={styles.sidebarShareBlock} onClick={handleShare}>
         <ShareIcon className={styles.sidebarShareIcon + (isSharePressed ? ' ' + styles.sidebarShareIconActive : '')} />
         <div className={styles.sidebarIconLabel}>{translations.share}</div>
       </div>

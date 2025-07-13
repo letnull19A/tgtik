@@ -115,11 +115,11 @@ export const WithdrawalForm: React.FC<WithdrawFormProps> = ({ onClose, minWithdr
                 type="submit"
                 disabled={!isFormValid}
                 style={{
-                    background: isFormValid ? '#FF2B54' : '#888',
+                    background: '#FF2B54',
                     cursor: isFormValid ? 'pointer' : 'not-allowed'
                 }}
             >
-                <div className={styles.buttonText}>{translations.amountToWithdraw}</div>
+                <div className={styles.buttonText}>{translations.withdraw}</div>
             </button>
         </form>
     );

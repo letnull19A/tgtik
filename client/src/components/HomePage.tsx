@@ -217,11 +217,23 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
   };
 
   const openTelegramChannel = () => {
-    if (!channelUrl) return;
+    if (!channelUrl) {
+      console.log('Channel URL not available');
+      return;
+    }
+    
+    // Убеждаемся, что ссылка имеет правильный формат
+    let formattedUrl = channelUrl;
+    if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
+      formattedUrl = `https://${formattedUrl}`;
+    }
+    
+    console.log('Opening channel URL:', formattedUrl);
+    
     if (window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
-      window.Telegram.WebApp.openTelegramLink(channelUrl);
+      window.Telegram.WebApp.openTelegramLink(formattedUrl);
     } else {
-      window.open(channelUrl, '_blank');
+      window.open(formattedUrl, '_blank');
     }
   };
 
