@@ -108,22 +108,17 @@ export const getUserId = (): string | null => {
  */
 export const getBotId = (): string | null => {
   try {
-    console.log('DEBUG: getBotId called');
-    console.log('DEBUG: window.location.search:', window.location.search);
-    
     // Сначала из initDataUnsafe (если вдруг есть)
     const fromInitData = window.Telegram?.WebApp?.initDataUnsafe?.bot_id;
-    console.log('DEBUG: fromInitData:', fromInitData);
     if (fromInitData) return fromInitData.toString();
     
     // Потом из URL
     const urlParams = new URLSearchParams(window.location.search);
     const botIdFromUrl = urlParams.get('bot_id') || urlParams.get('botId');
-    console.log('DEBUG: botIdFromUrl:', botIdFromUrl);
     
     return botIdFromUrl;
   } catch (error) {
-    console.error('DEBUG: Error in getBotId:', error);
+    console.error('Error in getBotId:', error);
     return null;
   }
 };

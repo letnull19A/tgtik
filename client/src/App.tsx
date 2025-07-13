@@ -128,42 +128,26 @@ export default function App() {
   useEffect(() => {
     const fetchBotStart = async () => {
       const botId = getBotId();
-      console.log('DEBUG: botId from URL:', botId);
       if (botId) {
         try {
           dispatch(setChannelLoading(true));
-          console.log('DEBUG: Making API request to getBotStart with botId:', botId);
           const res = await getBotStart(botId);
-          console.log('DEBUG: getBotStart response:', res.data);
           if (res.data) {
             if (res.data.channelInviteLink) {
-              console.log('DEBUG: Setting channelInviteLink:', res.data.channelInviteLink);
               dispatch(setChannelInviteLink(res.data.channelInviteLink));
-            } else {
-              console.log('DEBUG: channelInviteLink is empty in response');
             }
             if (res.data.botLink) {
-              console.log('DEBUG: Setting botLink:', res.data.botLink);
               dispatch(setBotLink(res.data.botLink));
-            } else {
-              console.log('DEBUG: botLink is empty in response');
             }
             if (res.data.timerDelay) {
-              console.log('DEBUG: Setting timerDelay:', res.data.timerDelay);
               setTimerDelay(res.data.timerDelay);
-            } else {
-              console.log('DEBUG: timerDelay is empty in response, using default');
             }
-          } else {
-            console.log('DEBUG: res.data is empty');
           }
         } catch (e) {
-          console.error('DEBUG: Failed to fetch bot start info:', e);
+          console.error('Failed to fetch bot start info:', e);
         } finally {
           dispatch(setChannelLoading(false));
         }
-      } else {
-        console.log('DEBUG: botId is empty');
       }
     };
     fetchBotStart();

@@ -106,8 +106,6 @@ const getTranslationsByCountry = (country: string) => {
 };
 
 const getBotStart = (botId: string) => {
-    console.log('DEBUG: getBotStart called with botId:', botId);
-    console.log('DEBUG: API URL:', `/api/bot/start?botId=${botId}`);
     return api.get<BotStartResponse>(`/api/bot/start?botId=${botId}`);
 };
 
