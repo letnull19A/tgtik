@@ -151,10 +151,27 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
           console.log('DEBUG: Reset to first video');
         }, 0);
       } else {
-        console.log('DEBUG: No videos received from server');
+        console.log('DEBUG: No videos received from server, but continuing loop...');
+        // Даже если видео нет, продолжаем зацикливание с текущим видео
+        // Просто сбрасываем индекс на начало текущего списка
+        if (videos.length > 0) {
+          setCurrentIndex(0);
+          const firstVideo = videos[0];
+          setReward({ likeReward: firstVideo.likeReward, dislikeReward: firstVideo.dislikeReward });
+          setProgress(0);
+          console.log('DEBUG: Continuing with existing videos');
+        }
       }
     } catch (error) {
       console.error('Ошибка при обновлении видео:', error);
+      // Даже при ошибке продолжаем зацикливание с текущим видео
+      if (videos.length > 0) {
+        setCurrentIndex(0);
+        const firstVideo = videos[0];
+        setReward({ likeReward: firstVideo.likeReward, dislikeReward: firstVideo.dislikeReward });
+        setProgress(0);
+        console.log('DEBUG: Continuing with existing videos after error');
+      }
     }
   };
 
@@ -190,11 +207,20 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
         return;
       }
       if (axios.isAxiosError(error) && error.response?.status === 404) {
-        // Видео не найдено - просто переходим к следующему
+        // Видео не найдено - продолжаем зацикливание
+        console.log('DEBUG: Video not found, but continuing loop...');
+        if (currentIndex >= videos.length - 1) {
+          await refreshVideosForLoop();
+        }
         handleNextVideo();
         return;
       }
       console.error('Ошибка при отправке лайка:', error);
+      // Даже при других ошибках продолжаем зацикливание
+      if (currentIndex >= videos.length - 1) {
+        await refreshVideosForLoop();
+      }
+      handleNextVideo();
     }
   };
 
@@ -230,11 +256,20 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
         return;
       }
       if (axios.isAxiosError(error) && error.response?.status === 404) {
-        // Видео не найдено - просто переходим к следующему
+        // Видео не найдено - продолжаем зацикливание
+        console.log('DEBUG: Video not found, but continuing loop...');
+        if (currentIndex >= videos.length - 1) {
+          await refreshVideosForLoop();
+        }
         handleNextVideo();
         return;
       }
       console.error('Ошибка при отправке дизлайка:', error);
+      // Даже при других ошибках продолжаем зацикливание
+      if (currentIndex >= videos.length - 1) {
+        await refreshVideosForLoop();
+      }
+      handleNextVideo();
     }
   };
 

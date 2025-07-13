@@ -67,7 +67,7 @@ const wrapperStyle: React.CSSProperties = {
 const VideoLimitModal: React.FC<VideoLimitModalProps> = ({ current, max, onContinue, translations }) => {
   return (
     <div style={wrapperStyle}>
-      <div style={circleStyle}>{current}/{max}</div>
+      <div style={circleStyle}>{current - 1}/{max}</div>
       <div style={titleStyle}>
         {translations.videoLimitTitle || `You have rated ${max} videos.`}
       </div>
@@ -76,7 +76,7 @@ const VideoLimitModal: React.FC<VideoLimitModalProps> = ({ current, max, onConti
           `This is the maximum daily limit.
           Come back tomorrow to continue earning
           (videos are refreshed `}
-        <span style={blueText}>
+        <span>
           {translations.videoLimitRefresh || 'every 24 hours'}
         </span>
         {translations.videoLimitDescEnd || ').'}
