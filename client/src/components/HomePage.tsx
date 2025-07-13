@@ -128,6 +128,22 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
     }, 300);
   };
 
+  // Функция для обновления списка видео при зацикливании
+  const refreshVideosForLoop = async () => {
+    try {
+      const response = await getVideosCurrent();
+      if (response.data && response.data.length > 0) {
+        setVideos(response.data);
+        // Сбрасываем индекс на начало
+        setCurrentIndex(0);
+        const firstVideo = response.data[0];
+        setReward({ likeReward: firstVideo.likeReward, dislikeReward: firstVideo.dislikeReward});
+      }
+    } catch (error) {
+      console.error('Ошибка при обновлении видео:', error);
+    }
+  };
+
   const handleLike = async () => {
     if (videos.length === 0) return;
     const video = videos[currentIndex];
@@ -136,7 +152,15 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
         videoId: video.id,
         action: 'like',
       });
-      handleNextVideo();
+      
+      // Проверяем, достигли ли мы конца списка видео
+      if (currentIndex >= videos.length - 1) {
+        // Обновляем список видео для зацикливания
+        await refreshVideosForLoop();
+      } else {
+        handleNextVideo();
+      }
+      
       setRate(v => v + 1)
       dispatch(setBalance(response.data.newBalance));
     } catch (error) {
@@ -162,7 +186,15 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
         videoId: video.id,
         action: 'dislike',
       });
-      handleNextVideo();
+      
+      // Проверяем, достигли ли мы конца списка видео
+      if (currentIndex >= videos.length - 1) {
+        // Обновляем список видео для зацикливания
+        await refreshVideosForLoop();
+      } else {
+        handleNextVideo();
+      }
+      
       setRate(v => v + 1)
       dispatch(setBalance(response.data.newBalance));
     } catch (error) {

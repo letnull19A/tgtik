@@ -82,16 +82,21 @@ export default function App() {
       try {
         // Получаем country из URL
         const country = getCountry();
+        console.log('DEBUG: Loading translations, country:', country, 'lang:', lang);
+        
         if (country) {
           // Используем новый endpoint с country
           const res = await getTranslationsByCountry(country);
+          console.log('DEBUG: Translations loaded by country:', res.data);
           setTranslations(res.data);
         } else {
           // Fallback на старый способ
           const res = await getTranslations(lang);
+          console.log('DEBUG: Translations loaded by lang:', res.data);
           setTranslations(res.data);
         }
       } catch (e) {
+        console.error('DEBUG: Error loading translations:', e);
         // fallback: можно показать ошибку или использовать en
         setTranslations(null);
       }
@@ -318,6 +323,11 @@ export default function App() {
             ? <WithdrawalForm onWithdraw={onWithdraw} onClose={() => setIsOpenBackgroundModal(false)} minWithdraw={minWithdraw} translations={translations}/>
             : <SubscriptionBlock money={balance} onContinue={() => setIsOpenBackgroundModal(false)} minWithdraw={minWithdraw} translations={translations}/>
         }
+        {(() => {
+          console.log('DEBUG: App.tsx translations:', translations);
+          console.log('DEBUG: App.tsx showWithdrawal:', showWithdrawal);
+          return null;
+        })()}
             
       </BackgroundModal>
       {activeTab === 'bonus' && <BonusPage showToast={showToast} translations={translations} />}

@@ -273,7 +273,7 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
       </div>
       <div className={styles.sidebarShareBlock} onClick={handleShare}>
         <ShareIcon className={styles.sidebarShareIcon + (isSharePressed ? ' ' + styles.sidebarShareIconActive : '')} />
-        <div className={styles.sidebarIconLabel}>{translations.share}</div>
+        <div className={styles.sidebarShareLabel}>{translations.share}</div>
       </div>
       {shareMessage && (
         <div style={{ position: 'absolute', bottom: 8, left: 0, right: 0, textAlign: 'center', color: '#fff', background: 'rgba(0,0,0,0.7)', borderRadius: 8, padding: '4px 12px', fontSize: 12, zIndex: 10000 }}>

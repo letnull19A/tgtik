@@ -80,6 +80,15 @@
   pointer-events: none;
 }
 
+.sidebarShareLabel {
+  color: #FFF;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  margin-top: 2px;
+  pointer-events: auto;
+}
+
 .sidebarShareBlock {
   width: 80px;
   height: 80px;
@@ -92,7 +101,9 @@
   transition: transform 0.2s ease;
   border-radius: 50%;
   padding: 8px;
-  z-index: 1000;
+  z-index: 10005;
+  pointer-events: auto;
+  margin-top: 4px;
 }
 
 .sidebarShareBlock:hover {
@@ -110,6 +121,7 @@
 .sidebarShareIcon {
   width: 64px;
   height: 58px;
+  pointer-events: auto;
 }
 
 .sidebarPlusVideoDot {
