@@ -15,9 +15,20 @@ declare global {
 }
 
 const InviteList: React.FC<{refs: Referral[], onInvite: () => void, translations: any}> = ({refs, onInvite, translations}) =>  {
+  const listRef = React.useRef<HTMLDivElement>(null);
+  
+  React.useEffect(() => {
+    if (listRef.current && refs.length >= 2) {
+      // Принудительно показываем скроллбар при наличии 2+ элементов
+      listRef.current.classList.add('has-scroll');
+    } else if (listRef.current) {
+      listRef.current.classList.remove('has-scroll');
+    }
+  }, [refs.length]);
+  
   return (
       <div className={styles.container}>
-        <div className={styles.list}>
+        <div className={styles.list} ref={listRef}>
           {refs.map((ref) => (
               <div className={styles.item} key={ref.referredId}>
                 <img src={'https://placehold.co/40x40'} alt="avatar" className={styles.avatar} />

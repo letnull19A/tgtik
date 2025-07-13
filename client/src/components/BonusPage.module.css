@@ -497,23 +497,50 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+  max-height: 300px;
 }
 
 .list {
-  max-height: 200px;
+  max-height: 180px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 14px;
   padding-right: 4px;
+  padding-bottom: 4px;
 
   /* Кастомный скроллбар */
   scrollbar-width: thin;
   scrollbar-color: #FF2B54 #2F2F2F;
+  
+  /* Принудительно показываем скроллбар при необходимости */
+  overflow-y: scroll;
+}
+
+/* Принудительно показываем скроллбар при наличии 2+ элементов */
+.list.has-scroll {
+  overflow-y: scroll !important;
+}
+
+/* Всегда показываем скроллбар для списка с 2+ элементами */
+.list.has-scroll::-webkit-scrollbar {
+  width: 4px !important;
+  display: block !important;
+}
+
+.list.has-scroll::-webkit-scrollbar-track {
+  background: #2F2F2F !important;
+  border-radius: 23px !important;
+}
+
+.list.has-scroll::-webkit-scrollbar-thumb {
+  background-color: #FF2B54 !important;
+  border-radius: 23px !important;
+  min-height: 20px !important;
 }
 
 .list::-webkit-scrollbar {
-  width: 3px;
+  width: 4px;
   border-radius: 23px;
 }
 
@@ -525,6 +552,11 @@
 .list::-webkit-scrollbar-thumb {
   background-color: #FF2B54;
   border-radius: 23px;
+  min-height: 20px;
+}
+
+.list::-webkit-scrollbar-thumb:hover {
+  background-color: #E0244A;
 }
 
 .item {
@@ -533,6 +565,7 @@
   gap: 14px;
   padding-bottom: 8px;
   border-bottom: 1px solid #373737;
+  min-height: 50px;
 }
 
 @keyframes fadeInUp {

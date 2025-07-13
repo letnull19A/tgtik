@@ -8,6 +8,8 @@
   align-items: center;
   gap: 17px;
   z-index: 10003;
+  /* Убеждаемся, что весь sidebar не перекрывается */
+  pointer-events: auto;
 }
 
 .sidebarProfileWrapper {
@@ -101,9 +103,14 @@
   transition: transform 0.2s ease;
   border-radius: 50%;
   padding: 8px;
-  z-index: 10005;
+  z-index: 10006;
   pointer-events: auto;
   margin-top: 4px;
+  /* Увеличиваем область клика */
+  min-width: 80px;
+  min-height: 80px;
+  /* Убираем любые ограничения */
+  overflow: visible;
 }
 
 .sidebarShareBlock:hover {
@@ -122,6 +129,8 @@
   width: 64px;
   height: 58px;
   pointer-events: auto;
+  z-index: 10007;
+  position: relative;
 }
 
 .sidebarPlusVideoDot {

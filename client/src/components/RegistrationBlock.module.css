@@ -1,47 +1,51 @@
 .registrationPopup {
-  max-width: 320px;
+  max-width: 300px;
   width: 100%;
   margin-right: 10px;
   margin-left: 10px;
-  padding: 20px 16px 16px 16px;
-  background: #2D2D2D;
-  border-radius: 11px;
+  padding: 16px 14px 14px 14px;
+  background: linear-gradient(135deg, #2D2D2D 0%, #1F1F1F 100%);
+  border-radius: 16px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .registrationTitle {
   text-align: center;
   color: white;
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 30px;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 24px;
   word-wrap: break-word;
+  margin-bottom: 8px;
 }
 
 .registrationLabel {
-  max-width: 288px;
+  max-width: 272px;
   width: 100%;
-  color: #999999;
-  font-size: 14px;
+  color: #B0B0B0;
+  font-size: 13px;
   font-weight: 500;
-  line-height: 21px;
+  line-height: 18px;
   word-wrap: break-word;
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 .registrationGenderBlock {
-  max-width: 288px;
+  max-width: 272px;
   width: 100%;
-  padding: 12px 11px;
-  background: #191919;
-  border-radius: 10px;
+  padding: 10px 10px;
+  background: linear-gradient(135deg, #191919 0%, #0F0F0F 100%);
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 10px;
+  gap: 8px;
+  margin-top: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .registrationGenderRow {
@@ -49,30 +53,39 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 6px 4px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.registrationGenderRow:hover {
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .registrationGenderText {
   color: white;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
-  line-height: 24px;
+  line-height: 20px;
   word-wrap: break-word;
 }
 
 .registrationGenderRadio {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border-radius: 9999px;
-  border: 1px #5C5C5C solid;
+  border: 2px #5C5C5C solid;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s ease;
 }
 
 .selected {
-  background: #FF2B54;
+  background: linear-gradient(135deg, #FF2B54 0%, #E0244A 100%);
   border: none;
+  box-shadow: 0 2px 8px rgba(255, 43, 84, 0.3);
 }
 
 .registrationGenderRadioDot {
@@ -88,25 +101,26 @@
 }
 
 .registrationAgeBlock {
-  max-width: 288px;
+  max-width: 272px;
   width: 100%;
-  padding: 12px 11px;
-  background: #191919;
-  border-radius: 10px;
+  padding: 10px 10px;
+  background: linear-gradient(135deg, #191919 0%, #0F0F0F 100%);
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 10px;
+  gap: 8px;
+  margin-top: 8px;
   box-sizing: border-box;
-  border: 1.5px solid transparent;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .registrationAgeRow {
-  width: 253px;
-  height: 24px;
+  width: 252px;
+  height: 22px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  padding: 2px 0;
 }
 
 .registrationAgeText {
@@ -126,9 +140,9 @@
 
 .registrationAgeDesc {
   color: white;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 400;
-  line-height: 21px;
+  line-height: 18px;
   word-wrap: break-word;
   background: transparent;
   border: none;
@@ -158,9 +172,9 @@
   color: white;
   background: transparent;
   border: none;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
-  line-height: 24px;
+  line-height: 20px;
   outline: none;
   text-align: left;
   padding: 0;
@@ -195,15 +209,16 @@
 }
 
 .registrationAgeBlockError {
-  max-width: 288px;
+  max-width: 272px;
   width: 100%;
-  padding: 12px 11px;
-  background: #191919;
-  border-radius: 10px;
-  border: 1.5px solid #FF2B54;
+  padding: 10px 10px;
+  background: linear-gradient(135deg, #191919 0%, #0F0F0F 100%);
+  border-radius: 12px;
+  border: 2px solid #FF2B54;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 10px;
+  gap: 8px;
+  margin-top: 8px;
   box-sizing: border-box;
+  box-shadow: 0 0 8px rgba(255, 43, 84, 0.2);
 } 

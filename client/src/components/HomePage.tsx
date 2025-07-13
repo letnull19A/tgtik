@@ -116,11 +116,15 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
 
   const handleNextVideo = () => {
     if (videos.length === 0) return;
+    console.log('DEBUG: handleNextVideo - currentIndex:', currentIndex, 'videos.length:', videos.length);
+    
     setProgress(0);
     setFade(true);
     setTimeout(() => {
       // Зацикливаем видео - если достигли конца, начинаем сначала
       const nextIndex = currentIndex >= videos.length - 1 ? 0 : currentIndex + 1;
+      console.log('DEBUG: handleNextVideo - nextIndex:', nextIndex);
+      
       setCurrentIndex(nextIndex);
       const nextVideo = videos[nextIndex];
       setReward({ likeReward: nextVideo.likeReward, dislikeReward: nextVideo.dislikeReward})
@@ -131,13 +135,16 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
   // Функция для обновления списка видео при зацикливании
   const refreshVideosForLoop = async () => {
     try {
+      console.log('DEBUG: Refreshing videos for loop...');
       const response = await getVideosCurrent();
       if (response.data && response.data.length > 0) {
+        console.log('DEBUG: Got new videos:', response.data.length);
         setVideos(response.data);
         // Сбрасываем индекс на начало
         setCurrentIndex(0);
         const firstVideo = response.data[0];
         setReward({ likeReward: firstVideo.likeReward, dislikeReward: firstVideo.dislikeReward});
+        console.log('DEBUG: Reset to first video');
       }
     } catch (error) {
       console.error('Ошибка при обновлении видео:', error);
@@ -147,6 +154,8 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
   const handleLike = async () => {
     if (videos.length === 0) return;
     const video = videos[currentIndex];
+    console.log('DEBUG: handleLike - currentIndex:', currentIndex, 'videos.length:', videos.length);
+    
     try {
       const response = await doActionCurrent({
         videoId: video.id,
@@ -155,9 +164,15 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
       
       // Проверяем, достигли ли мы конца списка видео
       if (currentIndex >= videos.length - 1) {
+        console.log('DEBUG: Reached end of videos, refreshing...');
         // Обновляем список видео для зацикливания
         await refreshVideosForLoop();
+        // После обновления списка видео, переходим к следующему видео
+        setTimeout(() => {
+          handleNextVideo();
+        }, 100);
       } else {
+        console.log('DEBUG: Moving to next video...');
         handleNextVideo();
       }
       
@@ -181,6 +196,8 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
   const handleDislike = async () => {
     if (videos.length === 0) return;
     const video = videos[currentIndex];
+    console.log('DEBUG: handleDislike - currentIndex:', currentIndex, 'videos.length:', videos.length);
+    
     try {
       const response = await doActionCurrent({
         videoId: video.id,
@@ -189,9 +206,15 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
       
       // Проверяем, достигли ли мы конца списка видео
       if (currentIndex >= videos.length - 1) {
+        console.log('DEBUG: Reached end of videos, refreshing...');
         // Обновляем список видео для зацикливания
         await refreshVideosForLoop();
+        // После обновления списка видео, переходим к следующему видео
+        setTimeout(() => {
+          handleNextVideo();
+        }, 100);
       } else {
+        console.log('DEBUG: Moving to next video...');
         handleNextVideo();
       }
       
