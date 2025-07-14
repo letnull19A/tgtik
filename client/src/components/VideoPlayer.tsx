@@ -18,18 +18,30 @@ interface VideoPlayerProps {
 
 export default function VideoPlayer({ setProgress, videos, currentIndex, setCurrentIndex, fade, setIsVideoLoading, playing, setPlaying, muted = false, onVideoReady, initialTime = 0 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const initialTimeRef = useRef<number>(initialTime);
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.currentTime = initialTime;
-      videoRef.current.play().catch((err) => {
-        if (err.name !== 'AbortError') {
-          console.error('Video play error:', err);
-        }
-      });
-    }
+    initialTimeRef.current = initialTime;
+  }, [initialTime]);
+
+  useEffect(() => {
     setIsVideoLoading(true);
-  }, [currentIndex, setIsVideoLoading, initialTime]);
+  }, [currentIndex, setIsVideoLoading]);
+
+  // Устанавливаем прогресс только после onCanPlay
+  const handleCanPlay = () => {
+    setIsVideoLoading(false);
+    const video = videoRef.current;
+    if (video) {
+      let safeTime = Number(initialTimeRef.current);
+      if (isNaN(safeTime) || safeTime < 0 || safeTime >= video.duration) safeTime = 0;
+      video.currentTime = safeTime;
+      if (playing && video.paused) {
+        video.play().catch(() => {});
+      }
+    }
+    if (onVideoReady) onVideoReady();
+  };
 
   return (
     <div style={{
@@ -82,13 +94,7 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
           }}
           onLoadStart={() => setIsVideoLoading(true)}
           onWaiting={() => setIsVideoLoading(true)}
-          onCanPlay={() => {
-            setIsVideoLoading(false);
-            if (onVideoReady) onVideoReady();
-            if (playing && videoRef.current && videoRef.current.paused) {
-              videoRef.current.play().catch(() => {});
-            }
-          }}
+          onCanPlay={handleCanPlay}
           style={{
             width: '100%',
             height: '100%',
