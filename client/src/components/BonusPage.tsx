@@ -31,7 +31,17 @@ const InviteList: React.FC<{refs: Referral[], onInvite: () => void, translations
         <div className={styles.list} ref={listRef}>
           {refs.map((ref) => (
               <div className={styles.item} key={ref.referredId}>
-                <img src={ref.avatarUrl || 'https://www.pngall.com/wp-content/uploads/5/Profile-PNG-Photo.png'} alt="avatar" className={styles.avatar} />
+                <img
+                  src={ref.avatarUrl || 'https://www.pngall.com/wp-content/uploads/5/Profile-PNG-Photo.png'}
+                  alt="avatar"
+                  className={styles.avatar}
+                  onError={e => {
+                    const target = e.currentTarget;
+                    if (target.src !== 'https://www.pngall.com/wp-content/uploads/5/Profile-PNG-Photo.png') {
+                      target.src = 'https://www.pngall.com/wp-content/uploads/5/Profile-PNG-Photo.png';
+                    }
+                  }}
+                />
                 <div className={styles.text}>
                   <div className={styles.username}>{ref.username}</div>
                   <div className={styles.bonus}>+{translations.currency}{ref.bonus} {translations.bonus || 'bonus'}</div>
