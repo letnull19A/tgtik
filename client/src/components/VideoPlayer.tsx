@@ -36,11 +36,9 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
       let safeTime = Number(initialTimeRef.current);
       if (isNaN(safeTime) || safeTime < 0 || safeTime >= video.duration) safeTime = 0;
       video.currentTime = safeTime;
-      console.log('[VideoPlayer] onCanPlay: set currentTime', safeTime, 'duration:', video.duration, 'playing:', playing);
-      video.play().then(() => {
-        console.log('[VideoPlayer] play() called after set currentTime');
-      }).catch((e) => {
-        console.log('[VideoPlayer] play() error:', e);
+      // удалили все логи
+      video.play().catch((e) => {
+        // удалили все логи
       });
     }
     if (onVideoReady) onVideoReady();
@@ -72,13 +70,14 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
           autoPlay={playing}
           onClick={() => {
             if (videoRef.current) {
+              console.log('[VideoPlayer] video clicked, playing:', playing);
               if (playing) {
                 videoRef.current.pause();
                 setPlaying(false);
               } else {
                 videoRef.current.play().catch((err) => {
                   if (err.name !== 'AbortError') {
-                    console.error('Video play error:', err);
+                    console.error('[VideoPlayer] Video play error:', err);
                   }
                 });
                 setPlaying(true);
