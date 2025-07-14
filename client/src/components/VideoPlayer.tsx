@@ -84,6 +84,9 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
           onCanPlay={() => {
             setIsVideoLoading(false);
             if (onVideoReady) onVideoReady();
+            if (playing && videoRef.current && videoRef.current.paused) {
+              videoRef.current.play().catch(() => {});
+            }
           }}
           style={{
             width: '100%',

@@ -57,6 +57,10 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
     }
   }, [isVideoLoading]);
 
+  useEffect(() => {
+    console.log('[HomePage] playing:', playing, 'isVideoLoading:', isVideoLoading, 'isVideoReady:', isVideoReady, 'currentIndex:', currentIndex);
+  }, [playing, isVideoLoading, isVideoReady, currentIndex]);
+
   // Fetch hasBonus on mount
   useEffect(() => {
     const fetchHasBonus = async () => {
@@ -136,6 +140,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
     setProgress(0);
     setFade(true);
     setIsVideoReady(false);
+    setPlaying(true);
     setTimeout(() => {
       // Зацикливаем видео - если достигли конца, начинаем сначала
       const nextIndex = currentIndex >= videos.length - 1 ? 0 : currentIndex + 1;
@@ -388,7 +393,10 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
         playing={playing}
         setPlaying={setPlaying}
         muted={rate >= maxVideos}
-        onVideoReady={() => setIsVideoReady(true)}
+        onVideoReady={() => {
+          setIsVideoReady(true);
+          if (!playing) setPlaying(true);
+        }}
       />
       <VideoProgressBar progress={progress} />
       <VideoTopBar onGiftClick={handleGiftClick} rate={rate} maxVideos={maxVideos} onProfileClick={handleOpenProfile} translations={translations} hideGiftIcon={hasBonus}/>
@@ -412,6 +420,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
           redirectChannelUrl={videos[currentIndex]?.redirectChannelUrl}
           translations={translations}
           timerDelay={timerDelay || 3000}
+          logPrefix={'[VideoSidebar]'}
         />
         <VideoInfoBlock video={videos[currentIndex]} />
       </div>

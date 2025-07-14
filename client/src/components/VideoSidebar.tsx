@@ -37,9 +37,10 @@ interface VideoSidebarProps {
   redirectChannelUrl: string
   translations: any;
   timerDelay?: number;
+  logPrefix?: string;
 }
 
-function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, currentIndex, isVideoReady, activeTab, playing, isVideoLoading, likeReward, dislikeReward, redirectChannelUrl, translations, timerDelay }: VideoSidebarProps) {
+function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, currentIndex, isVideoReady, activeTab, playing, isVideoLoading, likeReward, dislikeReward, redirectChannelUrl, translations, timerDelay, logPrefix }: VideoSidebarProps) {
     const timerFillLike = useRef<HTMLDivElement>(null);
     const timerFillDislike = useRef<HTMLDivElement>(null);
     const [timeStart, setTimeStart] = useState(0);
@@ -63,6 +64,7 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
 
     // Сбросить все reward-состояния и таймер только при смене видео
     useEffect(() => {
+        console.log(logPrefix || '[VideoSidebar]', 'resetTimer on currentIndex change', 'currentIndex:', currentIndex);
         setShowRewardDislike(false);
         setRewardLikeFlyOut(false);
         setRewardDislikeFlyOut(false);
@@ -72,13 +74,20 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
 
     // Управление статусом таймера по бизнес-логике
     useEffect(() => {
+        console.log(logPrefix || '[VideoSidebar]', 'timerStatus:', timerStatus, 'playing:', playing, 'isVideoLoading:', isVideoLoading, 'isVideoReady:', isVideoReady, 'currentIndex:', currentIndex);
         if (timerStatus === 'finished') return;
         if (activeTab !== 'home' || !playing || isVideoLoading || !isVideoReady || isBlocked) {
-            if (timerStatus === 'running') dispatch(pauseTimer());
+            if (timerStatus === 'running') {
+                console.log(logPrefix || '[VideoSidebar]', 'pauseTimer');
+                dispatch(pauseTimer());
+            }
         } else {
-            if (timerStatus === 'not_started' || timerStatus === 'paused') dispatch(startTimer());
+            if (timerStatus === 'not_started' || timerStatus === 'paused') {
+                console.log(logPrefix || '[VideoSidebar]', 'startTimer');
+                dispatch(startTimer());
+            }
         }
-    }, [activeTab, playing, isVideoLoading, timerStatus, isVideoReady, isBlocked, dispatch]);
+    }, [activeTab, playing, isVideoLoading, timerStatus, isVideoReady, isBlocked, dispatch, currentIndex, logPrefix]);
 
     // Глобальный таймер: завершение через timerDelay миллисекунд после старта
     useEffect(() => {
@@ -116,12 +125,26 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
         return () => { if (raf !== undefined) cancelAnimationFrame(raf); };
     }, [timerState.status, timerState.startedAt, timerState.elapsedBeforePause, timerDelay]);
 
-    // Ставить таймер на паузу при размонтировании (например, при смене страницы)
+    // Ставить таймер на паузу при размонтировании (например, при смене страницы), и возобновлять при возврате
     useEffect(() => {
         return () => {
             dispatch(pauseTimer());
         };
     }, [dispatch]);
+
+    // Если вернулись на главную и все условия для таймера соблюдены, возобновить таймер
+    useEffect(() => {
+        if (
+            activeTab === 'home' &&
+            playing &&
+            !isVideoLoading &&
+            isVideoReady &&
+            timerStatus === 'paused'
+        ) {
+            console.log(logPrefix || '[VideoSidebar]', 'resumeTimer');
+            dispatch(resumeTimer());
+        }
+    }, [activeTab, playing, isVideoLoading, isVideoReady, timerStatus, dispatch, logPrefix]);
 
     useEffect(() => {
       if (window.Telegram?.WebApp) {
