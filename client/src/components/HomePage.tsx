@@ -18,6 +18,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setBalance } from '../store';
 import type { RootState, AppDispatch } from '../store';
 import { getUserId, getBotId, isTelegramWebApp } from '../utils/telegram';
+import { setPlayedSeconds } from '../store';
 
 function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, setIsOpenBackgroundModal, translations, timerDelay, onVideoLimitReached }: { onSelect?: (tab: 'home' | 'bonus' | 'money') => void, activeTab?: 'home' | 'bonus' | 'money' , setMoney: (v: number) => void, showToast: (title: string, description: string) => void, showErrorModal?: (msg: string) => void, setIsOpenBackgroundModal: (value: boolean) => void, translations: any, timerDelay?: number, onVideoLimitReached?: (rate: number, maxVideos: number) => void }) {
   const [showGiftToast, setShowGiftToast] = useState(false);
@@ -46,6 +47,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
   console.log('HomePage: botLink:', botLink);
   console.log('HomePage: botId:', botId);
   const [hasBonus, setHasBonus] = useState<boolean>(false);
+  const playedSeconds = useSelector((state: RootState) => state.videoProgress.playedSeconds);
 
   useEffect(() => {
     setMoney(balance);
@@ -60,6 +62,13 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
   useEffect(() => {
     console.log('[HomePage] playing:', playing, 'isVideoLoading:', isVideoLoading, 'isVideoReady:', isVideoReady, 'currentIndex:', currentIndex);
   }, [playing, isVideoLoading, isVideoReady, currentIndex]);
+
+  useEffect(() => {
+    if (activeTab !== 'home') {
+      setPlaying(false);
+      dispatch(setPlayedSeconds(progress));
+    }
+  }, [activeTab]);
 
   // Fetch hasBonus on mount
   useEffect(() => {
@@ -360,6 +369,11 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
     }
   };
 
+  const handleProgress = (playedState: { playedSeconds: number }) => {
+    dispatch(setPlayedSeconds(playedState.playedSeconds));
+    setProgress(playedState.playedSeconds);
+  };
+
   return (
     <>
       {showGiftWindow && (
@@ -388,7 +402,12 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
           translations={translations}
         />
       )}
-      <VideoPlayer setProgress={setProgress} videos={videos} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} fade={fade} 
+      <VideoPlayer
+        setProgress={setProgress}
+        videos={videos}
+        currentIndex={currentIndex}
+        setCurrentIndex={setCurrentIndex}
+        fade={fade}
         setIsVideoLoading={setIsVideoLoading}
         playing={playing}
         setPlaying={setPlaying}
@@ -397,6 +416,8 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
           setIsVideoReady(true);
           if (!playing) setPlaying(true);
         }}
+        playedSeconds={activeTab === 'home' ? playedSeconds : 0}
+        onProgress={handleProgress}
       />
       <VideoProgressBar progress={progress} />
       <VideoTopBar onGiftClick={handleGiftClick} rate={rate} maxVideos={maxVideos} onProfileClick={handleOpenProfile} translations={translations} hideGiftIcon={hasBonus}/>

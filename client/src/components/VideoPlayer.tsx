@@ -13,10 +13,13 @@ interface VideoPlayerProps {
   setPlaying: React.Dispatch<React.SetStateAction<boolean>>;
   muted?: boolean;
   onVideoReady?: () => void;
+  playedSeconds?: number;
+  onProgress?: (state: { playedSeconds: number }) => void;
 }
 
-export default function VideoPlayer({ setProgress, videos, currentIndex, setCurrentIndex, fade, setIsVideoLoading, playing, setPlaying, muted = false, onVideoReady }: VideoPlayerProps) {
+export default function VideoPlayer({ setProgress, videos, currentIndex, setCurrentIndex, fade, setIsVideoLoading, playing, setPlaying, muted = false, onVideoReady, playedSeconds = 0, onProgress }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const lastSeekRef = useRef<number>(-1);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -28,7 +31,21 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
       });
     }
     setIsVideoLoading(true);
+    lastSeekRef.current = -1;
   }, [currentIndex, setIsVideoLoading]);
+
+  // Seek to playedSeconds when it changes (if different from current)
+  useEffect(() => {
+    if (
+      videoRef.current &&
+      typeof playedSeconds === 'number' &&
+      Math.abs(videoRef.current.currentTime - playedSeconds) > 0.5 &&
+      playedSeconds !== lastSeekRef.current
+    ) {
+      videoRef.current.currentTime = playedSeconds;
+      lastSeekRef.current = playedSeconds;
+    }
+  }, [playedSeconds]);
 
   return (
     <div style={{
@@ -51,6 +68,9 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
           onTimeUpdate={() => {
             if (videoRef.current) {
               setProgress(videoRef.current.currentTime / videoRef.current.duration);
+              if (onProgress) {
+                onProgress({ playedSeconds: videoRef.current.currentTime });
+              }
             }
           }}
           autoPlay={playing}

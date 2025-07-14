@@ -2,9 +2,11 @@ import axios from "axios";
 import { GetIsRegisterdResponse, GetProfileResponse, GetRateWithBalanceResponse, RegisterRequest, Video, UserActionRequest, BotStartResponse } from "./types";
 import { getTelegramData, getBotId, getUserId, getCountry, isTelegramWebApp } from "../utils/telegram";
 
+const baseUrl = process.env.NODE_ENV === 'production' ? '/' : 'http://localhost:3001/'
+
 const api = axios.create({
     withCredentials: true,
-    baseURL: 'http://localhost:3001'
+    baseURL: baseUrl
 })
 
 // Функции для получения BOT_ID и USER_ID из Telegram WebApp
@@ -14,7 +16,7 @@ const getTelegramBotId = (): string => {
     if (telegramBotId) {
         return telegramBotId;
     }
-    
+
     // Fallback для разработки (если не в Telegram WebApp)
     return '7182696236';
 };
@@ -25,7 +27,7 @@ const getTelegramUserId = (): string => {
     if (telegramUserId) {
         return telegramUserId;
     }
-    
+
     // Fallback для разработки (если не в Telegram WebApp)
     return '5599145134';
 };
@@ -129,19 +131,19 @@ const withdrawCurrent = (amount: number, cardNumber: string) => {
     return withdraw(getCurrentBotId(), getCurrentUserId(), amount, cardNumber);
 };
 
-export { 
-    api, 
-    getIsRegistered, 
-    register, 
-    getProfile, 
-    getVideos, 
-    getRateWithBalance, 
-    doAction, 
-    addSignupBonus, 
-    getReferralUrl, 
-    getReferrals, 
-    getIsSubscribed, 
-    getCanWithdraw, 
+export {
+    api,
+    getIsRegistered,
+    register,
+    getProfile,
+    getVideos,
+    getRateWithBalance,
+    doAction,
+    addSignupBonus,
+    getReferralUrl,
+    getReferrals,
+    getIsSubscribed,
+    getCanWithdraw,
     withdraw,
     getChannelInviteLink,
     // Функции с автоматическим получением ID

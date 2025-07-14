@@ -1,4 +1,4 @@
-import { configureStore, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { configureStore, createSlice, PayloadAction, combineReducers } from '@reduxjs/toolkit';
 
 // Пример глобального state
 interface AppState {
@@ -138,18 +138,44 @@ const channelSlice = createSlice({
   },
 });
 
+// --- Video Progress Slice ---
+interface VideoProgressState {
+  playedSeconds: number;
+}
+
+const initialVideoProgressState: VideoProgressState = {
+  playedSeconds: 0,
+};
+
+const videoProgressSlice = createSlice({
+  name: 'videoProgress',
+  initialState: initialVideoProgressState,
+  reducers: {
+    setPlayedSeconds: (state, action) => {
+      state.playedSeconds = action.payload;
+    },
+    resetPlayedSeconds: (state) => {
+      state.playedSeconds = 0;
+    }
+  }
+});
+
 export const { setLoading, setRegistered } = appSlice.actions;
 export const { startTimer, pauseTimer, resumeTimer, resetTimer, finishTimer } = timerSlice.actions;
 export const { setBalance, incrementBalance, decrementBalance } = balanceSlice.actions;
 export const { setChannelInviteLink, setChannelLoading, setBotLink } = channelSlice.actions;
+export const { setPlayedSeconds, resetPlayedSeconds } = videoProgressSlice.actions;
+
+const rootReducer = combineReducers({
+  app: appSlice.reducer,
+  timer: timerSlice.reducer,
+  balance: balanceSlice.reducer,
+  channel: channelSlice.reducer,
+  videoProgress: videoProgressSlice.reducer,
+});
 
 export const store = configureStore({
-  reducer: {
-    app: appSlice.reducer,
-    timer: timerSlice.reducer,
-    balance: balanceSlice.reducer,
-    channel: channelSlice.reducer,
-  },
+  reducer: rootReducer,
 });
 
 export type RootState = ReturnType<typeof store.getState>;
