@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import VideoPlayer from './VideoPlayer';
 import VideoProgressBar from './VideoProgressBar';
 import VideoTopBar from './VideoTopBar';
@@ -48,6 +48,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
   console.log('HomePage: botId:', botId);
   const [hasBonus, setHasBonus] = useState<boolean>(false);
   const playedSeconds = useSelector((state: RootState) => state.videoProgress.playedSeconds);
+  const firstLoadRef = useRef(true);
 
   useEffect(() => {
     setMoney(balance);
@@ -128,9 +129,12 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
   };
 
   useEffect(() => {
-    fetchRate()
-    fetchVideos();
-  }, []) 
+    if (firstLoadRef.current) {
+      fetchRate();
+      fetchVideos();
+      firstLoadRef.current = false;
+    }
+  }, []);
 
   const handleOpenProfile = async () => {
     await fetchProfile();
