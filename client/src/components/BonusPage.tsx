@@ -14,6 +14,8 @@ declare global {
   }
 }
 
+const DEFAULT_AVATAR = 'https://www.pngall.com/wp-content/uploads/5/Profile-PNG-Photo.png';
+
 const InviteList: React.FC<{refs: Referral[], onInvite: () => void, translations: any}> = ({refs, onInvite, translations}) =>  {
   const listRef = React.useRef<HTMLDivElement>(null);
   
@@ -31,7 +33,7 @@ const InviteList: React.FC<{refs: Referral[], onInvite: () => void, translations
         <div className={styles.list} ref={listRef}>
           {refs.map((ref) => (
               <div className={styles.item} key={ref.referredId}>
-                <img src={ref.avatarUrl || 'https://placehold.co/40x40'} alt="avatar" className={styles.avatar} />
+                <img src={ref.avatarUrl || DEFAULT_AVATAR} alt="avatar" className={styles.avatar} />
                 <div className={styles.text}>
                   <div className={styles.username}>{ref.username}</div>
                   <div className={styles.bonus}>+{translations.currency}{ref.bonus} {translations.bonus || 'bonus'}</div>
