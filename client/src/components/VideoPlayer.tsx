@@ -67,13 +67,21 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
             width="100%"
             height="100%"
             controls={false}
-            muted={muted}
+            muted={true}
             onTimeUpdate={() => {
               if (videoRef.current) {
                 setProgress(videoRef.current.currentTime / videoRef.current.duration);
               }
             }}
             onCanPlay={handleCanPlay}
+            onError={() => {
+              console.error('[VideoPlayer] video error', videoRef.current?.error, videoRef.current?.src);
+            }}
+            onLoadedData={() => {
+              if (videoRef.current) {
+                console.log('[VideoPlayer] loaded', videoRef.current.src, videoRef.current.duration);
+              }
+            }}
             style={{
               width: '100%',
               height: '100%',
@@ -83,7 +91,7 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
               cursor: 'pointer',
             }}
           />
-          {!playing && (
+          {!playing && videos[currentIndex]?.url && (
             <button
               style={{
                 position: 'absolute',
@@ -98,6 +106,7 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
                 padding: 32,
                 cursor: 'pointer',
                 zIndex: 10,
+                display: playing ? 'none' : 'block',
               }}
               onClick={() => {
                 if (videoRef.current) {
