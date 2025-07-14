@@ -320,7 +320,7 @@ export default function App() {
               translations={translations}
             />
           : canWithdraw
-            ? <WithdrawalForm onWithdraw={onWithdraw} onClose={() => setIsOpenBackgroundModal(false)} minWithdraw={minWithdraw} translations={translations}/>
+            ? <WithdrawalForm onWithdraw={onWithdraw} onClose={() => setIsOpenBackgroundModal(false)} minWithdraw={minWithdraw} translations={translations} showToast={showToast}/>
             : <SubscriptionBlock money={balance} onContinue={() => setIsOpenBackgroundModal(false)} minWithdraw={minWithdraw} translations={translations}/>
         }
         {(() => {
