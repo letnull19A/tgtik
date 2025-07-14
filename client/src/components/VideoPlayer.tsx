@@ -13,14 +13,15 @@ interface VideoPlayerProps {
   setPlaying: React.Dispatch<React.SetStateAction<boolean>>;
   muted?: boolean;
   onVideoReady?: () => void;
+  initialTime?: number; // новый проп
 }
 
-export default function VideoPlayer({ setProgress, videos, currentIndex, setCurrentIndex, fade, setIsVideoLoading, playing, setPlaying, muted = false, onVideoReady }: VideoPlayerProps) {
+export default function VideoPlayer({ setProgress, videos, currentIndex, setCurrentIndex, fade, setIsVideoLoading, playing, setPlaying, muted = false, onVideoReady, initialTime = 0 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     if (videoRef.current) {
-      videoRef.current.currentTime = 0;
+      videoRef.current.currentTime = initialTime;
       videoRef.current.play().catch((err) => {
         if (err.name !== 'AbortError') {
           console.error('Video play error:', err);
@@ -28,7 +29,7 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
       });
     }
     setIsVideoLoading(true);
-  }, [currentIndex, setIsVideoLoading]);
+  }, [currentIndex, setIsVideoLoading, initialTime]);
 
   return (
     <div style={{

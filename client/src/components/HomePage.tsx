@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import VideoPlayer from './VideoPlayer';
 import VideoProgressBar from './VideoProgressBar';
 import VideoTopBar from './VideoTopBar';
@@ -46,6 +46,25 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
   console.log('HomePage: botLink:', botLink);
   console.log('HomePage: botId:', botId);
   const [hasBonus, setHasBonus] = useState<boolean>(false);
+  const [videoTimes, setVideoTimes] = useState<{ [index: number]: number }>({});
+  const lastTab = useRef<'home' | 'bonus' | 'money' | undefined>(activeTab);
+
+  // Сохраняем прогресс видео при уходе с вкладки home
+  useEffect(() => {
+    if (lastTab.current === 'home' && activeTab !== 'home') {
+      setVideoTimes((prev) => ({ ...prev, [currentIndex]: progress }));
+    }
+    lastTab.current = activeTab;
+    // eslint-disable-next-line
+  }, [activeTab]);
+
+  // При смене видео сбрасываем прогресс, если нет сохранённого значения
+  useEffect(() => {
+    if (videoTimes[currentIndex] === undefined) {
+      setProgress(0);
+    }
+    // eslint-disable-next-line
+  }, [currentIndex]);
 
   useEffect(() => {
     setMoney(balance);
@@ -388,7 +407,15 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
           translations={translations}
         />
       )}
-      <VideoPlayer setProgress={setProgress} videos={videos} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} fade={fade} 
+      <VideoPlayer 
+        setProgress={(v) => {
+          setProgress(v);
+          setVideoTimes((prev) => ({ ...prev, [currentIndex]: v }));
+        }}
+        videos={videos} 
+        currentIndex={currentIndex} 
+        setCurrentIndex={setCurrentIndex} 
+        fade={fade} 
         setIsVideoLoading={setIsVideoLoading}
         playing={playing}
         setPlaying={setPlaying}
@@ -397,6 +424,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
           setIsVideoReady(true);
           if (!playing) setPlaying(true);
         }}
+        initialTime={videoTimes[currentIndex] || 0}
       />
       <VideoProgressBar progress={progress} />
       <VideoTopBar onGiftClick={handleGiftClick} rate={rate} maxVideos={maxVideos} onProfileClick={handleOpenProfile} translations={translations} hideGiftIcon={hasBonus}/>
