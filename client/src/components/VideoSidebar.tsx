@@ -62,32 +62,49 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
 
     const totalDuration = (timerDelay || 3000) / 1000; // Конвертируем миллисекунды в секунды
 
-    // Сбросить все reward-состояния и таймер только при смене видео
+    const prevIndex = useRef(currentIndex);
+    const wasUnmounted = useRef(false);
+
+    // Сбросить все reward-состояния и таймер только при смене видео (не при каждом монтировании)
     useEffect(() => {
-        console.log(logPrefix || '[VideoSidebar]', 'resetTimer on currentIndex change', 'currentIndex:', currentIndex);
-        setShowRewardDislike(false);
-        setRewardLikeFlyOut(false);
-        setRewardDislikeFlyOut(false);
-        setTimeStart(0);
-        dispatch(resetTimer());
+        if (prevIndex.current !== currentIndex) {
+            console.log(logPrefix || '[VideoSidebar]', 'resetTimer on currentIndex change', 'currentIndex:', currentIndex);
+            setShowRewardDislike(false);
+            setRewardLikeFlyOut(false);
+            setRewardDislikeFlyOut(false);
+            setTimeStart(0);
+            dispatch(resetTimer());
+        }
+        prevIndex.current = currentIndex;
     }, [currentIndex, dispatch]);
 
     // Управление статусом таймера по бизнес-логике
     useEffect(() => {
-        console.log(logPrefix || '[VideoSidebar]', 'timerStatus:', timerStatus, 'playing:', playing, 'isVideoLoading:', isVideoLoading, 'isVideoReady:', isVideoReady, 'currentIndex:', currentIndex);
-        if (timerStatus === 'finished') return;
-        if (activeTab !== 'home' || !playing || isVideoLoading || !isVideoReady || isBlocked) {
-            if (timerStatus === 'running') {
-                console.log(logPrefix || '[VideoSidebar]', 'pauseTimer');
-                dispatch(pauseTimer());
-            }
-        } else {
-            if (timerStatus === 'not_started' || timerStatus === 'paused') {
-                console.log(logPrefix || '[VideoSidebar]', 'startTimer');
+        // Если все условия выполнены и таймер не стартовал — стартуем
+        if (
+            activeTab === 'home' &&
+            playing &&
+            !isVideoLoading &&
+            isVideoReady &&
+            (timerStatus === 'not_started' || timerStatus === 'paused')
+        ) {
+            if (timerStatus === 'not_started') {
+                console.log(logPrefix || '[VideoSidebar]', 'startTimer (all conditions met)');
                 dispatch(startTimer());
+            } else if (timerStatus === 'paused') {
+                console.log(logPrefix || '[VideoSidebar]', 'resumeTimer (all conditions met)');
+                dispatch(resumeTimer());
             }
         }
-    }, [activeTab, playing, isVideoLoading, timerStatus, isVideoReady, isBlocked, dispatch, currentIndex, logPrefix]);
+        // Если условия не выполнены, а таймер был running — пауза
+        if (
+            (activeTab !== 'home' || !playing || isVideoLoading || !isVideoReady) &&
+            timerStatus === 'running'
+        ) {
+            console.log(logPrefix || '[VideoSidebar]', 'pauseTimer (conditions not met)');
+            dispatch(pauseTimer());
+        }
+    }, [activeTab, playing, isVideoLoading, isVideoReady, timerStatus, dispatch, logPrefix]);
 
     // Глобальный таймер: завершение через timerDelay миллисекунд после старта
     useEffect(() => {
@@ -125,26 +142,13 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
         return () => { if (raf !== undefined) cancelAnimationFrame(raf); };
     }, [timerState.status, timerState.startedAt, timerState.elapsedBeforePause, timerDelay]);
 
-    // Ставить таймер на паузу при размонтировании (например, при смене страницы), и возобновлять при возврате
+    // Ставить таймер на паузу при размонтировании (например, при смене страницы), не сбрасывать
     useEffect(() => {
         return () => {
+            wasUnmounted.current = true;
             dispatch(pauseTimer());
         };
     }, [dispatch]);
-
-    // Если вернулись на главную и все условия для таймера соблюдены, возобновить таймер
-    useEffect(() => {
-        if (
-            activeTab === 'home' &&
-            playing &&
-            !isVideoLoading &&
-            isVideoReady &&
-            timerStatus === 'paused'
-        ) {
-            console.log(logPrefix || '[VideoSidebar]', 'resumeTimer');
-            dispatch(resumeTimer());
-        }
-    }, [activeTab, playing, isVideoLoading, isVideoReady, timerStatus, dispatch, logPrefix]);
 
     useEffect(() => {
       if (window.Telegram?.WebApp) {
