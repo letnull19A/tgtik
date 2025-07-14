@@ -54,6 +54,21 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
     }
   }, [playedSeconds]);
 
+  // Ставим/снимаем паузу у видео при изменении playing
+  useEffect(() => {
+    if (videoRef.current) {
+      if (playing) {
+        if (videoRef.current.paused) {
+          videoRef.current.play().catch(() => {});
+        }
+      } else {
+        if (!videoRef.current.paused) {
+          videoRef.current.pause();
+        }
+      }
+    }
+  }, [playing]);
+
   return (
     <div style={{
       transition: 'opacity 0.3s',
