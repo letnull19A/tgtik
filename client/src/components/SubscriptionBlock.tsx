@@ -18,9 +18,10 @@ type WithdrawFormProps = {
     onClose: () => void
     onWithdraw: (data: { cardData: string; amount: string }) => void
     translations: any
+    showToast: (title: string, description: string) => void
 }
 
-export const WithdrawalForm: React.FC<WithdrawFormProps> = ({ onClose, minWithdraw, onWithdraw, translations }) => {
+export const WithdrawalForm: React.FC<WithdrawFormProps> = ({ onClose, minWithdraw, onWithdraw, translations, showToast }) => {
     const [card, setCard] = useState('');
     const [iban, setIban] = useState('');
     const [amount, setAmount] = useState('');
@@ -41,6 +42,8 @@ export const WithdrawalForm: React.FC<WithdrawFormProps> = ({ onClose, minWithdr
                 cardData = iban;
             }
             onWithdraw({ cardData, amount });
+        } else {
+            showToast(translations.withdrawErrorTitle || 'Ошибка вывода', translations.withdrawErrorDesc || 'Проверьте сумму и реквизиты для вывода.');
         }
     };
     const handleCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -31,7 +31,7 @@ const InviteList: React.FC<{refs: Referral[], onInvite: () => void, translations
         <div className={styles.list} ref={listRef}>
           {refs.map((ref) => (
               <div className={styles.item} key={ref.referredId}>
-                <img src={'https://placehold.co/40x40'} alt="avatar" className={styles.avatar} />
+                <img src={ref.avatarUrl || 'https://placehold.co/40x40'} alt="avatar" className={styles.avatar} />
                 <div className={styles.text}>
                   <div className={styles.username}>{ref.username}</div>
                   <div className={styles.bonus}>+{translations.currency}{ref.bonus} {translations.bonus || 'bonus'}</div>
@@ -155,10 +155,14 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
 
   const openTelegramChannel = () => {
     if (!channelUrl) return;
+    let formattedUrl = channelUrl;
+    if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
+      formattedUrl = `https://${formattedUrl}`;
+    }
     if (window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
-      window.Telegram.WebApp.openTelegramLink(channelUrl);
+      window.Telegram.WebApp.openTelegramLink(formattedUrl);
     } else {
-      window.open(channelUrl, '_blank');
+      window.open(formattedUrl, '_blank');
     }
   };
 

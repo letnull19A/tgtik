@@ -34,6 +34,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
   const [rate, setRate] = useState(0);
   const [maxVideos, setMaxVideos] = useState(0)
   const [isVideoLoading, setIsVideoLoading] = useState(true);
+  const [isVideoReady, setIsVideoReady] = useState(false);
   const [timerFinished, setTimerFinished] = useState(false);
   const [playing, setPlaying] = useState(true);
   const dispatch = useDispatch<AppDispatch>();
@@ -44,6 +45,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
   console.log('HomePage: channelUrl (inviteLink):', channelUrl);
   console.log('HomePage: botLink:', botLink);
   console.log('HomePage: botId:', botId);
+  const [hasBonus, setHasBonus] = useState<boolean>(false);
 
   useEffect(() => {
     setMoney(balance);
@@ -54,6 +56,19 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
       setTimerFinished(false);
     }
   }, [isVideoLoading]);
+
+  // Fetch hasBonus on mount
+  useEffect(() => {
+    const fetchHasBonus = async () => {
+      try {
+        const res = await getIsSubscribedCurrent();
+        setHasBonus(!!res.data.hasBonus);
+      } catch (e) {
+        setHasBonus(false);
+      }
+    };
+    fetchHasBonus();
+  }, []);
 
   // Убираем этот useEffect - модалка должна появляться только при достижении дневного лимита
 
@@ -120,6 +135,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
     
     setProgress(0);
     setFade(true);
+    setIsVideoReady(false);
     setTimeout(() => {
       // Зацикливаем видео - если достигли конца, начинаем сначала
       const nextIndex = currentIndex >= videos.length - 1 ? 0 : currentIndex + 1;
@@ -302,6 +318,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
     try {
       const response = await addSignupBonusCurrent()
       dispatch(setBalance(balance + response.data.bonus))
+      setHasBonus(true);
       showToast(translations.giftToast.giftClaimedTitle, translations.giftToast.giftClaimedDescription.replace('{amount}', response.data.bonus.toString()).replace('{currency}', translations.currency));
     }catch(err) {
       showToast(translations.giftToast.serverErrorTitle, translations.giftToast.serverErrorDescription);
@@ -371,9 +388,10 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
         playing={playing}
         setPlaying={setPlaying}
         muted={rate >= maxVideos}
+        onVideoReady={() => setIsVideoReady(true)}
       />
       <VideoProgressBar progress={progress} />
-      <VideoTopBar onGiftClick={handleGiftClick} rate={rate} maxVideos={maxVideos} onProfileClick={handleOpenProfile} translations={translations}/>
+      <VideoTopBar onGiftClick={handleGiftClick} rate={rate} maxVideos={maxVideos} onProfileClick={handleOpenProfile} translations={translations} hideGiftIcon={hasBonus}/>
       <VideoBalanceBar translations={translations} />
       <VideoPromoBar onOpenTelegramChannel={openTelegramChannel} translations={translations} />
       <div className={styles.homePage}>
@@ -386,7 +404,7 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
           rate={rate}
           likeReward={reward.likeReward}
           dislikeReward={reward?.dislikeReward}
-          isVideoReady={!isVideoLoading}
+          isVideoReady={isVideoReady}
           currentIndex={currentIndex}
           activeTab={activeTab}
           playing={playing}

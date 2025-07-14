@@ -61,22 +61,14 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
 
     const totalDuration = (timerDelay || 3000) / 1000; // Конвертируем миллисекунды в секунды
 
-    // Сбросить все reward-состояния и таймер при смене видео
+    // Сбросить все reward-состояния и таймер только при смене видео
     useEffect(() => {
-        setShowRewardLike(false);
         setShowRewardDislike(false);
         setRewardLikeFlyOut(false);
         setRewardDislikeFlyOut(false);
         setTimeStart(0);
         dispatch(resetTimer());
     }, [currentIndex, dispatch]);
-
-    // Останавливать таймер при размонтировании (например, при смене страницы)
-    useEffect(() => {
-        return () => {
-            dispatch(resetTimer());
-        };
-    }, [dispatch]);
 
     // Управление статусом таймера по бизнес-логике
     useEffect(() => {
@@ -123,6 +115,13 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
         }
         return () => { if (raf !== undefined) cancelAnimationFrame(raf); };
     }, [timerState.status, timerState.startedAt, timerState.elapsedBeforePause, timerDelay]);
+
+    // Ставить таймер на паузу при размонтировании (например, при смене страницы)
+    useEffect(() => {
+        return () => {
+            dispatch(pauseTimer());
+        };
+    }, [dispatch]);
 
     useEffect(() => {
       if (window.Telegram?.WebApp) {

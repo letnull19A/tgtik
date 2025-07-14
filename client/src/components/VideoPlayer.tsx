@@ -12,9 +12,10 @@ interface VideoPlayerProps {
   playing: boolean;
   setPlaying: React.Dispatch<React.SetStateAction<boolean>>;
   muted?: boolean;
+  onVideoReady?: () => void;
 }
 
-export default function VideoPlayer({ setProgress, videos, currentIndex, setCurrentIndex, fade, setIsVideoLoading, playing, setPlaying, muted = false }: VideoPlayerProps) {
+export default function VideoPlayer({ setProgress, videos, currentIndex, setCurrentIndex, fade, setIsVideoLoading, playing, setPlaying, muted = false, onVideoReady }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -80,7 +81,10 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
           }}
           onLoadStart={() => setIsVideoLoading(true)}
           onWaiting={() => setIsVideoLoading(true)}
-          onCanPlay={() => setIsVideoLoading(false)}
+          onCanPlay={() => {
+            setIsVideoLoading(false);
+            if (onVideoReady) onVideoReady();
+          }}
           style={{
             width: '100%',
             height: '100%',

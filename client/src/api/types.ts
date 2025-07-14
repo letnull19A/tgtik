@@ -46,11 +46,12 @@ export type UserActionRequest = {
   action: 'like' | 'dislike';
 };
 
-export type Referral = {
+export interface Referral {
   referredId: string;
-  username: string;
+  username: string | null;
   bonus: number;
-};
+  avatarUrl?: string;
+}
 
 export type BotStartResponse = {
   botId: string;
