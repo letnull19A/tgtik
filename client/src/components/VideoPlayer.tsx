@@ -60,7 +60,7 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
       background: '#000'
     }}>
       {videos[currentIndex]?.url ? (
-        <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
+        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
           <video
             ref={videoRef}
             src={videos[currentIndex].url}
@@ -74,7 +74,14 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
               }
             }}
             onCanPlay={handleCanPlay}
-            style={{ border: '2px solid red' }}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              display: 'block',
+              background: '#000',
+              cursor: 'pointer',
+            }}
           />
           {!playing && (
             <button
