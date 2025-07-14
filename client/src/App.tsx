@@ -330,23 +330,27 @@ export default function App() {
         })()}
             
       </BackgroundModal>
-      {activeTab === 'bonus' && <BonusPage showToast={showToast} translations={translations} />}
-      {activeTab !== 'bonus' && <HomePage 
-        translations={translations} 
-        onSelect={handleTabSelect} 
-        activeTab={activeTab} 
-        setMoney={() => {}} 
-        showToast={showToast} 
-        showErrorModal={undefined} 
-        setIsOpenBackgroundModal={setIsOpenBackgroundModal} 
-        timerDelay={timerDelay}
-        onVideoLimitReached={(rate, maxVideos) => {
-          setVideoRate(rate);
-          setVideoMaxVideos(maxVideos);
-          setVideoLimitReached(true);
-          setIsOpenBackgroundModal(true);
-        }}
-      />}
+      <div style={{display: activeTab === 'home' ? 'block' : 'none'}}>
+        <HomePage 
+          translations={translations} 
+          onSelect={handleTabSelect} 
+          activeTab={activeTab} 
+          setMoney={() => {}} 
+          showToast={showToast} 
+          showErrorModal={undefined} 
+          setIsOpenBackgroundModal={setIsOpenBackgroundModal} 
+          timerDelay={timerDelay}
+          onVideoLimitReached={(rate, maxVideos) => {
+            setVideoRate(rate);
+            setVideoMaxVideos(maxVideos);
+            setVideoLimitReached(true);
+            setIsOpenBackgroundModal(true);
+          }}
+        />
+      </div>
+      <div style={{display: activeTab === 'bonus' ? 'block' : 'none'}}>
+        <BonusPage showToast={showToast} translations={translations} />
+      </div>
       <BottomNavBar onSelect={handleTabSelect} activeTab={activeTab} isModalOpen={isOpenBackgroundModal} translations={translations} />
     </>;
   }

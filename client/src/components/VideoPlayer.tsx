@@ -20,6 +20,7 @@ interface VideoPlayerProps {
 export default function VideoPlayer({ setProgress, videos, currentIndex, setCurrentIndex, fade, setIsVideoLoading, playing, setPlaying, muted = false, onVideoReady, playedSeconds = 0, onProgress }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const lastSeekRef = useRef<number>(-1);
+  const shouldSeekRef = useRef(false);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -32,6 +33,7 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
     }
     setIsVideoLoading(true);
     lastSeekRef.current = -1;
+    shouldSeekRef.current = false;
   }, [currentIndex, setIsVideoLoading]);
 
   // Seek to playedSeconds when it changes (if different from current)
@@ -42,8 +44,13 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
       Math.abs(videoRef.current.currentTime - playedSeconds) > 0.5 &&
       playedSeconds !== lastSeekRef.current
     ) {
-      videoRef.current.currentTime = playedSeconds;
-      lastSeekRef.current = playedSeconds;
+      if (videoRef.current.readyState >= 1) {
+        videoRef.current.currentTime = playedSeconds;
+        lastSeekRef.current = playedSeconds;
+        shouldSeekRef.current = false;
+      } else {
+        shouldSeekRef.current = true;
+      }
     }
   }, [playedSeconds]);
 
@@ -104,6 +111,11 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
           onCanPlay={() => {
             setIsVideoLoading(false);
             if (onVideoReady) onVideoReady();
+            if (shouldSeekRef.current && videoRef.current) {
+              videoRef.current.currentTime = playedSeconds;
+              lastSeekRef.current = playedSeconds;
+              shouldSeekRef.current = false;
+            }
             if (playing && videoRef.current && videoRef.current.paused) {
               videoRef.current.play().catch(() => {});
             }
