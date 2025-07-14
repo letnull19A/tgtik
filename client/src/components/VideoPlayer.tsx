@@ -73,7 +73,8 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
             }
           }}
           autoPlay={playing}
-          onClick={() => {
+          onClick={e => {
+            if (!e.isTrusted) return;
             if (videoRef.current) {
               if (playing) {
                 console.log('[VideoPlayer] pause() called by click');
