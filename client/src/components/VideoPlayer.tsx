@@ -72,7 +72,6 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
               setProgress(videoRef.current.currentTime / videoRef.current.duration);
             }
           }}
-          autoPlay={playing}
           onClick={e => {
             if (!e.isTrusted) return;
             if (videoRef.current) {
