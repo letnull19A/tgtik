@@ -7,7 +7,6 @@ import GiftToast from './GiftToast';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../store';
 
-// Add this at the very top of the file
 declare global {
   interface Window {
     Telegram?: any;
@@ -25,7 +24,6 @@ const InviteList: React.FC<{refs: Referral[], onInvite: () => void, translations
   
   React.useEffect(() => {
     if (listRef.current && refs.length >= 2) {
-      // Принудительно показываем скроллбар при наличии 2+ элементов
       listRef.current.classList.add('has-scroll');
     } else if (listRef.current) {
       listRef.current.classList.remove('has-scroll');
@@ -57,7 +55,6 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
   const [loading, setLoading] = React.useState(false);
   const botLink = useSelector((state: RootState) => state.channel.botLink);
 
-  // Проверяем, что мы в Telegram Mini App
   React.useEffect(() => {
     if (window.Telegram?.WebApp) {
       window.Telegram.WebApp.ready();
@@ -66,7 +63,7 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
 
   const handlePromoApply = () => {
     showToast(translations.promocodeError, translations.promocodeNotFound);
-    setPromoCode(''); // Очищаем поле промокода после применения
+    setPromoCode('');
   };
 
   const fetchReferrals = async () => {
@@ -75,13 +72,7 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
       const res = await getReferralsCurrent();
       const data = Array.isArray(res.data) ? res.data : [res.data];
       setReferrals(data);
-      // Получаем актуальный баланс с сервера:
-      try {
-        const balanceRes = await getRateWithBalanceCurrent();
-        // dispatch(setBalance(balanceRes.data.balance)); // This line was removed as per the edit hint
-      } catch (e) {}
     } catch (e) {
-      console.log('Ошибка при получении рефералов:', e);
       setReferrals([]);
     } finally {
       setLoading(false);
@@ -94,20 +85,16 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
 
   const handleCopyInvite = async () => {
     try {
-      // Получаем реферальную ссылку
       const referralRes = await getReferralUrlCurrent();
       const referralLink = referralRes.data.referralLink;
       await navigator.clipboard.writeText(referralLink);
       showToast(translations.linkCopied || 'Link copied', translations.linkCopiedDesc || 'Referral link copied to clipboard');
     } catch (e) {
-      console.log('Ошибка при получении реферальной ссылки:', e);
-      // Fallback на botLink если реферальная ссылка недоступна
       if (botLink) {
         try {
           await navigator.clipboard.writeText(botLink);
           showToast(translations.linkCopied || 'Link copied', translations.linkCopiedDesc || 'Referral link copied to clipboard');
         } catch (e) {
-          console.log('Ошибка при копировании ссылки');
           showToast(translations.copyError || 'Copy error', translations.copyErrorDesc || 'Failed to copy link');
         }
       } else {
@@ -116,17 +103,14 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
     }
   };
 
-  // Функция для обработки клика по кнопке "Поделиться"
   const handleShare = async () => {
     try {
-      // Получаем реферальную ссылку
       const referralRes = await getReferralUrlCurrent();
       const shareUrl = referralRes.data.referralLink;
       const shareText = '';
 
       if (window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
         const tgLink = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
-        console.log('Opening Telegram link:', tgLink);
         window.Telegram.WebApp.openTelegramLink(tgLink);
         showToast(translations.shareMenuOpened || 'Share menu opened', translations.shareMenuOpenedDesc || 'Telegram share menu opened');
       } else {
@@ -134,8 +118,6 @@ const BonusPage: React.FC<{ showToast: (title: string, description: string) => v
         showToast(translations.linkCopied || 'Link copied', translations.linkCopiedDesc || 'Referral link copied to clipboard');
       }
     } catch (e) {
-      console.log('Ошибка при получении реферальной ссылки:', e);
-      // Fallback на botLink если реферальная ссылка недоступна
       if (botLink) {
         const shareUrl = botLink;
         const shareText = '';

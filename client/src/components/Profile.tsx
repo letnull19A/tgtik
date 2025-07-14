@@ -38,8 +38,6 @@ const Profile: React.FC<ProfileProps> = ({
   const [animate, setAnimate] = useState(false);
   const channelUrl = useSelector((state: RootState) => state.channel.inviteLink);
   
-  console.log('Profile: channelUrl:', channelUrl);
-
   useEffect(() => {
     if (open) {
       setVisible(true);
@@ -57,7 +55,6 @@ const Profile: React.FC<ProfileProps> = ({
 
   const openTelegramChannel = () => {
     if (!channelUrl) {
-      console.log('Channel URL not available');
       return;
     }
     
@@ -66,8 +63,6 @@ const Profile: React.FC<ProfileProps> = ({
     if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
       formattedUrl = `https://${formattedUrl}`;
     }
-    
-    console.log('Opening channel URL:', formattedUrl);
     
     if (window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
       window.Telegram.WebApp.openTelegramLink(formattedUrl);

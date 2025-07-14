@@ -36,10 +36,7 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
       let safeTime = Number(initialTimeRef.current);
       if (isNaN(safeTime) || safeTime < 0 || safeTime >= video.duration) safeTime = 0;
       video.currentTime = safeTime;
-      // удалили все логи
-      video.play().catch((e) => {
-        // удалили все логи
-      });
+      video.play();
     }
     if (onVideoReady) onVideoReady();
   };
@@ -70,16 +67,11 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
           autoPlay={playing}
           onClick={() => {
             if (videoRef.current) {
-              console.log('[VideoPlayer] video clicked, playing:', playing);
               if (playing) {
                 videoRef.current.pause();
                 setPlaying(false);
               } else {
-                videoRef.current.play().catch((err) => {
-                  if (err.name !== 'AbortError') {
-                    console.error('[VideoPlayer] Video play error:', err);
-                  }
-                });
+                videoRef.current.play();
                 setPlaying(true);
               }
             }

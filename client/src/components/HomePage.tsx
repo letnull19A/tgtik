@@ -42,14 +42,10 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
   const channelUrl = useSelector((state: RootState) => state.channel.inviteLink);
   const botLink = useSelector((state: RootState) => state.channel.botLink);
   const botId = getBotId();
-  console.log('HomePage: channelUrl (inviteLink):', channelUrl);
-  console.log('HomePage: botLink:', botLink);
-  console.log('HomePage: botId:', botId);
   const [hasBonus, setHasBonus] = useState<boolean>(false);
   const [videoTimes, setVideoTimes] = useState<{ [index: number]: number }>({});
   const lastTab = useRef<'home' | 'bonus' | 'money' | undefined>(activeTab);
 
-  // Сохраняем прогресс видео при уходе с вкладки home
   useEffect(() => {
     if (lastTab.current === 'home' && activeTab !== 'home') {
       setVideoTimes((prev) => ({ ...prev, [currentIndex]: progress }));
@@ -58,7 +54,6 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
     // eslint-disable-next-line
   }, [activeTab]);
 
-  // При смене видео сбрасываем прогресс, если нет сохранённого значения
   useEffect(() => {
     if (videoTimes[currentIndex] === undefined) {
       setProgress(0);
@@ -77,11 +72,6 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
   }, [isVideoLoading]);
 
   useEffect(() => {
-    console.log('[HomePage] playing:', playing, 'isVideoLoading:', isVideoLoading, 'isVideoReady:', isVideoReady, 'currentIndex:', currentIndex);
-  }, [playing, isVideoLoading, isVideoReady, currentIndex]);
-
-  // Fetch hasBonus on mount
-  useEffect(() => {
     const fetchHasBonus = async () => {
       try {
         const res = await getIsSubscribedCurrent();
@@ -93,16 +83,11 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
     fetchHasBonus();
   }, []);
 
-  // Убираем этот useEffect - модалка должна появляться только при достижении дневного лимита
-
-
-
   const fetchProfile = async () => {
     try {
       const response = await getProfileCurrent()
       const data = response.data
       setProfile(data)
-      // Получаем статус подписки
       const subRes = await getIsSubscribedCurrent();
       setIsSubscribed(!!subRes.data.isSubscribed);
     } catch (error) {
@@ -126,7 +111,6 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
   const fetchVideos = async () => {
     try {
       const response = await getVideosCurrent();
-      console.log(response.data)
       if (response.data && response.data.length > 0) {
         const firstVideo = response.data[0]
         setVideos(response.data);
@@ -148,26 +132,20 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
   }
 
   const handlePassVerification = () => {
-    // Handle verification logic here
     console.log('Pass verification clicked');
   };
 
   const handleNextVideo = () => {
     if (videos.length === 0) return;
-    console.log('DEBUG: handleNextVideo - currentIndex:', currentIndex, 'videos.length:', videos.length);
-    
     setProgress(0);
     setFade(true);
     setIsVideoReady(false);
     setPlaying(true);
     setTimeout(() => {
-      // Зацикливаем видео - если достигли конца, начинаем сначала
       const nextIndex = currentIndex >= videos.length - 1 ? 0 : currentIndex + 1;
-      console.log('DEBUG: handleNextVideo - nextIndex:', nextIndex, 'videos.length:', videos.length);
-      
+
       setCurrentIndex(nextIndex);
       const nextVideo = videos[nextIndex];
-      console.log('DEBUG: handleNextVideo - nextVideo:', nextVideo);
       setReward({ likeReward: nextVideo.likeReward, dislikeReward: nextVideo.dislikeReward})
       setFade(false);
     }, 300);
@@ -176,11 +154,8 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
   // Функция для обновления списка видео при зацикливании
   const refreshVideosForLoop = async () => {
     try {
-      console.log('DEBUG: Refreshing videos for loop...');
       const response = await getVideosCurrent();
-      console.log('DEBUG: refreshVideosForLoop - response:', response.data);
       if (response.data && response.data.length > 0) {
-        // Сначала сбрасываем videos в пустой массив, чтобы форсировать ре-рендер
         setVideos([]);
         setTimeout(() => {
           setVideos(response.data);
@@ -188,29 +163,21 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
           const firstVideo = response.data[0];
           setReward({ likeReward: firstVideo.likeReward, dislikeReward: firstVideo.dislikeReward });
           setProgress(0);
-          console.log('DEBUG: Reset to first video');
         }, 0);
       } else {
-        console.log('DEBUG: No videos received from server, but continuing loop...');
-        // Даже если видео нет, продолжаем зацикливание с текущим видео
-        // Просто сбрасываем индекс на начало текущего списка
         if (videos.length > 0) {
           setCurrentIndex(0);
           const firstVideo = videos[0];
           setReward({ likeReward: firstVideo.likeReward, dislikeReward: firstVideo.dislikeReward });
           setProgress(0);
-          console.log('DEBUG: Continuing with existing videos');
         }
       }
     } catch (error) {
-      console.error('Ошибка при обновлении видео:', error);
-      // Даже при ошибке продолжаем зацикливание с текущим видео
       if (videos.length > 0) {
         setCurrentIndex(0);
         const firstVideo = videos[0];
         setReward({ likeReward: firstVideo.likeReward, dislikeReward: firstVideo.dislikeReward });
         setProgress(0);
-        console.log('DEBUG: Continuing with existing videos after error');
       }
     }
   };
@@ -218,23 +185,17 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
   const handleLike = async () => {
     if (videos.length === 0) return;
     const video = videos[currentIndex];
-    console.log('DEBUG: handleLike - currentIndex:', currentIndex, 'videos.length:', videos.length);
-    
+
     try {
       const response = await doActionCurrent({
         videoId: video.id,
         action: 'like',
       });
       
-      // Проверяем, достигли ли мы конца списка видео
       if (currentIndex >= videos.length - 1) {
-        console.log('DEBUG: Reached end of videos, refreshing...');
-        // Обновляем список видео для зацикливания
         await refreshVideosForLoop();
-        // После обновления списка видео, переходим к следующему видео
         handleNextVideo();
       } else {
-        console.log('DEBUG: Moving to next video...');
         handleNextVideo();
       }
       
@@ -242,21 +203,16 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
       dispatch(setBalance(response.data.newBalance));
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 403) {
-        // Daily video limit reached
         onVideoLimitReached?.(rate + 1, maxVideos);
         return;
       }
       if (axios.isAxiosError(error) && error.response?.status === 404) {
-        // Видео не найдено - продолжаем зацикливание
-        console.log('DEBUG: Video not found, but continuing loop...');
         if (currentIndex >= videos.length - 1) {
           await refreshVideosForLoop();
         }
         handleNextVideo();
         return;
       }
-      console.error('Ошибка при отправке лайка:', error);
-      // Даже при других ошибках продолжаем зацикливание
       if (currentIndex >= videos.length - 1) {
         await refreshVideosForLoop();
       }
@@ -267,23 +223,17 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
   const handleDislike = async () => {
     if (videos.length === 0) return;
     const video = videos[currentIndex];
-    console.log('DEBUG: handleDislike - currentIndex:', currentIndex, 'videos.length:', videos.length);
-    
+
     try {
       const response = await doActionCurrent({
         videoId: video.id,
         action: 'dislike',
       });
       
-      // Проверяем, достигли ли мы конца списка видео
       if (currentIndex >= videos.length - 1) {
-        console.log('DEBUG: Reached end of videos, refreshing...');
-        // Обновляем список видео для зацикливания
         await refreshVideosForLoop();
-        // После обновления списка видео, переходим к следующему видео
         handleNextVideo();
       } else {
-        console.log('DEBUG: Moving to next video...');
         handleNextVideo();
       }
       
@@ -291,21 +241,16 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
       dispatch(setBalance(response.data.newBalance));
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 403) {
-        // Daily video limit reached
         onVideoLimitReached?.(rate + 1, maxVideos);
         return;
       }
       if (axios.isAxiosError(error) && error.response?.status === 404) {
-        // Видео не найдено - продолжаем зацикливание
-        console.log('DEBUG: Video not found, but continuing loop...');
         if (currentIndex >= videos.length - 1) {
           await refreshVideosForLoop();
         }
         handleNextVideo();
         return;
       }
-      console.error('Ошибка при отправке дизлайка:', error);
-      // Даже при других ошибках продолжаем зацикливание
       if (currentIndex >= videos.length - 1) {
         await refreshVideosForLoop();
       }
@@ -314,28 +259,22 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
   };
 
   const handleGiftClick = async () => {
-    console.log('Gift button clicked!');
     try {
         const response = await getIsSubscribedCurrent()
-        console.log('Subscription response:', response.data);
         const {isSubscribed, hasBonus} = response.data
         if(!isSubscribed) {
-          console.log('User not subscribed');
           showToast(translations.giftToast.noSubscriptionTitle, translations.giftToast.noSubscriptionDescription);
           return
         }
         if (hasBonus) {
-          console.log('User already has bonus');
           showToast(translations.giftToast.alreadyBonusTitle, translations.giftToast.alreadyBonusDescription);
           return
         }
-        console.log('Opening gift window');
         setShowGiftWindow(true);
         setIsGiftOpen(true)
     } catch (error) {
-       console.error('Error in handleGiftClick:', error);
        showToast(translations.giftToast.noSubscriptionTitle, translations.giftToast.noSubscriptionDescription);
-     } 
+     }
   };
 
   const onClaimGift = async () => {
@@ -360,18 +299,14 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
 
   const openTelegramChannel = () => {
     if (!channelUrl) {
-      console.log('Channel URL not available');
       return;
     }
     
-    // Убеждаемся, что ссылка имеет правильный формат
     let formattedUrl = channelUrl;
     if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
       formattedUrl = `https://${formattedUrl}`;
     }
-    
-    console.log('Opening channel URL:', formattedUrl);
-    
+
     if (window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
       window.Telegram.WebApp.openTelegramLink(formattedUrl);
     } else {

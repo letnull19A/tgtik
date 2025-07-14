@@ -14,7 +14,6 @@ interface VideoTopBarProps {
 
 function VideoTopBar({ onGiftClick, rate, maxVideos, onProfileClick, translations, hideGiftIcon }: VideoTopBarProps) {
   const handleGiftClick = () => {
-    console.log('Gift icon clicked in VideoTopBar');
     if (onGiftClick) {
       onGiftClick();
     }

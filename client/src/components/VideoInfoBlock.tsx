@@ -11,14 +11,11 @@ interface VideoInfoBlockProps {
 
 function VideoInfoBlock({ video }: VideoInfoBlockProps) {
   const channelUrl = useSelector((state: RootState) => state.channel.inviteLink);
-  
-  console.log('VideoInfoBlock: channelUrl:', channelUrl);
 
   if (!video) return null;
 
   const openTelegramChannel = () => {
     if (!channelUrl) {
-      console.log('Channel URL not available');
       return;
     }
     

@@ -82,17 +82,14 @@ export default function App() {
       try {
         // Получаем country из URL
         const country = getCountry();
-        console.log('DEBUG: Loading translations, country:', country, 'lang:', lang);
-        
+
         if (country) {
           // Используем новый endpoint с country
           const res = await getTranslationsByCountry(country);
-          console.log('DEBUG: Translations loaded by country:', res.data);
           setTranslations(res.data);
         } else {
           // Fallback на старый способ
           const res = await getTranslations(lang);
-          console.log('DEBUG: Translations loaded by lang:', res.data);
           setTranslations(res.data);
         }
       } catch (e) {
@@ -137,25 +134,20 @@ export default function App() {
   useEffect(() => {
     const fetchBotStart = async () => {
       const botId = getBotId();
-      console.log('App: Fetching bot start info for botId:', botId);
       if (botId) {
         try {
           dispatch(setChannelLoading(true));
           const res = await getBotStart(botId);
-          console.log('App: getBotStart response:', res.data);
           if (res.data) {
             if (res.data.channelInviteLink) {
-              console.log('App: Setting channelInviteLink:', res.data.channelInviteLink);
               dispatch(setChannelInviteLink(res.data.channelInviteLink));
             } else {
               console.log('App: channelInviteLink is empty in response');
             }
             if (res.data.botLink) {
-              console.log('App: Setting botLink:', res.data.botLink);
               dispatch(setBotLink(res.data.botLink));
             }
             if (res.data.timerDelay) {
-              console.log('App: Setting timerDelay:', res.data.timerDelay);
               setTimerDelay(res.data.timerDelay);
             }
           }
@@ -174,7 +166,6 @@ export default function App() {
   const fetchCanWithdraw = async () => {
     try {
       const response = await getCanWithdrawCurrent()
-      console.log(response.data)
       setCanWithdraw(response.data.canWithdraw)
       setMinWithdraw(response.data.withdrawalLimit)
     } catch (err) {

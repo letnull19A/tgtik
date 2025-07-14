@@ -17,7 +17,6 @@ function ActionButtons({ showRegistration, onNext, onCreateAccount, isAgeValid, 
 
   const handleSubscribeClick = () => {
     if (!channelUrl) {
-      console.log('Channel URL not available');
       return;
     }
     
