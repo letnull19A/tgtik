@@ -369,9 +369,18 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
     }
   };
 
+  const getCurrentVideoDuration = () => {
+    const video = videos[currentIndex];
+    // duration может быть недоступен до загрузки видео, поэтому fallback = 1
+    const videoElement = document.querySelector('video');
+    return videoElement && videoElement.duration ? videoElement.duration : 1;
+  };
+
   const handleProgress = (playedState: { playedSeconds: number }) => {
     dispatch(setPlayedSeconds(playedState.playedSeconds));
-    setProgress(playedState.playedSeconds);
+    // вычисляем прогресс в процентах относительно длительности видео
+    const duration = getCurrentVideoDuration();
+    setProgress(duration > 0 ? playedState.playedSeconds / duration : 0);
   };
 
   return (
