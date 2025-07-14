@@ -58,6 +58,7 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
     const [isSharePressed, setIsSharePressed] = useState(false);
     const channelUrl = useSelector((state: RootState) => state.channel.inviteLink);
     
+    console.log('VideoSidebar: channelUrl:', channelUrl);
 
     const totalDuration = (timerDelay || 3000) / 1000; // Конвертируем миллисекунды в секунды
 
@@ -67,11 +68,12 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
     // Сбросить все reward-состояния и таймер только при смене видео (не при каждом монтировании)
     useEffect(() => {
         if (prevIndex.current !== currentIndex) {
-            setShowRewardDislike(false);
-            setRewardLikeFlyOut(false);
-            setRewardDislikeFlyOut(false);
-            setTimeStart(0);
-            dispatch(resetTimer());
+            console.log(logPrefix || '[VideoSidebar]', 'resetTimer on currentIndex change', 'currentIndex:', currentIndex);
+        setShowRewardDislike(false);
+        setRewardLikeFlyOut(false);
+        setRewardDislikeFlyOut(false);
+        setTimeStart(0);
+        dispatch(resetTimer());
         }
         prevIndex.current = currentIndex;
     }, [currentIndex, dispatch]);
@@ -87,8 +89,10 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
             (timerStatus === 'not_started' || timerStatus === 'paused')
         ) {
             if (timerStatus === 'not_started') {
+                console.log(logPrefix || '[VideoSidebar]', 'startTimer (all conditions met)');
                 dispatch(startTimer());
             } else if (timerStatus === 'paused') {
+                console.log(logPrefix || '[VideoSidebar]', 'resumeTimer (all conditions met)');
                 dispatch(resumeTimer());
             }
         }
@@ -97,9 +101,10 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
             (activeTab !== 'home' || !playing || isVideoLoading || !isVideoReady) &&
             timerStatus === 'running'
         ) {
+            console.log(logPrefix || '[VideoSidebar]', 'pauseTimer (conditions not met)');
             dispatch(pauseTimer());
         }
-    }, [activeTab, playing, isVideoLoading, isVideoReady, timerStatus, dispatch]);
+    }, [activeTab, playing, isVideoLoading, isVideoReady, timerStatus, dispatch, logPrefix]);
 
     // Глобальный таймер: завершение через timerDelay миллисекунд после старта
     useEffect(() => {
@@ -170,22 +175,27 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
     };
 
     const handleShare = async () => {
+      console.log('DEBUG: Share button clicked!');
       setIsSharePressed(true);
       setTimeout(() => setIsSharePressed(false), 300);
       try {
         const res = await getReferralUrl(BOT_ID, USER_ID);
         const shareUrl = res.data?.referralLink || window.location.href;
         const shareText = '';
+        console.log('DEBUG: Share URL:', shareUrl);
         if (isTelegram && window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
           const tgLink = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
+          console.log('DEBUG: Opening Telegram share link:', tgLink);
           window.Telegram.WebApp.openTelegramLink(tgLink);
           setShareMessage(translations.shareMenuOpened || 'Share menu opened');
         } else {
+          console.log('DEBUG: Copying to clipboard:', shareUrl);
           await navigator.clipboard.writeText(shareUrl);
           setShareMessage(translations.linkCopied || 'Link copied');
         }
         setTimeout(() => setShareMessage(''), 2000);
       } catch (error) {
+        console.error('DEBUG: Share error:', error);
         setShareMessage(translations.shareError || 'Share error');
         setTimeout(() => setShareMessage(''), 2000);
       }
@@ -193,6 +203,7 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
 
   const openTelegramChannel = () => {
     if (!channelUrl) {
+      console.log('Channel URL not available');
       return;
     }
     
@@ -201,6 +212,8 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
     if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
       formattedUrl = `https://${formattedUrl}`;
     }
+    
+    console.log('Opening channel URL:', formattedUrl);
     
     if (window.Telegram?.WebApp && typeof window.Telegram.WebApp.openTelegramLink === 'function') {
       window.Telegram.WebApp.openTelegramLink(formattedUrl);
@@ -294,6 +307,7 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
           className={styles.sidebarShareIcon + (isSharePressed ? ' ' + styles.sidebarShareIconActive : '')} 
           onClick={(e) => {
             e.stopPropagation();
+            console.log('DEBUG: Share icon clicked!');
             handleShare();
           }}
         />
@@ -311,6 +325,7 @@ function VideoSidebar({ onProfileClick, onLike, onDislike, likes, dislikes, curr
           }}
           onClick={(e) => {
             e.stopPropagation();
+            console.log('DEBUG: Invisible area clicked!');
             handleShare();
           }}
         />

@@ -124,6 +124,7 @@ export const WithdrawalForm: React.FC<WithdrawFormProps> = ({ onClose, minWithdr
             >
                 <div className={styles.buttonText}>
                     {translations?.withdraw || 'Withdraw'}
+                    {console.log('DEBUG: translations in WithdrawalForm:', translations)}
                 </div>
             </button>
         </form>

@@ -13,41 +13,22 @@ interface VideoPlayerProps {
   setPlaying: React.Dispatch<React.SetStateAction<boolean>>;
   muted?: boolean;
   onVideoReady?: () => void;
-  initialTime?: number; // новый проп
 }
 
-export default function VideoPlayer({ setProgress, videos, currentIndex, setCurrentIndex, fade, setIsVideoLoading, playing, setPlaying, muted = false, onVideoReady, initialTime = 0 }: VideoPlayerProps) {
+export default function VideoPlayer({ setProgress, videos, currentIndex, setCurrentIndex, fade, setIsVideoLoading, playing, setPlaying, muted = false, onVideoReady }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const initialTimeRef = useRef<number>(initialTime);
 
   useEffect(() => {
-    initialTimeRef.current = initialTime;
-  }, [initialTime]);
-
-  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.play().catch((err) => {
+        if (err.name !== 'AbortError') {
+          console.error('Video play error:', err);
+        }
+      });
+    }
     setIsVideoLoading(true);
   }, [currentIndex, setIsVideoLoading]);
-
-  useEffect(() => {
-    // Удаляем автоматический вызов play/pause по playing,
-    // чтобы не конфликтовать с действиями пользователя и onCanPlay
-  }, [playing]);
-
-  // Устанавливаем прогресс только после onCanPlay
-  const handleCanPlay = () => {
-    setIsVideoLoading(false);
-    const video = videoRef.current;
-    if (video) {
-      let safeTime = Number(initialTimeRef.current);
-      if (isNaN(safeTime) || safeTime < 0 || safeTime >= video.duration) safeTime = 0;
-      video.currentTime = safeTime;
-      if (playing) {
-        console.log('[VideoPlayer] play() called by onCanPlay');
-        video.play();
-      }
-    }
-    if (onVideoReady) onVideoReady();
-  };
 
   return (
     <div style={{
@@ -60,65 +41,62 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
       background: '#000'
     }}>
       {videos[currentIndex]?.url ? (
-        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-          <video
-            ref={videoRef}
-            src={videos[currentIndex].url}
-            width="100%"
-            height="100%"
-            controls={false}
-            muted={true}
-            onTimeUpdate={() => {
-              if (videoRef.current) {
-                setProgress(videoRef.current.currentTime / videoRef.current.duration);
+        <video
+          ref={videoRef}
+          src={videos[currentIndex].url}
+          width="100%"
+          height="100%"
+          controls={false}
+          muted={muted}
+          onTimeUpdate={() => {
+            if (videoRef.current) {
+              setProgress(videoRef.current.currentTime / videoRef.current.duration);
+            }
+          }}
+          autoPlay={playing}
+          onClick={() => {
+            if (videoRef.current) {
+              if (playing) {
+                videoRef.current.pause();
+                setPlaying(false);
+              } else {
+                videoRef.current.play().catch((err) => {
+                  if (err.name !== 'AbortError') {
+                    console.error('Video play error:', err);
+                  }
+                });
+                setPlaying(true);
               }
-            }}
-            onCanPlay={handleCanPlay}
-            onError={() => {
-              console.error('[VideoPlayer] video error', videoRef.current?.error, videoRef.current?.src);
-            }}
-            onLoadedData={() => {
-              if (videoRef.current) {
-                console.log('[VideoPlayer] loaded', videoRef.current.src, videoRef.current.duration);
-              }
-            }}
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              display: 'block',
-              background: '#000',
-              cursor: 'pointer',
-            }}
-          />
-          {!playing && videos[currentIndex]?.url && (
-            <button
-              style={{
-                position: 'absolute',
-                left: '50%',
-                top: '50%',
-                transform: 'translate(-50%, -50%)',
-                fontSize: 48,
-                background: 'rgba(0,0,0,0.5)',
-                color: '#fff',
-                border: 'none',
-                borderRadius: 50,
-                padding: 32,
-                cursor: 'pointer',
-                zIndex: 10,
-                display: playing ? 'none' : 'block',
-              }}
-              onClick={() => {
-                if (videoRef.current) {
-                  videoRef.current.play();
-                  setPlaying(true);
+            }
+          }}
+          onEnded={() => {
+            if (videoRef.current) {
+              videoRef.current.currentTime = 0;
+              videoRef.current.play().catch((err) => {
+                if (err.name !== 'AbortError') {
+                  console.error('Video play error:', err);
                 }
-              }}
-            >
-              ▶
-            </button>
-          )}
-        </div>
+              });
+            }
+          }}
+          onLoadStart={() => setIsVideoLoading(true)}
+          onWaiting={() => setIsVideoLoading(true)}
+          onCanPlay={() => {
+            setIsVideoLoading(false);
+            if (onVideoReady) onVideoReady();
+            if (playing && videoRef.current && videoRef.current.paused) {
+              videoRef.current.play().catch(() => {});
+            }
+          }}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            display: 'block',
+            background: '#000',
+            cursor: 'pointer',
+          }}
+        />
       ) : null}
       {/* Loader is now handled by parent via isVideoLoading state */}
     </div>
