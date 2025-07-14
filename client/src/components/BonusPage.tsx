@@ -16,7 +16,7 @@ declare global {
 
 const DEFAULT_AVATAR = 'https://www.pngall.com/wp-content/uploads/5/Profile-PNG-Photo.png';
 const getAvatar = (url?: string) => {
-  if (!url || url === 'null' || url === 'undefined' || url === '' || url.includes('default') || url.includes('null') || url.includes('undefined')) return DEFAULT_AVATAR;
+  if (!url || url === 'null' || url === 'undefined' || url === '' || url.includes('default') || url.includes('null') || url.includes('undefined') || url.includes('placehold.co')) return DEFAULT_AVATAR;
   return url;
 };
 

@@ -36,9 +36,12 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
       let safeTime = Number(initialTimeRef.current);
       if (isNaN(safeTime) || safeTime < 0 || safeTime >= video.duration) safeTime = 0;
       video.currentTime = safeTime;
-      if (playing && video.paused) {
-        video.play().catch(() => {});
-      }
+      console.log('[VideoPlayer] onCanPlay: set currentTime', safeTime, 'duration:', video.duration, 'playing:', playing);
+      video.play().then(() => {
+        console.log('[VideoPlayer] play() called after set currentTime');
+      }).catch((e) => {
+        console.log('[VideoPlayer] play() error:', e);
+      });
     }
     if (onVideoReady) onVideoReady();
   };
