@@ -60,54 +60,49 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
       background: '#000'
     }}>
       {videos[currentIndex]?.url ? (
-        <video
-          ref={videoRef}
-          src={videos[currentIndex].url}
-          width="100%"
-          height="100%"
-          controls={false}
-          muted={muted}
-          onTimeUpdate={() => {
-            if (videoRef.current) {
-              setProgress(videoRef.current.currentTime / videoRef.current.duration);
-            }
-          }}
-          onClick={e => {
-            if (!e.isTrusted) return;
-            if (videoRef.current) {
-              if (playing) {
-                console.log('[VideoPlayer] pause() called by click');
-                videoRef.current.pause();
-                setPlaying(false);
-              } else {
-                console.log('[VideoPlayer] play() called by click');
-                videoRef.current.play();
-                setPlaying(true);
+        <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
+          <video
+            ref={videoRef}
+            src={videos[currentIndex].url}
+            width="100%"
+            height="100%"
+            controls={false}
+            muted={muted}
+            onTimeUpdate={() => {
+              if (videoRef.current) {
+                setProgress(videoRef.current.currentTime / videoRef.current.duration);
               }
-            }
-          }}
-          onEnded={() => {
-            if (videoRef.current) {
-              videoRef.current.currentTime = 0;
-              videoRef.current.play().catch((err) => {
-                if (err.name !== 'AbortError') {
-                  console.error('Video play error:', err);
+            }}
+            onCanPlay={handleCanPlay}
+            style={{ border: '2px solid red' }}
+          />
+          {!playing && (
+            <button
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '50%',
+                transform: 'translate(-50%, -50%)',
+                fontSize: 48,
+                background: 'rgba(0,0,0,0.5)',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 50,
+                padding: 32,
+                cursor: 'pointer',
+                zIndex: 10,
+              }}
+              onClick={() => {
+                if (videoRef.current) {
+                  videoRef.current.play();
+                  setPlaying(true);
                 }
-              });
-            }
-          }}
-          onLoadStart={() => setIsVideoLoading(true)}
-          onWaiting={() => setIsVideoLoading(true)}
-          onCanPlay={handleCanPlay}
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            display: 'block',
-            background: '#000',
-            cursor: 'pointer',
-          }}
-        />
+              }}
+            >
+              ▶
+            </button>
+          )}
+        </div>
       ) : null}
       {/* Loader is now handled by parent via isVideoLoading state */}
     </div>
