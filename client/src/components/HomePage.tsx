@@ -68,6 +68,8 @@ function HomePage({ onSelect, activeTab, setMoney, showToast, showErrorModal, se
     if (activeTab !== 'home') {
       setPlaying(false);
       dispatch(setPlayedSeconds(progress));
+    } else {
+      setPlaying(true);
     }
   }, [activeTab]);
 
