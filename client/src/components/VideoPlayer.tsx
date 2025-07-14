@@ -28,6 +28,17 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
     setIsVideoLoading(true);
   }, [currentIndex, setIsVideoLoading]);
 
+  useEffect(() => {
+    if (!videoRef.current) return;
+    if (playing) {
+      console.log('[VideoPlayer] play() called by effect');
+      videoRef.current.play();
+    } else {
+      console.log('[VideoPlayer] pause() called by effect');
+      videoRef.current.pause();
+    }
+  }, [playing]);
+
   // Устанавливаем прогресс только после onCanPlay
   const handleCanPlay = () => {
     setIsVideoLoading(false);
@@ -36,6 +47,7 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
       let safeTime = Number(initialTimeRef.current);
       if (isNaN(safeTime) || safeTime < 0 || safeTime >= video.duration) safeTime = 0;
       video.currentTime = safeTime;
+      console.log('[VideoPlayer] play() called by onCanPlay');
       video.play();
     }
     if (onVideoReady) onVideoReady();
@@ -68,9 +80,11 @@ export default function VideoPlayer({ setProgress, videos, currentIndex, setCurr
           onClick={() => {
             if (videoRef.current) {
               if (playing) {
+                console.log('[VideoPlayer] pause() called by click');
                 videoRef.current.pause();
                 setPlaying(false);
               } else {
+                console.log('[VideoPlayer] play() called by click');
                 videoRef.current.play();
                 setPlaying(true);
               }
